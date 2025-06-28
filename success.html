@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Success - Account Details</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-br from-white to-green-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white shadow-xl rounded-lg p-8 max-w-md w-full text-center">
+    <h2 class="text-2xl font-bold text-green-700 mb-4">🎉 Payment Successful!</h2>
+    <p class="text-gray-600 mb-6">Enter your mobile number to get your login details. You can view them only once.</p>
+
+    <div class="mb-4">
+      <input id="phone" type="tel" placeholder="Enter Mobile Number"
+             class="w-full border border-gray-300 rounded px-4 py-2 focus:ring focus:ring-green-200">
+    </div>
+
+    <div class="mb-4">
+      <select id="app" class="w-full border border-gray-300 rounded px-4 py-2 focus:ring focus:ring-green-200">
+        <option value="YouTube">YouTube</option>
+        <option value="Spotify">Spotify</option>
+      </select>
+    </div>
+
+    <button onclick="getLoginInfo()"
+            class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 font-semibold transition">
+      Get Login Info
+    </button>
+
+    <div id="account" class="mt-6 text-left hidden bg-gray-100 p-4 rounded text-sm text-gray-700"></div>
+  </div>
+
+  <script>
+    function getLoginInfo() {
+      const phone = document.getElementById('phone').value.trim();
+      const app = document.getElementById('app').value;
+      const alreadyUsedKey = `used_${app}_${phone}`;
+
+      // Block if already used this combo
+      if (sessionStorage.getItem(alreadyUsedKey)) {
+        document.getElementById('account').classList.remove("hidden");
+        document.getElementById('account').innerHTML = `<p class="text-red-600 font-semibold">You have already received your login info. This page only works once per order.</p>`;
+        return;
+      }
+
+      fetch("https://script.google.com/macros/s/AKfycbzm_1SznNpuy_48wZgspLuD-CN2NXOfFL8qUqO1TM23XGcSNcH9Q99v0OIqXAVgflsR/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ app, phone })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('account').classList.remove("hidden");
+        if (data.success) {
+          sessionStorage.setItem(alreadyUsedKey, "true"); // Set one-time flag
+          document.getElementById('account').innerHTML = `
+            <p><strong>📧 Email:</strong> ${data.email}</p>
+            <p><strong>🔐 Password:</strong> ${data.password}</p>
+            <p class="mt-2 text-xs text-gray-500 italic">Note: You can see this info only once.</p>
+          `;
+        } else {
+          document.getElementById('account').innerHTML = `<p class="text-red-600">${data.message}</p>`;
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
