@@ -9,13 +9,13 @@
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const reseller = localStorage.getItem("reseller");
-      if (!reseller) window.location.href = "login.html";
+      if (reseller) window.location.href = "index.html";
       document.getElementById("reseller-name").innerText = reseller;
     });
 
     function logout() {
       localStorage.removeItem("reseller");
-      window.location.href = "login.html";
+      window.location.href = "index.html";
     }
   </script>
 </head>
