@@ -1,61 +1,571 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Reseller Dashboard</title>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VogueVerse - Admin Panel</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Lucide Icons CDN (Vanilla JS version) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'admin-primary': '#111827',
+                        'admin-secondary': '#1f2937',
+                        'admin-accent': '#3b82f6',
+                        'admin-accent-hover': '#2563eb',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        i[data-lucide] {
+            width: 20px;
+            height: 20px;
+        }
+        /* Styles for responsive tables */
+        @media (max-width: 767px) {
+            .responsive-table thead {
+                display: none;
+            }
+            .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td {
+                display: block;
+                width: 100%;
+            }
+            .responsive-table tr {
+                margin-bottom: 1rem;
+                border: 1px solid #ddd;
+                border-radius: 0.5rem;
+                overflow: hidden;
+            }
+            .responsive-table td {
+                padding-left: 50%;
+                position: relative;
+                text-align: right;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .responsive-table td:last-child {
+                border-bottom: 0;
+            }
+            .responsive-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 0;
+                width: 45%;
+                padding-left: 1.5rem;
+                font-weight: 600;
+                text-align: left;
+                white-space: nowrap;
+            }
+        }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-indigo-100 via-white to-pink-100 min-h-screen font-sans">
+<body class="bg-gray-100">
 
-  <!-- Header -->
-  <header class="bg-white shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-50">
-    <h1 class="text-xl font-bold text-indigo-600">🎯 Reseller Dashboard</h1>
-    <div class="flex items-center space-x-3">
-      <span class="text-sm text-gray-600">Hi, <strong class="text-indigo-800">Reseller 436</strong></span>
+    <!-- Login Screen -->
+    <div id="login-screen" class="flex items-center justify-center min-h-screen bg-gray-900">
+        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
+            <h2 class="text-3xl font-bold text-center text-gray-900">VogueVerse Admin Login</h2>
+            <form id="login-form" class="space-y-6">
+                <div>
+                    <label for="admin-email" class="text-sm font-medium text-gray-700">Email</label>
+                    <input id="admin-email" type="email" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-admin-accent focus:border-admin-accent" value="admin@vogueverse.com">
+                </div>
+                <div>
+                    <label for="admin-password" class="text-sm font-medium text-gray-700">Password</label>
+                    <input id="admin-password" type="password" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-admin-accent focus:border-admin-accent" value="admin123">
+                </div>
+                <p id="login-feedback" class="text-sm text-center text-red-500"></p>
+                <button type="submit" class="w-full py-3 font-semibold text-white bg-admin-primary rounded-md hover:bg-admin-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-admin-primary">
+                    Sign In
+                </button>
+            </form>
+        </div>
     </div>
-  </header>
 
-  <!-- Main -->
-  <main class="max-w-4xl mx-auto p-6">
+    <!-- Admin Dashboard -->
+    <div id="admin-dashboard" class="hidden">
+        <div class="relative min-h-screen md:flex">
+            <!-- Mobile Sidebar Overlay -->
+            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
 
-    <!-- Welcome Card -->
-    <section class="bg-white shadow rounded-xl p-6 mb-6 text-center">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-1">Welcome Reseller 👋</h2>
-      <p class="text-gray-500">Manage your OTT subscriptions & reseller orders here</p>
-    </section>
+            <!-- Sidebar -->
+            <aside id="sidebar" class="w-64 flex-shrink-0 bg-admin-primary text-white fixed inset-y-0 left-0 z-30 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out">
+                <div class="p-6 text-2xl font-bold">VogueVerse</div>
+                <nav id="sidebar-nav" class="mt-6">
+                    <a href="#products" class="nav-link flex items-center px-6 py-3 bg-admin-accent"><i data-lucide="package" class="mr-3"></i> Products</a>
+                    <a href="#categories" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="layout-grid" class="mr-3"></i> Categories</a>
+                    <a href="#testimonials" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="message-square" class="mr-3"></i> Testimonials</a>
+                    <a href="#hero" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="layout-template" class="mr-3"></i> Hero Content</a>
+                    <a href="#promotions" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="megaphone" class="mr-3"></i> Promotions</a>
+                    <a href="#users" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="users" class="mr-3"></i> Users</a>
+                </nav>
+                <div class="absolute bottom-0 w-64 p-6">
+                    <button id="logout-btn" class="w-full flex items-center justify-center py-2 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">
+                        <i data-lucide="log-out" class="mr-2"></i> Logout
+                    </button>
+                </div>
+            </aside>
 
-    <!-- App Cards -->
-    <section>
-      <h2 class="text-xl font-semibold text-gray-700 mb-4">📦 Available Subscriptions</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- Main Content -->
+            <div class="flex-1 flex flex-col">
+                <!-- Mobile Header -->
+                <header class="md:hidden flex justify-between items-center bg-white p-4 shadow-md">
+                     <button id="mobile-menu-btn">
+                        <i data-lucide="menu"></i>
+                    </button>
+                    <h1 id="mobile-header-title" class="text-xl font-bold">Products</h1>
+                    <div></div> <!-- Spacer -->
+                </header>
 
-        <!-- YouTube Card -->
-        <a href="youtube-order.html" class="bg-white hover:shadow-2xl shadow-md transition rounded-xl p-6 flex flex-col items-center text-center">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png" alt="YouTube" class="h-16 mb-4">
-          <h3 class="text-lg font-bold text-red-600 mb-1">YouTube Premium gmails</h3>
-          <p class="text-gray-500 text-sm mb-2">life time Access</p>
-          <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-medium">₹15</span>
-        </a>
+                <main class="flex-1 p-4 md:p-6 overflow-y-auto">
+                    <!-- Products Section -->
+                    <div id="products-section" class="admin-section">
+                        <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Products</h2>
+                        <form id="products-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
+                            <h3 id="products-form-title" class="text-xl font-semibold mb-4">Add New Product</h3>
+                            <input type="hidden" id="products-id">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <input id="products-name" type="text" placeholder="Product Name" class="w-full p-2 border rounded" required>
+                                <input id="products-price" type="number" placeholder="Price (₹)" class="w-full p-2 border rounded" required>
+                                <input id="products-salePrice" type="number" placeholder="Sale Price (Optional, ₹)" class="w-full p-2 border rounded">
+                                <input id="products-image" type="url" placeholder="Image URL" class="w-full p-2 border rounded" required>
+                                <input id="products-tag" type="text" placeholder="Tag (e.g., SALE, NEW)" class="w-full p-2 border rounded">
+                            </div>
+                            <div class="mt-6 flex gap-4">
+                                <button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Product</button>
+                                <button type="button" id="clear-products-form" class="px-6 py-2 font-semibold text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Clear</button>
+                            </div>
+                        </form>
+                        <div id="products-table-container" class="bg-white rounded-lg shadow-md overflow-hidden"></div>
+                    </div>
 
-        <!-- Spotify Card -->
-        <a href="spotify-order.html" class="bg-white hover:shadow-2xl shadow-md transition rounded-xl p-6 flex flex-col items-center text-center">
-          <img src="https://upload.wikimedia.org/wikipedia/commons/1/19/Spotify_logo_without_text.svg" alt="Spotify" class="h-16 mb-4">
-          <h3 class="text-lg font-bold text-green-600 mb-1">Spotify Premium</h3>
-          <p class="text-gray-500 text-sm mb-2">2 Months Access</p>
-          <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">₹54</span>
-        </a>
+                    <!-- Categories Section -->
+                    <div id="categories-section" class="admin-section hidden">
+                         <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Categories</h2>
+                        <form id="categories-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
+                             <h3 id="categories-form-title" class="text-xl font-semibold mb-4">Add New Category</h3>
+                             <input type="hidden" id="categories-id">
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <input id="categories-name" type="text" placeholder="Category Name" class="w-full p-2 border rounded" required>
+                                <input id="categories-image" type="url" placeholder="Image URL" class="w-full p-2 border rounded" required>
+                            </div>
+                             <div class="mt-6 flex gap-4">
+                                <button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Category</button>
+                                <button type="button" id="clear-categories-form" class="px-6 py-2 font-semibold text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Clear</button>
+                            </div>
+                        </form>
+                        <div id="categories-table-container" class="bg-white rounded-lg shadow-md overflow-hidden"></div>
+                    </div>
 
-      </div>
-    </section>
-  </main>
+                    <!-- Testimonials Section -->
+                    <div id="testimonials-section" class="admin-section hidden">
+                        <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Testimonials</h2>
+                         <form id="testimonials-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
+                             <h3 id="testimonials-form-title" class="text-xl font-semibold mb-4">Add New Testimonial</h3>
+                             <input type="hidden" id="testimonials-id">
+                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <input id="testimonials-name" type="text" placeholder="Customer Name" class="w-full p-2 border rounded" required>
+                                <input id="testimonials-location" type="text" placeholder="Location (e.g., City, State)" class="w-full p-2 border rounded" required>
+                                <input id="testimonials-image" type="url" placeholder="Image URL" class="w-full p-2 border rounded" required>
+                                <textarea id="testimonials-text" placeholder="Testimonial Text" class="w-full p-2 border rounded md:col-span-2" rows="3" required></textarea>
+                            </div>
+                             <div class="mt-6 flex gap-4">
+                                <button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Testimonial</button>
+                                <button type="button" id="clear-testimonials-form" class="px-6 py-2 font-semibold text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Clear</button>
+                            </div>
+                        </form>
+                        <div id="testimonials-table-container" class="bg-white rounded-lg shadow-md overflow-hidden"></div>
+                    </div>
 
-  <!-- WhatsApp Support Floating Button -->
-  <a href="https://wa.me/918764023747" target="_blank"
-     class="fixed bottom-5 right-5 bg-green-500 hover:bg-green-600 text-white p-4 rounded-full shadow-lg transition"
-     title="Chat on WhatsApp">
-    💬
-  </a>
+                    <!-- Hero Section -->
+                    <div id="hero-section" class="admin-section hidden">
+                         <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Hero Content</h2>
+                        <form id="hero-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
+                            <div class="space-y-4">
+                                <div><label for="hero-title-input" class="font-semibold">Title</label><input id="hero-title-input" type="text" class="w-full p-2 mt-1 border rounded" required></div>
+                                <div><label for="hero-subtitle-input" class="font-semibold">Subtitle</label><input id="hero-subtitle-input" type="text" class="w-full p-2 mt-1 border rounded" required></div>
+                                <div><label for="hero-image-input" class="font-semibold">Background Image URL</label><input id="hero-image-input" type="url" class="w-full p-2 mt-1 border rounded" required></div>
+                            </div>
+                             <div class="mt-6"><button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Hero Content</button></div>
+                        </form>
+                    </div>
+                    
+                    <!-- Promotions Section -->
+                    <div id="promotions-section" class="admin-section hidden">
+                        <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Promotion Bar</h2>
+                        <form id="promotion-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="promotion-text-input" class="font-semibold">Promotion Text</label>
+                                    <input id="promotion-text-input" type="text" class="w-full p-2 mt-1 border rounded" required placeholder="e.g., Free Shipping On All Orders Over ₹3,999">
+                                </div>
+                            </div>
+                             <div class="mt-6">
+                                <button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Promotion</button>
+                            </div>
+                        </form>
+                    </div>
 
+                    <!-- Users Section -->
+                    <div id="users-section" class="admin-section hidden">
+                         <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Users & Orders</h2>
+                         <div id="users-table-container" class="bg-white rounded-lg shadow-md overflow-hidden"></div>
+                    </div>
+
+                </main>
+            </div>
+        </div>
+    </div>
+    
+    <!-- User Cart Modal -->
+    <div id="user-cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full">
+             <div class="flex justify-between items-center mb-6">
+                <h2 id="user-cart-modal-title" class="text-2xl font-bold">User's Cart</h2>
+                <button id="close-user-cart-modal-btn" class="text-gray-500 hover:text-black"><i data-lucide="x"></i></button>
+            </div>
+            <div id="user-cart-items-container" class="max-h-96 overflow-y-auto"></div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Firebase Initialization ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgErP_g_ZqKraxqFAQi3W0YdwwkQdAZzg",
+            authDomain: "my-chat-app-a9b9e.firebaseapp.com",
+            projectId: "my-chat-app-a9b9e",
+            storageBucket: "my-chat-app-a9b9e.firebasestorage.app",
+            messagingSenderId: "292137527608",
+            appId: "1:292137527608:web:692b165effa77e79bf79cd"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DOM Elements ---
+        const loginScreen = document.getElementById('login-screen');
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const loginForm = document.getElementById('login-form');
+        const loginFeedback = document.getElementById('login-feedback');
+        const logoutBtn = document.getElementById('logout-btn');
+        const sidebarNav = document.getElementById('sidebar-nav');
+        const adminSections = document.querySelectorAll('.admin-section');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileHeaderTitle = document.getElementById('mobile-header-title');
+
+        // --- Admin Authentication (Local Check with Firebase Anonymous Auth) ---
+        const ADMIN_EMAIL = "admin@vogueverse.com";
+        const ADMIN_PASSWORD = "admin123";
+
+        async function initializeAdminSession() {
+            try {
+                // Only sign in if not already signed in
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                    console.log("Admin session signed in anonymously.");
+                }
+            } catch (error) {
+                console.error("Anonymous sign-in for admin failed:", error);
+                loginFeedback.textContent = "Could not connect to database. Please check Firebase console for enabled Auth providers.";
+            }
+        }
+
+        function showDashboard() {
+            loginScreen.classList.add('hidden');
+            adminDashboard.style.display = 'block';
+            loadSectionData('products');
+        }
+        
+        function showLoginScreen() {
+            sessionStorage.removeItem('isAdminLoggedIn');
+            loginScreen.classList.remove('hidden');
+            adminDashboard.style.display = 'none';
+        }
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('admin-email').value;
+            const password = document.getElementById('admin-password').value;
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('isAdminLoggedIn', 'true');
+                showDashboard();
+            } else {
+                 loginFeedback.textContent = 'Error: Invalid credentials.';
+            }
+        });
+
+        logoutBtn.addEventListener('click', showLoginScreen);
+        
+        // --- Mobile Navigation ---
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('hidden');
+        }
+        mobileMenuBtn.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+
+        // --- Navigation ---
+        sidebarNav.addEventListener('click', (e) => {
+            e.preventDefault();
+            const link = e.target.closest('.nav-link');
+            if (!link) return;
+            sidebarNav.querySelectorAll('.nav-link').forEach(l => l.classList.remove('bg-admin-accent'));
+            link.classList.add('bg-admin-accent');
+            const sectionId = link.getAttribute('href').substring(1);
+            adminSections.forEach(s => s.classList.add('hidden'));
+            document.getElementById(`${sectionId}-section`).classList.remove('hidden');
+            mobileHeaderTitle.textContent = capitalize(sectionId);
+            loadSectionData(sectionId);
+
+            if (window.innerWidth < 768) {
+                toggleSidebar();
+            }
+        });
+
+        // --- Generic CRUD Functions ---
+        const getPublicCollectionRef = (collectionName) => collection(db, 'artifacts', appId, collectionName);
+        const getPublicDocRef = (collectionName, docId) => doc(db, 'artifacts', appId, collectionName, docId);
+
+        async function loadSectionData(sectionName) {
+            try {
+                switch(sectionName) {
+                    case 'hero':
+                        const heroRef = doc(db, 'artifacts', appId, 'siteContent', 'hero');
+                        const heroSnap = await getDoc(heroRef);
+                        if (heroSnap.exists()) {
+                            const data = heroSnap.data();
+                            document.getElementById('hero-title-input').value = data.title;
+                            document.getElementById('hero-subtitle-input').value = data.subtitle;
+                            document.getElementById('hero-image-input').value = data.backgroundImage;
+                        }
+                        break;
+                    case 'promotions':
+                         const promoRef = doc(db, 'artifacts', appId, 'siteContent', 'promotionBar');
+                         const promoSnap = await getDoc(promoRef);
+                         if (promoSnap.exists()) {
+                            document.getElementById('promotion-text-input').value = promoSnap.data().text;
+                         }
+                        break;
+                    case 'users':
+                        const usersRef = collection(db, 'artifacts', appId, 'users');
+                        const usersSnap = await getDocs(usersRef);
+                        const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        renderUsersTable(users);
+                        break;
+                    default:
+                        const querySnapshot = await getDocs(getPublicCollectionRef(sectionName));
+                        const items = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        renderTable(sectionName, items);
+                }
+            } catch (error) {
+                console.error(`Error loading ${sectionName}:`, error);
+                const container = document.getElementById(`${sectionName}-table-container`) || document.getElementById(`${sectionName}-section`);
+                if(container) container.innerHTML = `<p class="text-red-500 p-4">Error loading data. Please check Firestore rules.</p>`;
+            }
+        }
+
+        function renderTable(sectionName, items) {
+            const container = document.getElementById(`${sectionName}-table-container`);
+            if (!container) return;
+            if (!items.length) {
+                container.innerHTML = `<p class="p-4">No items found.</p>`;
+                return;
+            }
+            const headers = Object.keys(items[0]).filter(k => k !== 'id' && typeof items[0][k] !== 'object');
+            container.innerHTML = `
+                <table class="w-full text-sm text-left text-gray-500 responsive-table">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr>
+                        ${headers.map(h => `<th scope="col" class="px-6 py-3">${h}</th>`).join('')}
+                        <th scope="col" class="px-6 py-3">Actions</th>
+                    </tr></thead>
+                    <tbody>${items.map(item => `
+                        <tr class="bg-white border-b">
+                            ${headers.map(h => `<td data-label="${h}" class="px-6 py-4">${item[h] || ''}</td>`).join('')}
+                            <td data-label="Actions" class="px-6 py-4 flex gap-2 justify-end md:justify-start">
+                                <button class="edit-btn font-medium text-blue-600 hover:underline" data-id="${item.id}" data-section="${sectionName}">Edit</button>
+                                <button class="delete-btn font-medium text-red-600 hover:underline" data-id="${item.id}" data-section="${sectionName}">Delete</button>
+                            </td>
+                        </tr>`).join('')}
+                    </tbody></table>`;
+        }
+        
+        function renderUsersTable(users) {
+            const container = document.getElementById('users-table-container');
+            if (!container) return;
+            if(!users.length) {
+                 container.innerHTML = `<p class="p-4">No users found. Users will appear here after they sign up on the main site.</p>`;
+                 return;
+            }
+            container.innerHTML = `
+                 <table class="w-full text-sm text-left text-gray-500 responsive-table">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr>
+                        <th scope="col" class="px-6 py-3">User ID</th>
+                        <th scope="col" class="px-6 py-3">Email</th>
+                        <th scope="col" class="px-6 py-3">Actions</th>
+                    </tr></thead>
+                    <tbody>${users.map(user => `
+                        <tr class="bg-white border-b">
+                            <td data-label="User ID" class="px-6 py-4 break-all">${user.id}</td>
+                            <td data-label="Email" class="px-6 py-4">${user.email || 'Anonymous'}</td>
+                            <td data-label="Actions" class="px-6 py-4 text-right md:text-left">
+                                <button class="view-cart-btn font-medium text-blue-600 hover:underline" data-id="${user.id}">View Cart</button>
+                            </td>
+                        </tr>`).join('')}
+                    </tbody></table>`;
+        }
+
+        // --- Form Handling ---
+        function setupForm(sectionName) {
+            const form = document.getElementById(`${sectionName}-form`);
+            if (!form) return;
+            const formTitle = document.getElementById(`${sectionName}-form-title`);
+            const idField = document.getElementById(`${sectionName}-id`);
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = idField.value;
+                const data = {};
+                form.querySelectorAll('input[type="text"], input[type="number"], input[type="url"], textarea').forEach(input => {
+                    if (input.id && input.id.startsWith(sectionName)) {
+                        const key = input.id.replace(`${sectionName}-`, '');
+                        data[key] = input.type === 'number' && input.value ? parseFloat(input.value) : input.value;
+                    }
+                });
+                try {
+                    const ref = id ? getPublicDocRef(sectionName, id) : doc(getPublicCollectionRef(sectionName));
+                    await setDoc(ref, data, { merge: true });
+                    form.reset();
+                    if(idField) idField.value = '';
+                    if(formTitle) formTitle.textContent = `Add New ${capitalize(sectionName)}`;
+                    loadSectionData(sectionName);
+                } catch (error) { console.error(`Error saving ${sectionName}:`, error); }
+            });
+            const clearBtn = document.getElementById(`clear-${sectionName}-form`);
+            if(clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    form.reset();
+                    if(idField) idField.value = '';
+                    if(formTitle) formTitle.textContent = `Add New ${capitalize(sectionName)}`;
+                });
+            }
+        }
+        
+        document.getElementById('hero-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('hero-title-input').value,
+                subtitle: document.getElementById('hero-subtitle-input').value,
+                backgroundImage: document.getElementById('hero-image-input').value,
+            };
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'siteContent', 'hero'), data);
+                alert("Hero content updated!");
+            } catch (error) { alert("Error saving. Check console."); }
+        });
+
+        document.getElementById('promotion-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = { text: document.getElementById('promotion-text-input').value };
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'siteContent', 'promotionBar'), data);
+                alert("Promotion updated!");
+            } catch (error) { alert("Error saving. Check console."); }
+        });
+
+        // --- Table & Modal Actions ---
+        document.getElementById('admin-dashboard').addEventListener('click', async (e) => {
+            const target = e.target;
+            if (target.classList.contains('delete-btn')) {
+                const { id, section } = target.dataset;
+                if (confirm(`Are you sure you want to delete this ${section} item?`)) {
+                    await deleteDoc(getPublicDocRef(section, id));
+                    loadSectionData(section);
+                }
+            } else if (target.classList.contains('edit-btn')) {
+                const { id, section } = target.dataset;
+                const docSnap = await getDoc(getPublicDocRef(section, id));
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    const form = document.getElementById(`${section}-form`);
+                    if(form) {
+                        form.querySelector(`#${section}-id`).value = id;
+                        document.getElementById(`${section}-form-title`).textContent = `Edit ${capitalize(section)}`;
+                        Object.keys(data).forEach(key => {
+                            const input = form.querySelector(`#${section}-${key.replace('salePrice', 'salePrice')}`); // Simple fix for inconsistent casing
+                            if (input) input.value = data[key];
+                        });
+                        window.scrollTo(0, 0);
+                    }
+                }
+            } else if(target.classList.contains('view-cart-btn')) {
+                const userId = target.dataset.id;
+                const cartColRef = collection(db, 'artifacts', appId, 'users', userId, 'cart');
+                const cartSnap = await getDocs(cartColRef);
+                const cartItems = cartSnap.docs.map(d => d.data());
+                
+                const modal = document.getElementById('user-cart-modal');
+                const container = document.getElementById('user-cart-items-container');
+                document.getElementById('user-cart-modal-title').textContent = `Cart for User: ${userId.substring(0,8)}...`;
+                
+                if(!cartItems.length) {
+                    container.innerHTML = '<p>This user\'s cart is empty.</p>';
+                } else {
+                    container.innerHTML = `<ul class="space-y-2">${cartItems.map(item => `
+                        <li class="p-2 border rounded"><strong>${item.name}</strong> - ₹${item.price.toLocaleString('en-IN')}</li>
+                    `).join('')}</ul>`;
+                }
+                modal.classList.remove('hidden');
+            }
+        });
+        
+        document.getElementById('close-user-cart-modal-btn').addEventListener('click', () => {
+            document.getElementById('user-cart-modal').classList.add('hidden');
+        });
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            lucide.createIcons();
+            
+            if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
+                await initializeAdminSession();
+                showDashboard();
+            }
+
+            setupForm('products');
+            setupForm('categories');
+            setupForm('testimonials');
+        });
+
+        // --- Helpers ---
+        const capitalize = s => s && s[0].toUpperCase() + s.slice(1);
+    </script>
 </body>
 </html>
