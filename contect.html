@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Support Form</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe, #e2e8f0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .form-container {
+            background: linear-gradient(135deg, #ffffff, #f8faff);
+            padding: 2.5rem;
+            border-radius: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.18), 0 8px 20px rgba(0, 0, 0, 0.1);
+            max-width: 580px;
+            width: 90%;
+            box-sizing: border-box;
+            animation: fadeInScale 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+            position: relative;
+        }
+        @keyframes fadeInScale {
+            from { opacity: 0; transform: scale(0.9) translateY(40px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+        .submit-button {
+            background: linear-gradient(45deg, #6366f1, #8b5cf6);
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        .submit-button:hover {
+            background: linear-gradient(45deg, #4f46e5, #7c3aed);
+            transform: translateY(-4px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.7);
+        }
+        .submit-button:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 3px 10px rgba(99, 102, 241, 0.3);
+        }
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            90% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-10px); }
+        }
+        .response-message-show {
+            animation: fadeInOut 4s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2 class="text-4xl font-extrabold text-center text-gray-900 mb-10 tracking-tight">
+            <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600">
+                Get In Touch
+            </span>
+        </h2>
+        <form id="supportForm" class="space-y-7">
+            <div>
+                <label for="name" class="block text-base font-semibold text-gray-700 mb-2">Your Name</label>
+                <input type="text" id="name" name="name" required
+                       class="mt-1 block w-full px-5 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400">
+            </div>
+            <div>
+                <label for="email" class="block text-base font-semibold text-gray-700 mb-2">Your Email</label>
+                <input type="email" id="email" name="email" required
+                       class="mt-1 block w-full px-5 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400">
+            </div>
+            <div>
+                <label for="subject" class="block text-base font-semibold text-gray-700 mb-2">Subject</label>
+                <input type="text" id="subject" name="subject" required
+                       class="mt-1 block w-full px-5 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400">
+            </div>
+            <div>
+                <label for="message" class="block text-base font-semibold text-gray-700 mb-2">Message</label>
+                <textarea id="message" name="message" rows="6" required
+                          class="mt-1 block w-full px-5 py-3 border border-gray-300 rounded-xl shadow-sm placeholder-gray-400 resize-y"></textarea>
+            </div>
+            <div class="flex justify-center pt-4">
+                <button type="submit"
+                        class="submit-button w-full sm:w-2/3 inline-flex items-center justify-center px-8 py-4 text-lg font-bold rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Submit Request
+                </button>
+            </div>
+            <div id="responseMessage" class="mt-6 text-center text-base font-medium hidden"></div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('supportForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            const responseMessage = document.getElementById('responseMessage');
+
+            responseMessage.textContent = 'Submitting your request...';
+            responseMessage.className = 'mt-6 text-center text-base font-medium text-blue-600 block response-message-show';
+
+            const googleAppsScriptURL = 'https://script.google.com/macros/s/AKfycby-SX1DwSByEnyirw_BTIDu3CLQ4VNQmp1h8-mHKWxDwcPXlKFGuKwuVFvLfiEH4cUWJg/exec';
+
+            try {
+                await fetch(googleAppsScriptURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams(data).toString(),
+                });
+
+                responseMessage.textContent = 'Your request has been submitted successfully!';
+                responseMessage.className = 'mt-6 text-center text-base font-medium text-green-600 block response-message-show';
+                form.reset();
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                responseMessage.textContent = 'There was an error submitting your request. Please try again.';
+                responseMessage.className = 'mt-6 text-center text-base font-medium text-red-600 block response-message-show';
+            }
+        });
+    </script>
+</body>
+</html>
