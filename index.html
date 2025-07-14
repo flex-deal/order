@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VogueVerse - Admin Panel</title>
+    <title>VogueVerse - software E-commerce</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,548 +24,835 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        'admin-primary': '#111827',
-                        'admin-secondary': '#1f2937',
-                        'admin-accent': '#3b82f6',
-                        'admin-accent-hover': '#2563eb',
+                        'brand-primary': '#1a1a1a',
+                        'brand-secondary': '#f3f3f3',
+                        'brand-accent': '#4a90e2',
+                        'brand-accent-hover': '#357abd',
                     }
                 }
             }
         }
     </script>
     <style>
+        html {
+            scroll-behavior: smooth;
+        }
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
         }
         i[data-lucide] {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
         }
-        /* Styles for responsive tables */
-        @media (max-width: 767px) {
-            .responsive-table thead {
-                display: none;
-            }
-            .responsive-table, .responsive-table tbody, .responsive-table tr, .responsive-table td {
-                display: block;
-                width: 100%;
-            }
-            .responsive-table tr {
-                margin-bottom: 1rem;
-                border: 1px solid #ddd;
-                border-radius: 0.5rem;
-                overflow: hidden;
-            }
-            .responsive-table td {
-                padding-left: 50%;
-                position: relative;
-                text-align: right;
-                border-bottom: 1px solid #f0f0f0;
-            }
-            .responsive-table td:last-child {
-                border-bottom: 0;
-            }
-            .responsive-table td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 0;
-                width: 45%;
-                padding-left: 1.5rem;
-                font-weight: 600;
-                text-align: left;
-                white-space: nowrap;
-            }
+        .search-bar-container {
+            transition: all 0.3s ease-in-out;
+        }
+        .modal-overlay {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .placeholder-glow::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            animation: glow 1.5s infinite;
+        }
+        @keyframes glow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        .active-category {
+            box-shadow: 0 0 0 3px #4a90e2;
+        }
+        .selected-option {
+            border: 2px solid #4a90e2;
+            box-shadow: 0 0 0 1px #4a90e2;
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-white text-brand-primary">
 
-    <!-- Login Screen -->
-    <div id="login-screen" class="flex items-center justify-center min-h-screen bg-gray-900">
-        <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
-            <h2 class="text-3xl font-bold text-center text-gray-900">VogueVerse Admin Login</h2>
-            <form id="login-form" class="space-y-6">
-                <div>
-                    <label for="admin-email" class="text-sm font-medium text-gray-700">Email</label>
-                    <input id="admin-email" type="email" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-admin-accent focus:border-admin-accent" value="admin@vogueverse.com">
-                </div>
-                <div>
-                    <label for="admin-password" class="text-sm font-medium text-gray-700">Password</label>
-                    <input id="admin-password" type="password" required class="w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-admin-accent focus:border-admin-accent" value="admin123">
-                </div>
-                <p id="login-feedback" class="text-sm text-center text-red-500"></p>
-                <button type="submit" class="w-full py-3 font-semibold text-white bg-admin-primary rounded-md hover:bg-admin-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-admin-primary">
-                    Sign In
-                </button>
-            </form>
-        </div>
+    <!-- Announcement Bar -->
+    <div id="promotion-bar" class="bg-brand-primary text-white text-center py-2.5 text-sm font-medium">
+        Unlock Your Potential with Our Latest Software Deals!
     </div>
 
-    <!-- Admin Dashboard -->
-    <div id="admin-dashboard" class="hidden">
-        <div class="relative min-h-screen md:flex">
-            <!-- Mobile Sidebar Overlay -->
-            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between h-20 relative">
+                <!-- Logo -->
+                <a href="#" class="text-2xl font-bold tracking-tight z-10">
+                    digi click
+                </a>
 
-            <!-- Sidebar -->
-            <aside id="sidebar" class="w-64 flex-shrink-0 bg-admin-primary text-white fixed inset-y-0 left-0 z-30 transform -translate-x-full md:relative md:translate-x-0 transition-transform duration-200 ease-in-out">
-                <div class="p-6 text-2xl font-bold">VogueVerse</div>
-                <nav id="sidebar-nav" class="mt-6">
-                    <a href="#products" class="nav-link flex items-center px-6 py-3 bg-admin-accent"><i data-lucide="package" class="mr-3"></i> Products</a>
-                    <a href="#categories" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="layout-grid" class="mr-3"></i> Categories</a>
-                    <a href="#testimonials" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="message-square" class="mr-3"></i> Testimonials</a>
-                    <a href="#hero" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="layout-template" class="mr-3"></i> Hero Content</a>
-                    <a href="#promotions" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="megaphone" class="mr-3"></i> Promotions</a>
-                    <a href="#users" class="nav-link flex items-center px-6 py-3 hover:bg-admin-secondary"><i data-lucide="users" class="mr-3"></i> Users</a>
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Home</a>
+                    <a href="#shop" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Shop</a>
+                    <a href="#new-arrivals" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">New Arrivals</a>
+                    <a href="#about" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">About</a>
+                    <a href="#contact" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Contact</a>
                 </nav>
-                <div class="absolute bottom-0 w-64 p-6">
-                    <button id="logout-btn" class="w-full flex items-center justify-center py-2 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">
-                        <i data-lucide="log-out" class="mr-2"></i> Logout
+                
+                <!-- Animated Search Bar -->
+                <div id="search-bar-container" class="search-bar-container absolute right-0 flex items-center justify-end w-full h-full bg-white opacity-0 pointer-events-none -z-10">
+                    <input type="text" id="search-input" placeholder="Search for products..." class="w-full max-w-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent">
+                    <button id="close-search-btn" class="ml-2 text-gray-500 hover:text-brand-primary">
+                        <i data-lucide="x"></i>
                     </button>
                 </div>
-            </aside>
 
-            <!-- Main Content -->
-            <div class="flex-1 flex flex-col">
-                <!-- Mobile Header -->
-                <header class="md:hidden flex justify-between items-center bg-white p-4 shadow-md">
-                     <button id="mobile-menu-btn">
+                <!-- Header Icons -->
+                <div id="header-icons" class="flex items-center space-x-5 z-10">
+                    <button id="search-btn" class="text-gray-500 hover:text-brand-accent">
+                        <i data-lucide="search"></i>
+                    </button>
+                    <button id="user-btn" class="text-gray-500 hover:text-brand-accent">
+                           <i data-lucide="user"></i>
+                    </button>
+                    <!-- Cart button and count removed as per single purchase model -->
+                    <!-- Mobile Menu Button -->
+                    <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-brand-accent">
                         <i data-lucide="menu"></i>
                     </button>
-                    <h1 id="mobile-header-title" class="text-xl font-bold">Products</h1>
-                    <div></div> <!-- Spacer -->
-                </header>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <nav class="flex flex-col p-4 space-y-4">
+                <a href="#home" class="text-gray-600 hover:text-brand-accent">Home</a>
+                <a href="#shop" class="text-gray-600 hover:text-brand-accent">Shop</a>
+                <a href="#new-arrivals" class="text-gray-600 hover:text-brand-accent">New Arrivals</a>
+                <a href="#about" class="text-gray-600 hover:text-brand-accent">About</a>
+                <a href="#contact" class="text-gray-600 hover:text-brand-accent">Contact</a>
+            </nav>
+        </div>
+    </header>
 
-                <main class="flex-1 p-4 md:p-6 overflow-y-auto">
-                    <!-- Products Section -->
-                    <div id="products-section" class="admin-section">
-                        <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Products</h2>
-                        <form id="products-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
-                            <h3 id="products-form-title" class="text-xl font-semibold mb-4">Add New Product</h3>
-                            <input type="hidden" id="products-id">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <input id="products-name" type="text" placeholder="Product Name" class="w-full p-2 border rounded" required>
-                                <input id="products-price" type="number" placeholder="Price (₹)" class="w-full p-2 border rounded" required>
-                                <input id="products-salePrice" type="number" placeholder="Sale Price (Optional, ₹)" class="w-full p-2 border rounded">
-                                <input id="products-image" type="url" placeholder="Image URL" class="w-full p-2 border rounded" required>
-                                <input id="products-tag" type="text" placeholder="Tag (e.g., SALE, NEW)" class="w-full p-2 border rounded">
-                            </div>
-                            <div class="mt-6 flex gap-4">
-                                <button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Product</button>
-                                <button type="button" id="clear-products-form" class="px-6 py-2 font-semibold text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Clear</button>
-                            </div>
-                        </form>
-                        <div id="products-table-container" class="bg-white rounded-lg shadow-md overflow-hidden"></div>
-                    </div>
+    <main id="home">
+        <!-- Hero Section -->
+        <section id="hero-section" class="relative h-[60vh] md:h-[80vh] bg-cover bg-center text-white bg-gray-300">
+            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
+            <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
+                <h1 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 leading-tight">Loading...</h1>
+                <p id="hero-subtitle" class="text-lg md:text-xl max-w-2xl mb-8">Please wait while we fetch the latest styles.</p>
+                <a href="#shop" class="bg-brand-accent hover:bg-brand-accent-hover text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 duration-300">
+                    Shop Now
+                </a>
+            </div>
+        </section>
 
-                    <!-- Categories Section -->
-                    <div id="categories-section" class="admin-section hidden">
-                         <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Categories</h2>
-                        <form id="categories-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
-                             <h3 id="categories-form-title" class="text-xl font-semibold mb-4">Add New Category</h3>
-                             <input type="hidden" id="categories-id">
-                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <input id="categories-name" type="text" placeholder="Category Name" class="w-full p-2 border rounded" required>
-                                <input id="categories-image" type="url" placeholder="Image URL" class="w-full p-2 border rounded" required>
-                            </div>
-                             <div class="mt-6 flex gap-4">
-                                <button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Category</button>
-                                <button type="button" id="clear-categories-form" class="px-6 py-2 font-semibold text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Clear</button>
-                            </div>
-                        </form>
-                        <div id="categories-table-container" class="bg-white rounded-lg shadow-md overflow-hidden"></div>
-                    </div>
+        <!-- Featured Categories -->
+        <section id="shop" class="py-16 md:py-24 bg-brand-secondary">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">Shop by Category</h2>
+                <div id="category-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-8">
+                    <p class="col-span-full text-center">Loading categories...</p>
+                </div>
+            </div>
+        </section>
 
-                    <!-- Testimonials Section -->
-                    <div id="testimonials-section" class="admin-section hidden">
-                        <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Testimonials</h2>
-                         <form id="testimonials-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
-                             <h3 id="testimonials-form-title" class="text-xl font-semibold mb-4">Add New Testimonial</h3>
-                             <input type="hidden" id="testimonials-id">
-                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <input id="testimonials-name" type="text" placeholder="Customer Name" class="w-full p-2 border rounded" required>
-                                <input id="testimonials-location" type="text" placeholder="Location (e.g., City, State)" class="w-full p-2 border rounded" required>
-                                <input id="testimonials-image" type="url" placeholder="Image URL" class="w-full p-2 border rounded" required>
-                                <textarea id="testimonials-text" placeholder="Testimonial Text" class="w-full p-2 border rounded md:col-span-2" rows="3" required></textarea>
-                            </div>
-                             <div class="mt-6 flex gap-4">
-                                <button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Testimonial</button>
-                                <button type="button" id="clear-testimonials-form" class="px-6 py-2 font-semibold text-gray-700 bg-gray-300 rounded-md hover:bg-gray-400">Clear</button>
-                            </div>
-                        </form>
-                        <div id="testimonials-table-container" class="bg-white rounded-lg shadow-md overflow-hidden"></div>
-                    </div>
+        <!-- Best Sellers -->
+        <section id="new-arrivals" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">Our Best Sellers</h2>
+                <div id="product-grid" class="grid grid-cols-2 gap-4 md:gap-8">
+                    <p class="col-span-full text-center">Loading products...</p>
+                </div>
+            </div>
+        </section>
 
-                    <!-- Hero Section -->
-                    <div id="hero-section" class="admin-section hidden">
-                         <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Hero Content</h2>
-                        <form id="hero-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
-                            <div class="space-y-4">
-                                <div><label for="hero-title-input" class="font-semibold">Title</label><input id="hero-title-input" type="text" class="w-full p-2 mt-1 border rounded" required></div>
-                                <div><label for="hero-subtitle-input" class="font-semibold">Subtitle</label><input id="hero-subtitle-input" type="text" class="w-full p-2 mt-1 border rounded" required></div>
-                                <div><label for="hero-image-input" class="font-semibold">Background Image URL</label><input id="hero-image-input" type="url" class="w-full p-2 mt-1 border rounded" required></div>
-                            </div>
-                             <div class="mt-6"><button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Hero Content</button></div>
-                        </form>
-                    </div>
-                    
-                    <!-- Promotions Section -->
-                    <div id="promotions-section" class="admin-section hidden">
-                        <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Promotion Bar</h2>
-                        <form id="promotion-form" class="p-6 mb-8 bg-white rounded-lg shadow-md">
-                            <div class="space-y-4">
-                                <div>
-                                    <label for="promotion-text-input" class="font-semibold">Promotion Text</label>
-                                    <input id="promotion-text-input" type="text" class="w-full p-2 mt-1 border rounded" required placeholder="e.g., Free Shipping On All Orders Over ₹3,999">
-                                </div>
-                            </div>
-                             <div class="mt-6">
-                                <button type="submit" class="px-6 py-2 font-semibold text-white bg-admin-accent rounded-md hover:bg-admin-accent-hover">Save Promotion</button>
-                            </div>
-                        </form>
-                    </div>
+        <!-- Sale Banner -->
+        <section class="bg-brand-primary text-white">
+            <div class="container mx-auto px-4 py-16 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold mb-2">LIMITED TIME OFFERS!</h2>
+                <p class="text-lg md:text-xl mb-6">Exclusive discounts on premium software. Don't miss out!</p>
+                <a href="#shop" class="bg-white text-brand-primary font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-200 transition-colors duration-300">
+                    Explore Deals
+                </a>
+            </div>
+        </section>
 
-                    <!-- Users Section -->
-                    <div id="users-section" class="admin-section hidden">
-                         <h2 class="text-3xl font-bold mb-6 hidden md:block">Manage Users & Orders</h2>
-                         <div id="users-table-container" class="bg-white rounded-lg shadow-md overflow-hidden"></div>
-                    </div>
+        <!-- Testimonials -->
+        <section id="about" class="py-16 md:py-24 bg-brand-secondary">
+            <div class="container mx-auto px-4">
+                <h2 class="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
+                <div id="testimonial-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <p class="col-span-full text-center">Loading testimonials...</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Newsletter Subscription -->
+        <section id="contact" class="py-16 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-2xl mx-auto text-center">
+                    <h2 class="text-3xl font-bold mb-4">Join Our Newsletter</h2>
+                    <p class="text-gray-600 mb-8">Subscribe to get the latest on sales, new releases and more.</p>
+                    <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4">
+                        <input type="email" id="newsletter-email" placeholder="Enter your email" class="flex-grow w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-accent" required>
+                        <button type="submit" class="bg-brand-primary text-white font-bold py-3 px-8 rounded-md hover:bg-gray-800 transition-colors duration-300">Subscribe</button>
+                    </form>
+                    <p id="newsletter-feedback" class="mt-4 text-green-600"></p>
+                </div>
+            </div>
+        </section>
 
-                </main>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-brand-primary text-white">
+        <div class="container mx-auto px-4 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+                <!-- About -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">digi click</h3>
+                    <p class="text-gray-400">Your destination for modern, stylish, and high-quality software solutions. We believe in empowering you with the best digital tools.</p>
+                </div>
+                <!-- Shop Links -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Shop</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#new-arrivals" class="text-gray-400 hover:text-white">New Arrivals</a></li>
+                        <li><a href="#shop" class="text-gray-400 hover:text-white">Best Sellers</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Productivity</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Security</a></li>
+                    </ul>
+                </div>
+                <!-- Customer Service -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Customer Service</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#contact" class="text-gray-400 hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Support</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">License Management</a></li>
+                    </ul>
+                </div>
+                <!-- Social Media -->
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+                    <p class="text-gray-400 mb-4">Stay connected for the latest updates.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="facebook"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="instagram"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500">
+                <p>&copy; 2024 digi click. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- User Profile Modal (Mock Authentication) -->
+    <div id="user-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="user-modal-title" class="text-2xl font-bold">My Account</h2>
+                <button id="close-user-modal-btn" class="text-gray-500 hover:text-brand-primary">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div id="auth-view">
+                <form id="user-form">
+                    <div class="mb-4">
+                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent" placeholder="you@example.com" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent" placeholder="••••••••" required>
+                    </div>
+                    <div id="confirm-password-container" class="mb-6 hidden">
+                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input type="password" id="confirm-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent" placeholder="••••••••">
+                    </div>
+                    <p id="user-form-feedback" class="mb-4 text-sm text-center"></p>
+                    <button id="user-form-submit" type="submit" class="w-full bg-brand-primary text-white font-bold py-3 rounded-md hover:bg-gray-800 transition-colors duration-300">Sign In</button>
+                    <p id="user-form-toggle" class="text-center text-sm text-gray-600 mt-4">
+                        Don't have an account? <a href="#" class="font-medium text-brand-accent hover:underline">Sign up</a>
+                    </p>
+                </form>
+            </div>
+            <div id="signed-in-view" class="hidden">
+                <p id="user-email-display" class="mb-4 text-center"></p>
+                <button id="sign-out-btn" class="w-full bg-red-500 text-white font-bold py-3 rounded-md hover:bg-red-600 transition-colors duration-300">Sign Out</button>
             </div>
         </div>
     </div>
     
-    <!-- User Cart Modal -->
-    <div id="user-cart-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full">
-             <div class="flex justify-between items-center mb-6">
-                <h2 id="user-cart-modal-title" class="text-2xl font-bold">User's Cart</h2>
-                <button id="close-user-cart-modal-btn" class="text-gray-500 hover:text-black"><i data-lucide="x"></i></button>
+    <!-- Quick View Modal -->
+    <div id="quick-view-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full flex flex-col md:flex-row gap-8 relative">
+            <button id="close-quick-view-btn" class="absolute top-4 right-4 text-gray-500 hover:text-brand-primary">
+                <i data-lucide="x"></i>
+            </button>
+            <div class="md:w-1/2">
+                <img id="quick-view-image" src="https://placehold.co/400x500/fecaca/333333?text=Product" alt="Product Image" class="w-full h-auto rounded-lg">
             </div>
-            <div id="user-cart-items-container" class="max-h-96 overflow-y-auto"></div>
+            <div class="md:w-1/2 flex flex-col justify-between">
+                <div>
+                    <h2 id="quick-view-name" class="text-3xl font-bold mb-2">Product Name</h2>
+                    <p id="quick-view-price" class="text-2xl font-bold text-brand-accent mb-4">₹0</p>
+                    <p id="quick-view-description" class="text-gray-600 mb-6">A brief description of the product.</p>
+
+                    <div id="quick-view-variants" class="mb-6">
+                        <h3 class="font-semibold text-lg mb-2">Select Variant:</h3>
+                        <div class="flex flex-wrap gap-2" id="variant-options">
+                            <!-- Variant options will be injected here -->
+                        </div>
+                    </div>
+                </div>
+                <button id="quick-view-buy-now-btn" class="w-full bg-brand-accent text-white font-bold py-3 rounded-lg hover:bg-brand-accent-hover">Buy Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Processing Modal (Mock) -->
+    <div id="payment-processing-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
+            <i data-lucide="credit-card" class="w-16 h-16 text-brand-accent mx-auto mb-4 animate-pulse"></i>
+            <h2 class="text-2xl font-bold mb-2">Redirecting to Payment...</h2>
+            <p class="text-gray-600 mb-6">Please wait while we prepare your secure payment link. If a new window does not open, please check your browser's pop-up blocker settings.</p>
+            <p class="text-sm text-gray-500">You will be redirected shortly.</p>
+        </div>
+    </div>
+
+    <!-- Thank You Modal -->
+    <div id="thank-you-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
+            <i data-lucide="check-circle" class="w-16 h-16 text-green-500 mx-auto mb-4"></i>
+            <h2 class="text-2xl font-bold mb-2">Thank You!</h2>
+            <p class="text-gray-600">Your purchase has been completed successfully.</p>
+            <button id="close-thank-you-btn" class="mt-6 w-full bg-brand-accent text-white font-bold py-3 rounded-md hover:bg-brand-accent-hover">Continue Browsing</button>
         </div>
     </div>
 
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, getDoc, addDoc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script>
+        // --- Static Data ---
+        const staticProducts = [
+            {
+                id: 'prod_1',
+                name: 'netflix',
+                category: 'ott apps',
+                image: 'https://i.pcmag.com/imagery/reviews/05cItXL96l4LE9n02WfDR0h-5.fit_lim.size_1050x591.v1582751026.png', // Light blue for software
+                tag: 'NEW',
+                description: 'An all-in-one software suite for enhanced productivity and collaboration.',
+                variants: [
+                    { name: '1 month credentials ', price: 149, paymentLink: 'https://payments.cashfree.com/forms/anil6895895894' },
+                    { name: '6 month  idp', price: 799, paymentLink: 'https://mock-payment.com/productivity-lifetime' },
+                     { name: '1 month full acount', price: 799, paymentLink: 'https://mock-payment.com/productivity-lifetime' },
+                ]
+            },
+            {
+                id: 'prod_2',
+                name: 'prime vedio',
+                category: 'ott apps',
+                image: 'https://www.ninja.it/wp-content/uploads/2023/02/nuova-identita-visiva-di-amazon-prime-video-14.jpg', // Light pink for security
+                description: 'Comprehensive protection against viruses, malware, and cyber threats.',
+                variants: [
+                    { name: '1 Device (1 month)credentials', price: 69, paymentLink: 'https://mock-payment.com/security-1dev-1yr' },
+                    { name: '3 Devices (6 month)on mail', price: 299, paymentLink: 'https://mock-payment.com/security-3dev-1yr' },
+                    { name: '3 Devices (1 Years)on mail', price: 399, paymentLink: 'https://mock-payment.com/security-5dev-2yr' }
+                ]
+            },
+            {
+                id: 'prod_3',
+                name: 'you tube',
+                category: 'ott apps', // New category
+                image: 'https://www.appsinvo.com/blog/wp-content/uploads/2024/03/twitter-will-be-launch-for-video-app-2.png', // Light green for design
+                tag: 'SALE',
+                description: 'you tube will provided on your mail.',
+                variants: [
+                    { name: '1 month on mail', price: 49, paymentLink: 'https://rzp.io/rzp/SQqn1vNh' },
+                    { name: '6 month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/sC5JW5LS' },
+                    { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/yYbnKJjs' }
+                ]
+            },
+            {
+                id: 'prod_4',
+                name: 'hotstar',
+                category: 'ott apps', // New category
+                image: 'https://img.hotstar.com/image/upload/v1738215515/helpdesk/new/portal/jio_hotstar_1200_630.png', // Plum for cloud
+                description: 'Secure and scalable cloud storage for all your files.',
+                variants: [
+                    { name: '1 device (1Monthly)credentials', price: 69, paymentLink: 'https://rzp.io/rzp/GZLLMs89' },
+                    { name: ' (6 month )on number', price: 399, paymentLink: 'https://rzp.io/rzp/9kaJLqz' },
+                    { name: ' (Annual) on number', price: 499, paymentLink: 'https://mock-payment.com/cloud-1tb-annual' }
+                ]
+            },
+            {
+                id: 'prod_5',
+                name: 'sony liv',
+                category: 'ott apps', //o+Edito New category
+                image: 'https://www.bizasialive.com/wp-content/uploads/2020/05/899ec721-sonylivnew001.jpg', // Powder blue for multimedia
+                description: 'Professional video ott for stunning cinematic results.',
+                variants: [
+                    { name: '1 month', price: 69, paymentLink: 'https://mock-payment.com/videoedit-basic' },
+                    { name: '6 month', price: 299, paymentLink: 'https://mock-payment.com/videoedit-creator' },
+                    { name: '1 year', price: 399, paymentLink: 'https://mock-payment.com/videoedit-studio' }
+                ]
+            },
+            {
+                id: 'prod_6',
+                name: 'zee 5',
+                category: 'ott apps', // New category
+                image: 'https://yt3.googleusercontent.com/ytc/AIdro_nO4wJmh7M9ktKbzNomqW4ais4W3Y69b4RngbQnagV08T8=s900-c-k-c0x00ffffff-no-rj', // Gold for gaming
+                description: 'Powerful engine for developing immersive 2D and 3D games.',
+                variants: [
+                    { name: 'Indie License', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                    { name: 'Pro License', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                ]
+            },
+             {
+                id: 'prod_7',
+                name: 'gta 5',
+                category: 'Gaming', // New category
+                image: 'https://lh4.googleusercontent.com/proxy/gT3325qQqvqB6WBtrcDpY_yjTy7KOlapI-xtn84u5ZziUeo2YSZ1fhqjYG_bEReMuOQQXigwKOkCehq8f9c_wsZatJKwpoHAZxwV7Mg6H6xShl1YDtLq1DBS44MxPW9Swrk7JOcEN5hPJ2AEH_yh5MfizDgUsRFDwjSi', // Gold for gaming
+                description: 'Powerful engine for developing immersive 2D and 3D games.',
+                variants: [
+                    { name: '1 month', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                    { name: '3 month', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                ]
+            },
+             {
+                id: 'prod_8',
+                name: 'you tube music',
+                category: 'music', // New category
+                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXNPpUMkJMluLa7E5W3BLepDz85W6yjfeUqP5okpziNcSXDicxTVLPD5EVJzPaDW6IHv4&usqp=CAUi', // Gold for gaming
+                description: 'Powerful music.',
+                variants: [
+                    { name: '1 month on mail', price: 39, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                    { name: '3 month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                ]
+            },
+             {
+                id: 'prod_9',
+                name: 'spider man game',
+                category: 'Gaming', // New category
+                image: 'https://images2.alphacoders.com/134/1348557.jpeg', // Gold for gaming
+                description: 'Powerful engine for developing immersive 2D and 3D games.',
+                variants: [
+                    { name: '1 month', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                    { name: '3 month', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                ]
+            },
+             {
+                id: 'prod_10',
+                name: 'spotify',
+                category: 'music', // New category
+                image: 'https://bestdealsgh.com/wp-content/uploads/2024/04/1000539684.jpg', // Gold for gaming
+                description: 'Powerful engine for developing immersive 2D and 3D games.',
+                variants: [
+                     { name: '1 month on mail', price: 79, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                    { name: '6  month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                ]
+            },
+             {
+                id: 'prod_11',
+                name: 'gana plus',
+                category: 'music', // New category
+                image: 'https://premiumdada.com/wp-content/uploads/2021/01/Gaana-Plus-3-Month-Subscription.jpg', // Gold for gaming
+                description: 'Powerful engine for developing immersive 2D and 3D games.',
+                variants: [
+                 
+                    { name: '6  month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                ]
+            }
+        ];
 
-        // --- Firebase Initialization ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = {
-            apiKey: "AIzaSyBgErP_g_ZqKraxqFAQi3W0YdwwkQdAZzg",
-            authDomain: "my-chat-app-a9b9e.firebaseapp.com",
-            projectId: "my-chat-app-a9b9e",
-            storageBucket: "my-chat-app-a9b9e.firebasestorage.app",
-            messagingSenderId: "292137527608",
-            appId: "1:292137527608:web:692b165effa77e79bf79cd"
+        const staticCategories = [
+            { name: 'ott apps', image: 'https://www.smarther.co/wp-content/uploads/2023/03/online-streaming-ott-app.jpg' },
+            { name: 'Software', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzx5RrU4WlutjrfmD16xnxFq-xVo-s5mrwNQ&s' },
+            { name: 'music', image: 'https://cdn.shopify.com/s/files/1/0657/3100/2634/files/papierpeintmusique-casqueaudio.png?v=1715586351' },
+             { name: 'adult content', image: 'https://images.prismic.io/ghostery/90fe4b64-cae3-4371-98e0-9d32ec9c3875_how-to-watch-porn-safely-on-ios.png?auto=compress,format' },
+            { name: 'Gaming', image: 'https://i.pcmag.com/imagery/roundups/06pbrFQKnLsVI0PIgatg35X-34..v1707500494.jpg' }
+        ];
+
+        const staticTestimonials = [
+            { name: 'Jessica Miller', location: 'New York, NY', text: "Absolutely love the quality and style. My order arrived faster than expected. Will definitely shop here again!", image: 'https://placehold.co/100x100/f0f9ff/333333?text=User+1' },
+            { name: 'Alex Chen', location: 'San Francisco, CA', text: "The best online store for trendy clothes. The customer service was amazing when I had a question about sizing.", image: 'https://placehold.co/100x100/ecfdf5/333333?text=User+2' },
+            { name: 'Samantha Brown', location: 'Chicago, IL', text: "I'm so impressed with the variety. Found the perfect dress for a wedding. Great prices and beautiful products.", image: 'https://placehold.co/100x100/fefce8/333333?text=User+3' }
+        ];
+
+        const staticHeroContent = {
+            title: 'Your Digital Journey Starts Here',
+            subtitle: 'Explore cutting-edge software solutions for every need, from productivity to creativity.',
+            backgroundImage: 'https://blog.flicknexs.com/wp-content/uploads/2023/05/498307841-ott-service-providersthe-ultimate-guide-for-beginners-1.webp' // Updated hero image URL
         };
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
 
-        // --- DOM Elements ---
-        const loginScreen = document.getElementById('login-screen');
-        const adminDashboard = document.getElementById('admin-dashboard');
-        const loginForm = document.getElementById('login-form');
-        const loginFeedback = document.getElementById('login-feedback');
-        const logoutBtn = document.getElementById('logout-btn');
-        const sidebarNav = document.getElementById('sidebar-nav');
-        const adminSections = document.querySelectorAll('.admin-section');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileHeaderTitle = document.getElementById('mobile-header-title');
+        const staticPromotionText = 'Special Launch Offer: Get 20% off on all new software licenses!';
 
-        // --- Admin Authentication (Local Check with Firebase Anonymous Auth) ---
-        const ADMIN_EMAIL = "admin@vogueverse.com";
-        const ADMIN_PASSWORD = "admin123";
+        // --- Global State Variables ---
+        let products = [...staticProducts]; // Copy to allow filtering
+        let categories = [...staticCategories];
+        let currentCategory = 'All';
+        let isLoggedIn = false; // Simple login state
+        let loggedInUserEmail = ''; // Stores a mock email for display
+        let selectedProduct = null; // Stores the product currently in quick view
+        let selectedVariant = null; // Stores the selected variant for the product in quick view
 
-        async function initializeAdminSession() {
-            try {
-                // Only sign in if not already signed in
-                if (!auth.currentUser) {
-                    await signInAnonymously(auth);
-                    console.log("Admin session signed in anonymously.");
-                }
-            } catch (error) {
-                console.error("Anonymous sign-in for admin failed:", error);
-                loginFeedback.textContent = "Could not connect to database. Please check Firebase console for enabled Auth providers.";
-            }
-        }
+        // --- UI Elements ---
+        const productGrid = document.getElementById('product-grid');
+        const categoryGrid = document.getElementById('category-grid');
+        const testimonialGrid = document.getElementById('testimonial-grid');
+        const heroTitle = document.getElementById('hero-title');
+        const heroSubtitle = document.getElementById('hero-subtitle');
+        const heroSection = document.getElementById('hero-section');
+        const promotionBar = document.getElementById('promotion-bar');
+        const userEmailDisplay = document.getElementById('user-email-display');
 
-        function showDashboard() {
-            loginScreen.classList.add('hidden');
-            adminDashboard.style.display = 'block';
-            loadSectionData('products');
-        }
-        
-        function showLoginScreen() {
-            sessionStorage.removeItem('isAdminLoggedIn');
-            loginScreen.classList.remove('hidden');
-            adminDashboard.style.display = 'none';
-        }
+        const quickViewModal = document.getElementById('quick-view-modal');
+        const quickViewImage = document.getElementById('quick-view-image');
+        const quickViewName = document.getElementById('quick-view-name');
+        const quickViewPrice = document.getElementById('quick-view-price');
+        const quickViewDescription = document.getElementById('quick-view-description');
+        const variantOptionsContainer = document.getElementById('variant-options');
+        const quickViewBuyNowBtn = document.getElementById('quick-view-buy-now-btn');
 
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('admin-email').value;
-            const password = document.getElementById('admin-password').value;
-            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                sessionStorage.setItem('isAdminLoggedIn', 'true');
-                showDashboard();
-            } else {
-                 loginFeedback.textContent = 'Error: Invalid credentials.';
-            }
-        });
-
-        logoutBtn.addEventListener('click', showLoginScreen);
-        
-        // --- Mobile Navigation ---
-        function toggleSidebar() {
-            sidebar.classList.toggle('-translate-x-full');
-            sidebarOverlay.classList.toggle('hidden');
-        }
-        mobileMenuBtn.addEventListener('click', toggleSidebar);
-        sidebarOverlay.addEventListener('click', toggleSidebar);
-
-
-        // --- Navigation ---
-        sidebarNav.addEventListener('click', (e) => {
-            e.preventDefault();
-            const link = e.target.closest('.nav-link');
-            if (!link) return;
-            sidebarNav.querySelectorAll('.nav-link').forEach(l => l.classList.remove('bg-admin-accent'));
-            link.classList.add('bg-admin-accent');
-            const sectionId = link.getAttribute('href').substring(1);
-            adminSections.forEach(s => s.classList.add('hidden'));
-            document.getElementById(`${sectionId}-section`).classList.remove('hidden');
-            mobileHeaderTitle.textContent = capitalize(sectionId);
-            loadSectionData(sectionId);
-
-            if (window.innerWidth < 768) {
-                toggleSidebar();
-            }
-        });
-
-        // --- Generic CRUD Functions ---
-        const getPublicCollectionRef = (collectionName) => collection(db, 'artifacts', appId, collectionName);
-        const getPublicDocRef = (collectionName, docId) => doc(db, 'artifacts', appId, collectionName, docId);
-
-        async function loadSectionData(sectionName) {
-            try {
-                switch(sectionName) {
-                    case 'hero':
-                        const heroRef = doc(db, 'artifacts', appId, 'siteContent', 'hero');
-                        const heroSnap = await getDoc(heroRef);
-                        if (heroSnap.exists()) {
-                            const data = heroSnap.data();
-                            document.getElementById('hero-title-input').value = data.title;
-                            document.getElementById('hero-subtitle-input').value = data.subtitle;
-                            document.getElementById('hero-image-input').value = data.backgroundImage;
-                        }
-                        break;
-                    case 'promotions':
-                         const promoRef = doc(db, 'artifacts', appId, 'siteContent', 'promotionBar');
-                         const promoSnap = await getDoc(promoRef);
-                         if (promoSnap.exists()) {
-                            document.getElementById('promotion-text-input').value = promoSnap.data().text;
-                         }
-                        break;
-                    case 'users':
-                        const usersRef = collection(db, 'artifacts', appId, 'users');
-                        const usersSnap = await getDocs(usersRef);
-                        const users = usersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        renderUsersTable(users);
-                        break;
-                    default:
-                        const querySnapshot = await getDocs(getPublicCollectionRef(sectionName));
-                        const items = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                        renderTable(sectionName, items);
-                }
-            } catch (error) {
-                console.error(`Error loading ${sectionName}:`, error);
-                const container = document.getElementById(`${sectionName}-table-container`) || document.getElementById(`${sectionName}-section`);
-                if(container) container.innerHTML = `<p class="text-red-500 p-4">Error loading data. Please check Firestore rules.</p>`;
-            }
-        }
-
-        function renderTable(sectionName, items) {
-            const container = document.getElementById(`${sectionName}-table-container`);
-            if (!container) return;
-            if (!items.length) {
-                container.innerHTML = `<p class="p-4">No items found.</p>`;
+        // --- Data Rendering Functions ---
+        function renderProducts(productsToRender) {
+            if (!productsToRender || productsToRender.length === 0) {
+                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600">No products found in this category.</p>';
                 return;
             }
-            const headers = Object.keys(items[0]).filter(k => k !== 'id' && typeof items[0][k] !== 'object');
-            container.innerHTML = `
-                <table class="w-full text-sm text-left text-gray-500 responsive-table">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr>
-                        ${headers.map(h => `<th scope="col" class="px-6 py-3">${h}</th>`).join('')}
-                        <th scope="col" class="px-6 py-3">Actions</th>
-                    </tr></thead>
-                    <tbody>${items.map(item => `
-                        <tr class="bg-white border-b">
-                            ${headers.map(h => `<td data-label="${h}" class="px-6 py-4">${item[h] || ''}</td>`).join('')}
-                            <td data-label="Actions" class="px-6 py-4 flex gap-2 justify-end md:justify-start">
-                                <button class="edit-btn font-medium text-blue-600 hover:underline" data-id="${item.id}" data-section="${sectionName}">Edit</button>
-                                <button class="delete-btn font-medium text-red-600 hover:underline" data-id="${item.id}" data-section="${sectionName}">Delete</button>
-                            </td>
-                        </tr>`).join('')}
-                    </tbody></table>`;
+            productGrid.innerHTML = productsToRender.map(p => `
+                <div class="product-card group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                    <div class="relative overflow-hidden">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110">
+                        ${p.tag ? `<div class="absolute top-3 left-3 ${p.tag === 'SALE' ? 'bg-red-500' : 'bg-green-500'} text-white text-xs font-bold px-2 py-1 rounded">${p.tag}</div>` : ''}
+                        <div class="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex justify-center space-x-2">
+                            <button class="view-details-btn bg-white text-brand-primary py-2 px-4 rounded-lg font-semibold text-sm hover:bg-gray-200" data-product-id="${p.id}">View Details</button>
+                        </div>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="product-name text-lg font-semibold text-gray-800 mb-1">${p.name}</h3>
+                        <p class="text-brand-accent font-bold">Starts from ₹${p.variants[0].price.toLocaleString('en-IN')}</p> <!-- Display price of first variant -->
+                    </div>
+                </div>
+            `).join('');
         }
         
-        function renderUsersTable(users) {
-            const container = document.getElementById('users-table-container');
-            if (!container) return;
-            if(!users.length) {
-                 container.innerHTML = `<p class="p-4">No users found. Users will appear here after they sign up on the main site.</p>`;
-                 return;
-            }
-            container.innerHTML = `
-                 <table class="w-full text-sm text-left text-gray-500 responsive-table">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50"><tr>
-                        <th scope="col" class="px-6 py-3">User ID</th>
-                        <th scope="col" class="px-6 py-3">Email</th>
-                        <th scope="col" class="px-6 py-3">Actions</th>
-                    </tr></thead>
-                    <tbody>${users.map(user => `
-                        <tr class="bg-white border-b">
-                            <td data-label="User ID" class="px-6 py-4 break-all">${user.id}</td>
-                            <td data-label="Email" class="px-6 py-4">${user.email || 'Anonymous'}</td>
-                            <td data-label="Actions" class="px-6 py-4 text-right md:text-left">
-                                <button class="view-cart-btn font-medium text-blue-600 hover:underline" data-id="${user.id}">View Cart</button>
-                            </td>
-                        </tr>`).join('')}
-                    </tbody></table>`;
+        function renderCategories(categories) {
+            let html = `<button data-category="All" class="category-btn group relative overflow-hidden rounded-lg active-category">
+                <div class="absolute inset-0 bg-brand-primary flex items-center justify-center">
+                    <h3 class="text-white text-2xl font-bold">All</h3>
+                </div>
+            </button>`;
+
+            html += categories.map(c => `
+                <button data-category="${c.name}" class="category-btn group relative overflow-hidden rounded-lg">
+                    <img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+                        <h3 class="text-white text-2xl font-bold">${c.name}</h3>
+                    </div>
+                </button>
+            `).join('');
+            categoryGrid.innerHTML = html;
+        }
+        
+        function renderTestimonials(testimonials) {
+            testimonialGrid.innerHTML = testimonials.map(t => `
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <img src="${t.image}" class="w-20 h-20 rounded-full mx-auto mb-4" alt="${t.name}">
+                    <p class="text-gray-600 mb-4">"${t.text}"</p>
+                    <h4 class="font-bold text-lg">${t.name}</h4>
+                    <p class="text-sm text-gray-500">${t.location}</p>
+                </div>
+            `).join('');
         }
 
-        // --- Form Handling ---
-        function setupForm(sectionName) {
-            const form = document.getElementById(`${sectionName}-form`);
-            if (!form) return;
-            const formTitle = document.getElementById(`${sectionName}-form-title`);
-            const idField = document.getElementById(`${sectionName}-id`);
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const id = idField.value;
-                const data = {};
-                form.querySelectorAll('input[type="text"], input[type="number"], input[type="url"], textarea').forEach(input => {
-                    if (input.id && input.id.startsWith(sectionName)) {
-                        const key = input.id.replace(`${sectionName}-`, '');
-                        data[key] = input.type === 'number' && input.value ? parseFloat(input.value) : input.value;
-                    }
-                });
+        function renderHero(heroData) {
+            heroTitle.textContent = heroData.title;
+            heroSubtitle.textContent = heroData.subtitle;
+            heroSection.style.backgroundImage = `url('${heroData.backgroundImage}')`;
+        }
+
+        // --- Purchase Logic (Single Item) ---
+        async function handleBuyNow() {
+            if (!selectedProduct || !selectedVariant) {
+                console.warn("No product or variant selected for purchase.");
+                return;
+            }
+
+            // Open the specific payment link for the selected variant immediately
+            let paymentWindow = null;
+            if (selectedVariant.paymentLink) {
                 try {
-                    const ref = id ? getPublicDocRef(sectionName, id) : doc(getPublicCollectionRef(sectionName));
-                    await setDoc(ref, data, { merge: true });
-                    form.reset();
-                    if(idField) idField.value = '';
-                    if(formTitle) formTitle.textContent = `Add New ${capitalize(sectionName)}`;
-                    loadSectionData(sectionName);
-                } catch (error) { console.error(`Error saving ${sectionName}:`, error); }
-            });
-            const clearBtn = document.getElementById(`clear-${sectionName}-form`);
-            if(clearBtn) {
-                clearBtn.addEventListener('click', () => {
-                    form.reset();
-                    if(idField) idField.value = '';
-                    if(formTitle) formTitle.textContent = `Add New ${capitalize(sectionName)}`;
-                });
+                    paymentWindow = window.open(selectedVariant.paymentLink, '_blank');
+                    if (!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed == 'undefined') {
+                        // Pop-up blocked
+                        console.warn("Pop-up blocked. Please allow pop-ups for this site.");
+                        document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Pop-up blocked. Please allow pop-ups for this site and try again.";
+                    }
+                } catch (e) {
+                    console.error("Error opening payment window:", e);
+                    document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Error opening payment window. Please try again.";
+                }
+            } else {
+                console.warn("No payment link found for the selected variant. Opening generic mock link.");
+                const mockPaymentUrl = `https://mock-payment-gateway.com/pay?product_id=${selectedProduct.id}&variant_name=${encodeURIComponent(selectedVariant.name)}&amount=${selectedVariant.price}&currency=INR`;
+                try {
+                    paymentWindow = window.open(mockPaymentUrl, '_blank');
+                    if (!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed == 'undefined') {
+                        // Pop-up blocked
+                        console.warn("Pop-up blocked. Please allow pop-ups for this site.");
+                        document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Pop-up blocked. Please allow pop-ups for this site and try again.";
+                    }
+                } catch (e) {
+                    console.error("Error opening payment window:", e);
+                    document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Error opening payment window. Please try again.";
+                }
+            }
+
+            // Show payment processing modal
+            const paymentProcessingOverlay = document.getElementById('payment-processing-overlay');
+            paymentProcessingOverlay.classList.remove('hidden');
+            
+            // Close the quick view modal immediately
+            closeQuickViewModal();
+
+            // Simulate a delay for payment processing, regardless of pop-up success
+            await new Promise(resolve => setTimeout(resolve, 3000)); 
+
+            paymentProcessingOverlay.classList.add('hidden'); // Hide payment processing modal
+            
+            // Show thank you modal after redirection (assuming successful payment)
+            document.getElementById('thank-you-overlay').classList.remove('hidden');
+        }
+
+        // --- User Authentication Logic (mock) ---
+        const openUserModal = () => document.getElementById('user-modal').classList.remove('opacity-0', 'pointer-events-none');
+        const closeUserModal = () => document.getElementById('user-modal').classList.add('opacity-0', 'pointer-events-none');
+
+        function updateAuthUI() {
+            if (isLoggedIn) {
+                document.getElementById('auth-view').classList.add('hidden');
+                document.getElementById('signed-in-view').classList.remove('hidden');
+                userEmailDisplay.textContent = `Signed in as ${loggedInUserEmail}`;
+            } else {
+                document.getElementById('auth-view').classList.remove('hidden');
+                document.getElementById('signed-in-view').classList.add('hidden');
+                userEmailDisplay.textContent = '';
             }
         }
-        
-        document.getElementById('hero-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const data = {
-                title: document.getElementById('hero-title-input').value,
-                subtitle: document.getElementById('hero-subtitle-input').value,
-                backgroundImage: document.getElementById('hero-image-input').value,
-            };
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'siteContent', 'hero'), data);
-                alert("Hero content updated!");
-            } catch (error) { alert("Error saving. Check console."); }
-        });
 
-        document.getElementById('promotion-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const data = { text: document.getElementById('promotion-text-input').value };
-            try {
-                await setDoc(doc(db, 'artifacts', appId, 'siteContent', 'promotionBar'), data);
-                alert("Promotion updated!");
-            } catch (error) { alert("Error saving. Check console."); }
-        });
-
-        // --- Table & Modal Actions ---
-        document.getElementById('admin-dashboard').addEventListener('click', async (e) => {
-            const target = e.target;
-            if (target.classList.contains('delete-btn')) {
-                const { id, section } = target.dataset;
-                if (confirm(`Are you sure you want to delete this ${section} item?`)) {
-                    await deleteDoc(getPublicDocRef(section, id));
-                    loadSectionData(section);
-                }
-            } else if (target.classList.contains('edit-btn')) {
-                const { id, section } = target.dataset;
-                const docSnap = await getDoc(getPublicDocRef(section, id));
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const form = document.getElementById(`${section}-form`);
-                    if(form) {
-                        form.querySelector(`#${section}-id`).value = id;
-                        document.getElementById(`${section}-form-title`).textContent = `Edit ${capitalize(section)}`;
-                        Object.keys(data).forEach(key => {
-                            const input = form.querySelector(`#${section}-${key.replace('salePrice', 'salePrice')}`); // Simple fix for inconsistent casing
-                            if (input) input.value = data[key];
-                        });
-                        window.scrollTo(0, 0);
-                    }
-                }
-            } else if(target.classList.contains('view-cart-btn')) {
-                const userId = target.dataset.id;
-                const cartColRef = collection(db, 'artifacts', appId, 'users', userId, 'cart');
-                const cartSnap = await getDocs(cartColRef);
-                const cartItems = cartSnap.docs.map(d => d.data());
-                
-                const modal = document.getElementById('user-cart-modal');
-                const container = document.getElementById('user-cart-items-container');
-                document.getElementById('user-cart-modal-title').textContent = `Cart for User: ${userId.substring(0,8)}...`;
-                
-                if(!cartItems.length) {
-                    container.innerHTML = '<p>This user\'s cart is empty.</p>';
-                } else {
-                    container.innerHTML = `<ul class="space-y-2">${cartItems.map(item => `
-                        <li class="p-2 border rounded"><strong>${item.name}</strong> - ₹${item.price.toLocaleString('en-IN')}</li>
-                    `).join('')}</ul>`;
-                }
-                modal.classList.remove('hidden');
+        // --- Quick View Modal Logic ---
+        function openQuickViewModal(productId) {
+            selectedProduct = staticProducts.find(p => p.id === productId);
+            if (!selectedProduct) {
+                console.error(`Product with ID ${productId} not found for quick view.`);
+                return;
             }
-        });
-        
-        document.getElementById('close-user-cart-modal-btn').addEventListener('click', () => {
-            document.getElementById('user-cart-modal').classList.add('hidden');
-        });
 
-        // --- Init ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            lucide.createIcons();
+            quickViewImage.src = selectedProduct.image;
+            quickViewImage.alt = selectedProduct.name;
+            quickViewName.textContent = selectedProduct.name;
+            quickViewDescription.textContent = selectedProduct.description;
+
+            // Render variants
+            variantOptionsContainer.innerHTML = '';
+            selectedVariant = null; // Reset selected variant
+            quickViewBuyNowBtn.disabled = true; // Disable buy now until variant is selected
+
+            if (selectedProduct.variants && selectedProduct.variants.length > 0) {
+                selectedProduct.variants.forEach((variant, index) => {
+                    const variantBtn = document.createElement('button');
+                    variantBtn.className = `px-4 py-2 border border-gray-300 rounded-md hover:border-brand-accent transition-all duration-200 text-sm`;
+                    variantBtn.textContent = `${variant.name}`; // Display only variant name, price will be updated below
+                    variantBtn.dataset.variantIndex = index; // Store index to easily retrieve variant object
+                    variantBtn.addEventListener('click', () => {
+                        document.querySelectorAll('#variant-options button').forEach(btn => btn.classList.remove('selected-option'));
+                        variantBtn.classList.add('selected-option');
+                        selectedVariant = selectedProduct.variants[index];
+                        quickViewPrice.textContent = `₹${selectedVariant.price.toLocaleString('en-IN')}`;
+                        quickViewBuyNowBtn.disabled = false; // Enable buy now
+                    });
+                    variantOptionsContainer.appendChild(variantBtn);
+                });
+                // Auto-select first variant if available
+                if (selectedProduct.variants.length > 0) {
+                    variantOptionsContainer.querySelector('button').click();
+                }
+            } else {
+                variantOptionsContainer.innerHTML = '<p class="text-gray-500 text-sm">No variants available for this product.</p>';
+                quickViewPrice.textContent = '₹N/A';
+            }
+
+            quickViewModal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeQuickViewModal() {
+            quickViewModal.classList.add('opacity-0', 'pointer-events-none');
+            selectedProduct = null;
+            selectedVariant = null;
+        }
+
+        // --- DOM Event Listeners ---
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons(); // Initialize Lucide icons on page load
+
+            // Initial rendering of static content
+            renderProducts(products);
+            renderCategories(categories);
+            renderTestimonials(staticTestimonials);
+            renderHero(staticHeroContent);
+            promotionBar.textContent = staticPromotionText;
+            updateAuthUI(); // Initialize auth UI
+
+            // --- UI Elements ---
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const searchBtn = document.getElementById('search-btn');
+            const closeSearchBtn = document.getElementById('close-search-btn');
+            const searchInput = document.getElementById('search-input');
+            const searchBarContainer = document.getElementById('search-bar-container');
+            const headerIcons = document.getElementById('header-icons');
+            const userBtn = document.getElementById('user-btn');
+            const userModal = document.getElementById('user-modal');
+            const closeUserModalBtn = document.getElementById('close-user-modal-btn');
+            const newsletterForm = document.getElementById('newsletter-form');
+            const newsletterEmail = document.getElementById('newsletter-email');
+            const newsletterFeedback = document.getElementById('newsletter-feedback');
+            const userModalTitle = document.getElementById('user-modal-title');
+            const userForm = document.getElementById('user-form');
+            const userFormSubmit = document.getElementById('user-form-submit');
+            const userFormToggle = document.getElementById('user-form-toggle');
+            const confirmPasswordContainer = document.getElementById('confirm-password-container');
+            const userFormFeedback = document.getElementById('user-form-feedback');
+            const signOutBtn = document.getElementById('sign-out-btn');
+            const closeThankYouBtn = document.getElementById('close-thank-you-btn');
+            const closeQuickViewBtn = document.getElementById('close-quick-view-btn');
+            let isSignUp = false; // State to toggle between sign-in and sign-up forms
+
+            // --- Event Handlers ---
+            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
             
-            if (sessionStorage.getItem('isAdminLoggedIn') === 'true') {
-                await initializeAdminSession();
-                showDashboard();
-            }
+            searchBtn.addEventListener('click', () => {
+                searchBarContainer.classList.remove('opacity-0', 'pointer-events-none', '-z-10');
+                searchBarContainer.classList.add('z-20');
+                headerIcons.classList.add('opacity-0', 'pointer-events-none');
+                searchInput.focus();
+            });
+            closeSearchBtn.addEventListener('click', () => {
+                searchBarContainer.classList.add('opacity-0', 'pointer-events-none', '-z-10');
+                searchBarContainer.classList.remove('z-20');
+                headerIcons.classList.remove('opacity-0', 'pointer-events-none');
+                searchInput.value = '';
+                renderProducts(products);
+            });
+            searchInput.addEventListener('keyup', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredProducts = staticProducts.filter(p => p.name.toLowerCase().includes(searchTerm));
+                renderProducts(filteredProducts);
+            });
 
-            setupForm('products');
-            setupForm('categories');
-            setupForm('testimonials');
+            // Delegate event for "View Details" buttons on product grid
+            productGrid.addEventListener('click', (e) => {
+                const viewDetailsButton = e.target.closest('.view-details-btn');
+
+                if (viewDetailsButton) {
+                    openQuickViewModal(viewDetailsButton.dataset.productId);
+                }
+            });
+
+            categoryGrid.addEventListener('click', (e) => {
+                const button = e.target.closest('.category-btn');
+                if (button) {
+                    currentCategory = button.dataset.category;
+                    const filtered = currentCategory === 'All' 
+                        ? staticProducts 
+                        : staticProducts.filter(p => p.category === currentCategory);
+                    renderProducts(filtered);
+
+                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active-category'));
+                    button.classList.add('active-category');
+                }
+            });
+
+            userBtn.addEventListener('click', openUserModal);
+            closeUserModalBtn.addEventListener('click', closeUserModal);
+            userModal.addEventListener('click', (e) => { if (e.target === userModal) closeUserModal(); });
+
+            // Quick View modal close
+            closeQuickViewBtn.addEventListener('click', closeQuickViewModal);
+            quickViewModal.addEventListener('click', (e) => { if (e.target === quickViewModal) closeQuickViewModal(); });
+
+            // Buy Now from Quick View modal
+            quickViewBuyNowBtn.addEventListener('click', handleBuyNow);
+
+            signOutBtn.addEventListener('click', () => {
+                isLoggedIn = false;
+                loggedInUserEmail = '';
+                updateAuthUI();
+                closeUserModal();
+            });
+
+            userFormToggle.addEventListener('click', (e) => {
+                e.preventDefault();
+                isSignUp = !isSignUp;
+                userForm.reset();
+                userFormFeedback.textContent = '';
+                if (isSignUp) {
+                    userModalTitle.textContent = 'Create Account';
+                    userFormSubmit.textContent = 'Sign Up';
+                    confirmPasswordContainer.classList.remove('hidden');
+                    document.getElementById('confirm-password').required = true;
+                    userFormToggle.innerHTML = `Already have an account? <a href="#" class="font-medium text-brand-accent hover:underline">Sign in</a>`;
+                } else {
+                    userModalTitle.textContent = 'My Account';
+                    userFormSubmit.textContent = 'Sign In';
+                    confirmPasswordContainer.classList.add('hidden');
+                    document.getElementById('confirm-password').required = false;
+                    userFormToggle.innerHTML = `Don't have an account? <a href="#" class="font-medium text-brand-accent hover:underline">Sign up</a>`;
+                }
+            });
+
+            userForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                userFormFeedback.classList.remove('text-red-600', 'text-green-600');
+                userFormFeedback.textContent = '';
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                if (isSignUp) {
+                    const confirmPassword = document.getElementById('confirm-password').value;
+                    if (password !== confirmPassword) {
+                        userFormFeedback.textContent = 'Passwords do not match.';
+                        userFormFeedback.classList.add('text-red-600');
+                        return;
+                    }
+                    userFormFeedback.textContent = 'Account created successfully (mock)!';
+                } else {
+                    userFormFeedback.textContent = 'Signed in successfully (mock)!';
+                }
+                userFormFeedback.classList.add('text-green-600');
+                isLoggedIn = true;
+                loggedInUserEmail = email;
+                updateAuthUI();
+                setTimeout(closeUserModal, 1500);
+            });
+
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                newsletterFeedback.textContent = `Thank you! ${newsletterEmail.value} has been subscribed (mock).`;
+                newsletterEmail.value = '';
+                setTimeout(() => newsletterFeedback.textContent = '', 5000);
+            });
+
+            closeThankYouBtn.addEventListener('click', () => {
+                document.getElementById('thank-you-overlay').classList.add('hidden');
+            });
         });
-
-        // --- Helpers ---
-        const capitalize = s => s && s[0].toUpperCase() + s.slice(1);
     </script>
 </body>
 </html>
