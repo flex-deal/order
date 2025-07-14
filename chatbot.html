@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DigiClick Chat Support</title>
+  <!-- Google Fonts - Inter for a professional look -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* Base styles for the body */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #e0f2f7 0%, #cce7f0 100%); /* Lighter, more inviting gradient */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      color: #334e68; /* Slightly darker, modern text color */
+      overflow: hidden; /* Prevent body scrollbar from gradient issues */
+    }
+
+    /* Header styling for a sleek, modern appearance */
+    .chat-header {
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%); /* More vibrant, eye-catching gradient */
+      color: #ffffff;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25); /* Deeper, softer shadow */
+      padding: 1.8rem 1rem; /* More generous padding */
+      text-align: center;
+      border-bottom-left-radius: 25px; /* More pronounced rounding */
+      border-bottom-right-radius: 25px;
+      position: relative;
+      z-index: 10;
+      overflow: hidden; /* For pseudo-elements */
+    }
+
+    .chat-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+      animation: headerShine 8s infinite linear;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    @keyframes headerShine {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .chat-header h1 {
+      font-size: 2.2rem; /* Even larger, bolder title */
+      font-weight: 800; /* Extra bold */
+      margin-bottom: 0.6rem;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.2); /* More prominent text shadow */
+      position: relative; /* For z-index */
+      z-index: 2;
+    }
+
+    .chat-header p {
+      font-size: 1.1rem; /* Clearer subtitle */
+      color: rgba(255, 255, 255, 0.95); /* Almost opaque white */
+      position: relative; /* For z-index */
+      z-index: 2;
+    }
+
+    /* Main chat area styling */
+    .chat-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+
+    /* Chat box container */
+    .chat-box {
+      max-width: 55rem; /* Wider chat area for better flow */
+      margin-left: auto;
+      margin-right: auto;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 1rem;
+    }
+
+    /* Chat bubble common styles - sleek and distinct */
+    .chat-bubble {
+      max-width: 70%; /* Slightly narrower bubbles for better visual balance */
+      padding: 1rem 1.5rem; /* Increased padding */
+      border-radius: 25px; /* Softer, modern rounding */
+      margin-bottom: 18px; /* More space between bubbles */
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* Clearer, softer shadow */
+      word-wrap: break-word;
+      font-size: 1rem; /* Standard font size */
+      line-height: 1.6; /* Improved readability */
+      transition: all 0.4s ease-out; /* Smooth transition for message appearance */
+      transform: translateY(20px); /* Initial state for animation */
+      opacity: 0; /* Initial state for animation */
+      animation: fadeInBubble 0.6s ease-out forwards; /* Animation on load */
+    }
+
+    /* Animation for chat bubbles */
+    @keyframes fadeInBubble {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* User message bubble specific styles */
+    .chat-bubble.user {
+      background: linear-gradient(45deg, #6a5acd, #4a90e2); /* Gradient for user messages */
+      color: white;
+      align-self: flex-end;
+      margin-left: auto;
+      border-bottom-right-radius: 10px; /* More integrated corner */
+    }
+
+    /* Bot message bubble specific styles */
+    .chat-bubble.bot {
+      background-color: #ffffff; /* Pristine white for bot */
+      color: #334e68;
+      align-self: flex-start;
+      margin-right: auto;
+      border-bottom-left-radius: 10px; /* More integrated corner */
+    }
+
+    /* Typing indicator styling */
+    .typing-indicator {
+      width: 70px; /* Slightly wider */
+      height: 28px; /* Slightly taller */
+      display: flex;
+      justify-content: space-around; /* Even spacing */
+      align-items: center;
+      margin-top: 0.8rem;
+      margin-left: 1.5rem; /* Align with bot messages */
+      background-color: #ffffff;
+      border-radius: 20px;
+      padding: 0 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .typing-indicator span {
+      width: 12px; /* Larger dots */
+      height: 12px;
+      background-color: #95a5a6;
+      border-radius: 50%;
+      animation: blink 1.4s infinite both;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    /* Footer styling for input and button - sleek and functional */
+    .chat-footer {
+      background-color: #ffffff;
+      padding: 1.5rem 2rem; /* More generous padding */
+      display: flex;
+      align-items: center;
+      gap: 1.2rem; /* More space between input and button */
+      box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.15); /* Stronger shadow for footer */
+      border-top-left-radius: 25px;
+      border-top-right-radius: 25px;
+      position: sticky;
+      bottom: 0;
+      width: 100%;
+      z-index: 10;
+    }
+
+    /* Chat input field styling */
+    .chat-input {
+      flex: 1;
+      border: 1px solid #e0e6ed; /* Lighter border */
+      border-radius: 35px; /* More rounded, pill-like */
+      padding: 1rem 1.6rem;
+      font-size: 1.05rem; /* Slightly larger font */
+      outline: none;
+      transition: all 0.3s ease-in-out;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); /* Inner shadow for depth */
+    }
+
+    .chat-input:focus {
+      border-color: #4a90e2; /* Focus color from gradient */
+      box-shadow: 0 0 0 5px rgba(74, 144, 226, 0.25), inset 0 2px 5px rgba(0,0,0,0.05); /* Enhanced focus ring */
+    }
+
+    /* Send button styling */
+    .send-button {
+      background: linear-gradient(45deg, #6a5acd, #4a90e2); /* Gradient for button */
+      color: white;
+      font-weight: 700; /* Bolder text */
+      padding: 1rem 2.5rem; /* More generous padding */
+      border-radius: 35px; /* Matches input field */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3); /* Deeper shadow */
+      transition: all 0.3s ease-in-out;
+      cursor: pointer;
+      border: none;
+      text-transform: uppercase;
+      letter-spacing: 1px; /* Slightly more letter spacing */
+      outline: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .send-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: skewX(-20deg);
+      transition: all 0.5s ease;
+    }
+
+    .send-button:hover::before {
+      left: 100%;
+    }
+
+    .send-button:hover {
+      background: linear-gradient(45deg, #4a90e2, #6a5acd); /* Reverse gradient on hover */
+      transform: translateY(-5px); /* More pronounced lift */
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .send-button:active {
+      transform: translateY(0); /* Press effect */
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header class="chat-header">
+    <h1>DigiClick Chat Support</h1>
+    <p>Your instant answers for DigiClick services</p>
+  </header>
+
+  <!-- Main Chat Area -->
+  <main class="chat-main">
+    <div id="chat-box" class="chat-box">
+      <!-- Chat messages will be appended here -->
+    </div>
+  </main>
+
+  <!-- Footer Input Section -->
+  <footer class="chat-footer">
+    <input
+      id="chat-input"
+      type="text"
+      placeholder="Type your message..."
+      class="chat-input"
+    />
+    <button
+      onclick="sendMessage()"
+      class="send-button"
+    >
+      Send
+    </button>
+  </footer>
+
+  <script>
+    const chatBox = document.getElementById("chat-box");
+    const chatInput = document.getElementById("chat-input");
+    const chatMessages = [];
+    const customerEmail = localStorage.getItem("customer") || "unknown@digiclick.com";
+
+    /**
+     * Adds a message bubble to the chat interface.
+     * @param {string} text - The message content.
+     * @param {boolean} isUser - True if the message is from the user, false if from the bot.
+     */
+    function addMessage(text, isUser) {
+      const bubble = document.createElement("div");
+      bubble.className = `chat-bubble ${isUser ? 'user' : 'bot'}`;
+      bubble.textContent = text;
+      chatBox.appendChild(bubble);
+      // Scroll to the bottom to show the latest message with a slight delay for animation
+      setTimeout(() => {
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 100);
+    }
+
+    /**
+     * Displays a typing indicator to show the bot is processing.
+     */
+    function showTyping() {
+      const typing = document.createElement("div");
+      typing.className = "typing-indicator";
+      typing.id = "typing-indicator";
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      chatBox.appendChild(typing);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    /**
+     * Removes the typing indicator from the chat.
+     */
+    function removeTyping() {
+      const typing = document.getElementById("typing-indicator");
+      if (typing) {
+        typing.remove();
+      }
+    }
+
+    /**
+     * Generates a unique ticket ID for support requests.
+     * @returns {string} A unique ticket ID.
+     */
+    function generateTicket() {
+      return "DC-" + Math.floor(Math.random() * 1000000);
+    }
+
+    /**
+     * Simulates a bot's reply based on user input.
+     * Contains predefined responses for common queries.
+     * Updated WhatsApp number to 8942865606.
+     * @param {string} text - The user's message.
+     */
+    function botReply(text) {
+      let reply = "I'm sorry, I couldn't understand your request. For further assistance, please chat with our dedicated support team on WhatsApp: https://wa.me/918942865606";
+      const t = text.toLowerCase();
+
+      if (t.includes("hi") || t.includes("hello") || t.includes("hey")) {
+        reply = "Hello there! How can I assist you with your DigiClick services today?";
+      } else if (t.includes("how to order") || t.includes("place order") || t.includes("buy subscription")) {
+        reply = "To place an order, simply navigate to your Dashboard, select the desired app/service, complete the payment, and you'll receive instant access. It's quick and easy!";
+      } else if (t.includes("how to get youtube premium") || t.includes("youtube premium")) {
+        reply = "You can get YouTube Premium by going to your Dashboard, selecting 'YouTube', and completing the payment process. Access will be provided instantly.";
+      } else if (t.includes("payment fail") || t.includes("payment failed") || t.includes("transaction failed")) {
+        reply = "I apologize for the payment issue. Please ensure your payment method is valid and try again. If it persists, kindly send your registered mobile number and a screenshot of the failed transaction to our WhatsApp support for immediate assistance: https://wa.me/918942865606";
+      } else if (t.includes("payment method") || t.includes("how to pay")) {
+        reply = "After selecting your desired app/service on our website, you can conveniently pay using various methods, including UPI and other secure online payment gateways.";
+      } else if (t.includes("how are you") || t.includes("you doing")) {
+        reply = "Thank you for asking! I'm an AI assistant, here to help you efficiently. How can I be of service to you?";
+      } else if (t.includes("prime video") || t.includes("amazon prime")) {
+        reply = "DigiClick offers Amazon Prime Video subscriptions. We have flexible plans for 1 month and 6 months. For more detailed information on pricing and features, please visit our website or contact support.";
+      } else if (t.includes("price") || t.includes("cost") || t.includes("how much")) {
+        reply = "For the most up-to-date pricing, please check our official DigiClick website. Prices can vary based on plans and current promotions. Common prices are: YouTube ₹15 | Spotify ₹54 | Prime Video ₹79.";
+      } else if (t.includes("support") || t.includes("contact us") || t.includes("help")) {
+        reply = "Our support team is available 24/7 on WhatsApp to assist you. You can reach us at: https://wa.me/918942865606";
+      } else if (t.includes("trust") || t.includes("reliable") || t.includes("legit")) {
+        reply = "Yes, you can absolutely trust DigiClick! We are a verified platform, trusted by thousands of customers for affordable OTT subscriptions like Netflix, Prime Video, YouTube, Spotify & more. We ensure secure payments, instant order confirmations, 24/7 WhatsApp support, and secure order saving in Google Sheets. Your satisfaction and trust are our top priorities.";
+      } else if (t.includes("refund") || t.includes("money back")) {
+        reply = `For refund requests, please send your payment screenshot and a brief explanation to our WhatsApp support team. We will process your request promptly. Your ticket ID for this query is: ${generateTicket()}`;
+      } else if (t.includes("delivery") || t.includes("delay") || t.includes("when will i get my subscription") || t.includes("access time")) {
+        reply = "All accounts and subscription accesses are delivered instantly after successful payment. You should receive your details immediately on the success page.";
+      } else if (t.includes("invite link") || t.includes("join link")) {
+        reply = "The invite link or access details are prominently displayed on the success page immediately after your payment is confirmed. Please check there.";
+      } else if (t.includes("discount") || t.includes("offer") || t.includes("promo code")) {
+        reply = "At DigiClick, we are committed to providing genuine, premium subscriptions at the most competitive prices possible. Our prices are already unbeatable, ensuring instant delivery and 24/7 support. Therefore, we typically do not offer additional discounts, as our base pricing is designed to be the best value! ";
+      } else if (t.includes("customer id") || t.includes("my id")) {
+        reply = "You're currently logged in with the email: " + customerEmail + ". This serves as your primary identifier.";
+      } else if (t.includes("note") || t.includes("remind me")) {
+        localStorage.setItem("note", text);
+        reply = "Your reminder has been successfully saved. I'll remind you about this later!";
+      } else if (t.includes("account issue") || t.includes("login problem")) {
+        reply = "If you're facing account or login issues, please try clearing your browser cache and cookies. If the problem persists, contact our WhatsApp support with your registered email and the issue details: https://wa.me/918942865606";
+      } else if (t.includes("cancel subscription") || t.includes("unsubscribe")) {
+        reply = "To cancel your subscription, please reach out to our support team on WhatsApp with your account details. They will guide you through the process.";
+      } else if (t.includes("change plan") || t.includes("upgrade plan")) {
+        reply = "Currently, plan changes or upgrades are handled manually. Please contact our WhatsApp support team with your current plan and desired new plan, and they will assist you.";
+      } else if (t.includes("supported apps") || t.includes("what services")) {
+        reply = "DigiClick offers a wide range of premium OTT subscriptions, including Netflix, Prime Video, YouTube Premium, Spotify, Disney+ Hotstar, and more. Please visit our website for a full list of available services.";
+      } else if (t.includes("website link") || t.includes("digiclick website")) {
+        reply = "You can find all our services and information on the official DigiClick website. (Please insert your actual website URL here, as I don't have it.)";
+      } else if (t.includes("how to use") || t.includes("getting started")) {
+        reply = "To get started, simply log in to your DigiClick dashboard. From there, you can browse available subscriptions, make a purchase, and receive instant access details. Our interface is designed to be user-friendly!";
+      } else if (t.includes("privacy policy") || t.includes("data security")) {
+        reply = "Your privacy and data security are paramount to us. DigiClick adheres to strict privacy policies to protect your information. Details can be found in our Privacy Policy section on the website.";
+      } else if (t.includes("terms and conditions") || t.includes("legal")) {
+        reply = "Our Terms and Conditions outline the agreement between you and DigiClick regarding service usage. We recommend reviewing them on our website for full details.";
+      } else if (t.includes("offers") || t.includes("promotions")) {
+        reply = "While we generally maintain highly competitive pricing, any special offers or promotions will be prominently displayed on our website's homepage or within your dashboard. Stay tuned for updates!";
+      } else if (t.includes("technical issue") || t.includes("bug")) {
+        reply = "If you're experiencing a technical issue or believe you've found a bug, please provide a detailed description and any error messages to our WhatsApp support team. This helps us resolve it quickly: https://wa.me/918942865606";
+      } else if (t.includes("account sharing")) {
+        reply = "Please refer to the specific terms of service for each subscription you purchase regarding account sharing. Generally, premium OTT accounts are for personal use or within a household as per their terms.";
+      } else if (t.includes("feedback") || t.includes("suggestion")) {
+        reply = "We highly value your feedback! Please send your suggestions directly to our support team via WhatsApp or email. Your input helps us improve: https://wa.me/918942865606";
+      }
+
+
+      setTimeout(() => {
+        removeTyping();
+        addMessage(reply, false);
+        chatMessages.push("Bot: " + reply);
+      }, 1000);
+    }
+
+    /**
+     * Handles sending a message when the user clicks the Send button or presses Enter.
+     */
+    function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      addMessage(text, true);
+      chatMessages.push("User: " + text);
+      chatInput.value = "";
+      showTyping();
+      setTimeout(() => botReply(text), 500);
+    }
+
+    // Allow sending message with Enter key
+    chatInput.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        sendMessage();
+      }
+    });
+
+    /**
+     * Sends the chat history to a Google Sheet (simulated).
+     * This function is called periodically.
+     */
+    function sendChatToSheet() {
+      if (!chatMessages.length) return;
+      // This fetch call is a placeholder and assumes a Google Apps Script deployment.
+      // The URL needs to be replaced with your actual deployed script URL.
+      fetch("https://script.google.com/macros/s/AKfycbxNNooo93qv1DWq-ew8zbcKc90pQ2g0-Oc22txht6GHgLbjmX6wYswJ88T3XmR5io5qHw/exec", {
+        method: "POST",
+        body: new URLSearchParams({
+          email: customerEmail,
+          chat: chatMessages.join("\n")
+        })
+      });
+      chatMessages.length = 0;
+    }
+
+    // Event listener for when the DOM is fully loaded
+    window.addEventListener("DOMContentLoaded", () => {
+      const greet = ["Welcome back", "Glad to see you again", "Hello again"][Math.floor(Math.random() * 3)];
+      addMessage(`${greet}, ${customerEmail.split("@")[0]}!`, false);
+
+      const note = localStorage.getItem("note");
+      if (note) {
+        addMessage("Reminder: " + note, false);
+      }
+    });
+
+    // Periodically send chat history to the sheet every 20 seconds
+    setInterval(sendChatToSheet, 20000);
+  </script>
+</body>
+</html>
