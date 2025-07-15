@@ -855,4 +855,54 @@
         });
     </script>
 </body>
+    <script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx-ij6RuYOWuszS9dmJW8_taqP4GH34wrSHqXmQhsTYL-9j1c_GJy4TAW34ESECzboTkw/exec';
+
+    function showFeedback(message, color='red') {
+        const feedback = document.getElementById('feedback');
+        feedback.textContent = message;
+        feedback.className = `text-center text-sm mb-4 text-${color}-500`;
+    }
+
+    async function signup() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        if (!email || !password) {
+            showFeedback('Please fill both fields.');
+            return;
+        }
+
+        const response = await fetch(`${API_URL}?action=signup`, {
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+        });
+        const result = await response.json();
+        showFeedback(result.message, result.status === 'success' ? 'green' : 'red');
+    }
+
+    async function login() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        if (!email || !password) {
+            showFeedback('Please fill both fields.');
+            return;
+        }
+
+        const response = await fetch(`${API_URL}?action=login`, {
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+            showFeedback(result.message, 'green');
+            alert('Login Successful!');
+            // Optionally hide login form and show dashboard
+            document.getElementById('login-section').style.display = 'none';
+            document.querySelector('main').style.display = 'block';  // Assuming you want to show main content after login
+        } else {
+            showFeedback(result.message, 'red');
+        }
+    }
+</script>
+
 </html>
