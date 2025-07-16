@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VogueVerse - software E-commerce</title>
+    <title>DigiClick - Software E-commerce</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -92,8 +92,8 @@
                     <a href="#home" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Home</a>
                     <a href="#shop" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Shop</a>
                     <a href="#about" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">about us</a>
-                    <a href="chatbot.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">chat bot</a>
-                    <a href="contect.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Contact</a>
+                    <a href="./chatbot.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">chat bot</a>
+                    <a href="./contect.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Contact</a>
                 </nav>
                 
                 <!-- Animated Search Bar -->
@@ -110,7 +110,7 @@
                         <i data-lucide="search"></i>
                     </button>
                     <button id="user-btn" class="text-gray-500 hover:text-brand-accent">
-                           <i data-lucide="user"></i>
+                            <i data-lucide="user"></i>
                     </button>
                     <!-- Cart button and count removed as per single purchase model -->
                     <!-- Mobile Menu Button -->
@@ -125,9 +125,9 @@
             <nav class="flex flex-col p-4 space-y-4">
                 <a href="#home" class="text-gray-600 hover:text-brand-accent">Home</a>
                 <a href="#shop" class="text-gray-600 hover:text-brand-accent">Shop</a>
-                  <a href="#about" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">about us</a>
-                    <a href="chatbot.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">chat bot</a>
-                    <a href="contect.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Contact</a>
+                <a href="#about" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">about us</a>
+                <a href="./chatbot.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">chat bot</a>
+                    <a href="./contect.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Contact</a>
             </nav>
         </div>
     </header>
@@ -244,12 +244,12 @@
                 </div>
             </div>
             <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500">
-                <p>&copy; 2024 digi click. All Rights Reserved.</p>
+                <p>© 2024 digi click. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- User Profile Modal (Mock Authentication) -->
+    <!-- User Profile Modal (Firebase Authentication) -->
     <div id="user-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full">
             <div class="flex justify-between items-center mb-6">
@@ -327,154 +327,426 @@
     <div id="thank-you-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
             <i data-lucide="check-circle" class="w-16 h-16 text-green-500 mx-auto mb-4"></i>
-            <h2 class="text-2xl font-bold mb-2">Thank You!</h2>
-            <p class="text-gray-600">Your purchase has been completed successfully.</p>
-            <button id="close-thank-you-btn" class="mt-6 w-full bg-brand-accent text-white font-bold py-3 rounded-md hover:bg-brand-accent-hover">Continue Browsing</button>
+            <h2 class="text-2xl font-bold mb-2">Payment Processing...</h2>
+            <p class="text-gray-600">Your payment is being processed. You will be redirected shortly.</p>
         </div>
     </div>
 
 
-    <script>
+    <script type="module">
+        // --- Firebase Integration ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword,
+            signOut,
+            onAuthStateChanged
+        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBgErP_g_ZqKraxqFAQi3W0YdwwkQdAZzg",
+            authDomain: "my-chat-app-a9b9e.firebaseapp.com",
+            projectId: "my-chat-app-a9b9e",
+            storageBucket: "my-chat-app-a9b9e.firebasestorage.app",
+            messagingSenderId: "292137527608",
+            appId: "1:292137527608:web:692b165effa77e79bf79cd"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+
         // --- Static Data ---
         const staticProducts = [
-            {
-                id: 'prod_1',
-                name: 'netflix',
-                category: 'ott apps',
-                image: 'https://i.pcmag.com/imagery/reviews/05cItXL96l4LE9n02WfDR0h-5.fit_lim.size_1050x591.v1582751026.png', // Light blue for software
-                tag: 'NEW',
-                description: 'An all-in-one software suite for enhanced productivity and collaboration.',
-                variants: [
-                    { name: '1 month credentials ', price: 149, paymentLink: 'https://payments.cashfree.com/forms/anil6895895894' },
-                    { name: '6 month  idp', price: 799, paymentLink: 'https://mock-payment.com/productivity-lifetime' },
+             {
+                 id: 'prod_1',
+                 name: 'netflix',
+                 category: 'ott apps',
+                 image: 'https://i.pcmag.com/imagery/reviews/05cItXL96l4LE9n02WfDR0h-5.fit_lim.size_1050x591.v1582751026.png', // Light blue for software
+                 tag: 'NEW',
+                 description: 'An all-in-one software suite for enhanced productivity and collaboration.',
+                 variants: [
+                     { name: '1 month credentials ', price: 149, paymentLink: 'https://payments.cashfree.com/forms/anil6895895894' },
+                     { name: '6 month  idp', price: 799, paymentLink: 'https://mock-payment.com/productivity-lifetime' },
                      { name: '1 month full acount', price: 799, paymentLink: 'https://mock-payment.com/productivity-lifetime' },
-                ]
-            },
-            {
-                id: 'prod_2',
-                name: 'prime vedio',
-                category: 'ott apps',
-                image: 'https://www.ninja.it/wp-content/uploads/2023/02/nuova-identita-visiva-di-amazon-prime-video-14.jpg', // Light pink for security
-                description: 'Comprehensive protection against viruses, malware, and cyber threats.',
-                variants: [
-                    { name: '1 Device (1 month)credentials', price: 69, paymentLink: 'https://mock-payment.com/security-1dev-1yr' },
-                    { name: '3 Devices (6 month)on mail', price: 299, paymentLink: 'https://mock-payment.com/security-3dev-1yr' },
-                    { name: '3 Devices (1 Years)on mail', price: 399, paymentLink: 'https://mock-payment.com/security-5dev-2yr' }
-                ]
-            },
-            {
-                id: 'prod_3',
-                name: 'you tube',
-                category: 'ott apps', // New category
-                image: 'https://www.appsinvo.com/blog/wp-content/uploads/2024/03/twitter-will-be-launch-for-video-app-2.png', // Light green for design
-                tag: 'SALE',
-                description: 'you tube will provided on your mail.',
-                variants: [
-                    { name: '1 month on mail', price: 49, paymentLink: 'https://rzp.io/rzp/SQqn1vNh' },
-                    { name: '6 month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/sC5JW5LS' },
-                    { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/yYbnKJjs' }
-                ]
-            },
-            {
-                id: 'prod_4',
-                name: 'hotstar',
-                category: 'ott apps', // New category
-                image: 'https://img.hotstar.com/image/upload/v1738215515/helpdesk/new/portal/jio_hotstar_1200_630.png', // Plum for cloud
-                description: 'Secure and scalable cloud storage for all your files.',
-                variants: [
-                    { name: '1 device (1Monthly)credentials', price: 69, paymentLink: 'https://rzp.io/rzp/GZLLMs89' },
-                    { name: ' (6 month )on number', price: 399, paymentLink: 'https://rzp.io/rzp/9kaJLqz' },
-                    { name: ' (Annual) on number', price: 499, paymentLink: 'https://mock-payment.com/cloud-1tb-annual' }
-                ]
-            },
-            {
-                id: 'prod_5',
-                name: 'sony liv',
-                category: 'ott apps', //o+Edito New category
-                image: 'https://www.bizasialive.com/wp-content/uploads/2020/05/899ec721-sonylivnew001.jpg', // Powder blue for multimedia
-                description: 'Professional video ott for stunning cinematic results.',
-                variants: [
-                    { name: '1 month', price: 69, paymentLink: 'https://mock-payment.com/videoedit-basic' },
-                    { name: '6 month', price: 299, paymentLink: 'https://mock-payment.com/videoedit-creator' },
-                    { name: '1 year', price: 399, paymentLink: 'https://mock-payment.com/videoedit-studio' }
-                ]
-            },
-            {
-                id: 'prod_6',
-                name: 'zee 5',
-                category: 'ott apps', // New category
-                image: 'https://yt3.googleusercontent.com/ytc/AIdro_nO4wJmh7M9ktKbzNomqW4ais4W3Y69b4RngbQnagV08T8=s900-c-k-c0x00ffffff-no-rj', // Gold for gaming
-                description: 'Powerful engine for developing immersive 2D and 3D games.',
-                variants: [
-                    { name: 'Indie License', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                    { name: 'Pro License', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                ]
-            },
+                 ]
+             },
              {
-                id: 'prod_7',
-                name: 'gta 5',
-                category: 'Gaming', // New category
-                image: 'https://lh4.googleusercontent.com/proxy/gT3325qQqvqB6WBtrcDpY_yjTy7KOlapI-xtn84u5ZziUeo2YSZ1fhqjYG_bEReMuOQQXigwKOkCehq8f9c_wsZatJKwpoHAZxwV7Mg6H6xShl1YDtLq1DBS44MxPW9Swrk7JOcEN5hPJ2AEH_yh5MfizDgUsRFDwjSi', // Gold for gaming
-                description: 'Powerful engine for developing immersive 2D and 3D games.',
-                variants: [
-                    { name: '1 month', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                    { name: '3 month', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                ]
-            },
+                 id: 'prod_2',
+                 name: 'prime vedio',
+                 category: 'ott apps',
+                 image: 'https://www.ninja.it/wp-content/uploads/2023/02/nuova-identita-visiva-di-amazon-prime-video-14.jpg', // Light pink for security
+                 description: 'Comprehensive protection against viruses, malware, and cyber threats.',
+                 variants: [
+                     { name: '1 Device (1 month)credentials', price: 69, paymentLink: 'https://rzp.io/rzp/GZLLMs89' },
+                     { name: '3 Devices (6 month)on mail', price: 299, paymentLink: 'https://rzp.io/rzp/9kaJLqz' },
+                     { name: '3 Devices (1 Years)on mail', price: 399, paymentLink: 'https://mock-payment.com/security-5dev-2yr' }
+                 ]
+             },
              {
-                id: 'prod_8',
-                name: 'you tube music',
-                category: 'music', // New category
-                image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXNPpUMkJMluLa7E5W3BLepDz85W6yjfeUqP5okpziNcSXDicxTVLPD5EVJzPaDW6IHv4&usqp=CAUi', // Gold for gaming
-                description: 'Powerful music.',
-                variants: [
-                    { name: '1 month on mail', price: 39, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                    { name: '3 month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
+                 id: 'prod_3',
+                 name: 'you tube',
+                 category: 'ott apps', // New category
+                 image: 'https://www.appsinvo.com/blog/wp-content/uploads/2024/03/twitter-will-be-launch-for-video-app-2.png', // Light green for design
+                 tag: 'SALE',
+                 description: 'you tube will provided on your mail.',
+                 variants: [
+                     { name: '1 month on mail', price: 49, paymentLink: 'https://rzp.io/rzp/SQqn1vNh' },
+                     { name: '6 month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/sC5JW5LS' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/yYbnKJjs' }
+                 ]
+             },
+             {
+                 id: 'prod_4',
+                 name: 'hotstar',
+                 category: 'ott apps', // New category
+                 image: 'https://img.hotstar.com/image/upload/v1738215515/helpdesk/new/portal/jio_hotstar_1200_630.png', // Plum for cloud
+                 description: 'Secure and scalable cloud storage for all your files.',
+                 variants: [
+                     { name: '1 device (1Monthly)credentials', price: 69, paymentLink: 'https://rzp.io/rzp/GZLLMs89' },
+                     { name: ' (6 month )on number', price: 399, paymentLink: 'https://rzp.io/rzp/9kaJLqz' },
+                     { name: ' (Annual) on number', price: 499, paymentLink: 'https://mock-payment.com/cloud-1tb-annual' }
+                 ]
+             },
+             {
+                 id: 'prod_5',
+                 name: 'sony liv',
+                 category: 'ott apps', //o+Edito New category
+                 image: 'https://www.bizasialive.com/wp-content/uploads/2020/05/899ec721-sonylivnew001.jpg', // Powder blue for multimedia
+                 description: 'Professional video ott for stunning cinematic results.',
+                 variants: [
+                     { name: '1 month', price: 69, paymentLink: 'https://mock-payment.com/videoedit-basic' },
+                     { name: '6 month', price: 299, paymentLink: 'https://mock-payment.com/videoedit-creator' },
+                     { name: '1 year', price: 399, paymentLink: 'https://mock-payment.com/videoedit-studio' }
+                 ]
+             },
+             {
+                 id: 'prod_6',
+                 name: 'zee 5',
+                 category: 'ott apps', // New category
+                 image: 'https://www.themobileindian.com/wp-content/uploads/2021/07/zee5-1024x580.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: 'Indie License', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                     { name: 'Pro License', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                 ]
+             },
+              {
+                 id: 'prod_7',
+                 name: 'gta 5',
+                 category: 'Gaming', // New category
+                 image: 'https://lh4.googleusercontent.com/proxy/gT3325qQqvqB6WBtrcDpY_yjTy7KOlapI-xtn84u5ZziUeo2YSZ1fhqjYG_bEReMuOQQXigwKOkCehq8f9c_wsZatJKwpoHAZxwV7Mg6H6xShl1YDtLq1DBS44MxPW9Swrk7JOcEN5hPJ2AEH_yh5MfizDgUsRFDwjSi', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1 month', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                     { name: '3 month', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                 ]
+             },
+              {
+                 id: 'prod_8',
+                 name: 'you tube music',
+                 category: 'music', // New category
+                 image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXNPpUMkJMluLa7E5W3BLepDz85W6yjfeUqP5okpziNcSXDicxTVLPD5EVJzPaDW6IHv4&usqp=CAUi', // Gold for gaming
+                 description: 'Powerful music.',
+                 variants: [
+                     { name: '1 month on mail', price: 39, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                     { name: '3 month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
                      { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                ]
-            },
-             {
-                id: 'prod_9',
-                name: 'spider man game',
-                category: 'Gaming', // New category
-                image: 'https://images2.alphacoders.com/134/1348557.jpeg', // Gold for gaming
-                description: 'Powerful engine for developing immersive 2D and 3D games.',
-                variants: [
-                    { name: '1 month', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                    { name: '3 month', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                ]
-            },
-             {
-                id: 'prod_10',
-                name: 'spotify',
-                category: 'music', // New category
-                image: 'https://bestdealsgh.com/wp-content/uploads/2024/04/1000539684.jpg', // Gold for gaming
-                description: 'Powerful engine for developing immersive 2D and 3D games.',
-                variants: [
+                 ]
+             },
+              {
+                 id: 'prod_9',
+                 name: 'spider man game',
+                 category: 'Gaming', // New category
+                 image: 'https://images2.alphacoders.com/134/1348557.jpeg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1 month', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
+                     { name: '3 month', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                 ]
+             },
+              {
+                 id: 'prod_10',
+                 name: 'spotify',
+                 category: 'music', // New category
+                 image: 'https://cdn.shopify.com/s/files/1/0267/6935/8923/products/spotify-card_2000x.png?v=1591691902', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
                      { name: '1 month on mail', price: 79, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                    { name: '6  month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
                      { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                ]
-            },
+                 ]
+             },
+              {
+                 id: 'prod_11',
+                 name: 'gana plus',
+                 category: 'music', // New category
+                 image: 'https://www.visa.com/images/merchantoffers/2021-07/1626770738048.G-Gaana_plus_logo__1_.png', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://payments.cashfree.com/forms/damoo' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
+                 ]
+             },
+              {
+                 id: 'prod_12',
+                 name: 'alt balaji',
+                 category: 'ott apps', // New category
+                 image: 'https://tse1.mm.bing.net/th/id/OIP.LkKtJ0Zir6vcwCpY-s2Q4gHaDt?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/GZLLMs89' },
+                     { name: '6 month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/lvHWjsv9' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/JgYIrNS' }
+                 ]
+             },
              {
-                id: 'prod_11',
-                name: 'gana plus',
-                category: 'music', // New category
-                image: 'https://premiumdada.com/wp-content/uploads/2021/01/Gaana-Plus-3-Month-Subscription.jpg', // Gold for gaming
-                description: 'Powerful engine for developing immersive 2D and 3D games.',
-                variants: [
-                 
-                    { name: '6  month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                ]
-            }
+                 id: 'prod_13',
+                 name: 'curosity stream',
+                 category: '', // New category
+                 image: 'https://www.readersfusion.com/wp-content/uploads/2022/01/Curiosity-Stream-Review-scaled.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/sC5JW5LS' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/U1tT59D' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/FGn2aoc4' }
+                 ]
+             },
+             {
+                 id: 'prod_14',
+                 name: 'mubi premium',
+                 category: 'ott apps', // New category
+                 image: 'https://images.firstpost.com/wp-content/uploads/large_file_plugin/2019/11/1573896036_mubisocial.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/SQqn1vNh' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/1cyzSha' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/b5e6PBp' }
+                 ]
+             },
+             {
+                 id: 'prod_15',
+                 name: 'discovery+',
+                 category: 'ott apps', // New category
+                 image: 'https://www.techhive.com/wp-content/uploads/2023/04/4347802_original.jpg?quality=50&strip=all&w=1024', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/KoSKEfKk' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/Un406km' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/7Ez0qNs' }
+                 ]
+             },
+             {
+                 id: 'prod_16',
+                 name: 'lionsgate play',
+                 category: 'ott apps', // New category
+                 image: 'https://static.digit.in/default/ef9584d7beaabe815657acc3abd0ac85819fafc2.jpeg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/Quou8jl' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/rjqlWoQ' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/k9D4N7yy' }
+                 ]
+             },
+             {
+                 id: 'prod_17',
+                 name: 'magzter gold',
+                 category: 'ott apps', // New category
+                 image: 'https://akcdn.magzter.com/web/assets/images/fb/mg_gold.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/I6UsqZN' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/VGJya0pK' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/gqnjp6H' }
+                 ]
+             },
+             {
+                 id: 'prod_18',
+                 name: 'sunnext',
+                 category: 'ott apps', // New category
+                 image: 'https://images-na.ssl-images-amazon.com/images/I/A13sXw0T8qL.png', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/nshfRDFO' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/tRAODO7' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/QRmA9VVg' }
+                 ]
+             },
+             {
+                 id: 'prod_19',
+                 name: 'Tinkle',
+                 category: '', // New category
+                 image: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1657102469i/61401203.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/UAJmh8wr' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/uqVchot' }
+                 ]
+             },
+             {
+                 id: 'prod_20',
+                 name: 'Crunchyroll',
+                 category: 'ott apps', // New category
+                 image: 'https://wallpaperaccess.com/full/9508779.png', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/pDMiVfCq' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/FFa5qzKS' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/zwB7hn4L' }
+                 ]
+             },
+             {
+                 id: 'prod_21',
+                 name: 'Fancode',
+                 category: '', // New category
+                 image: 'https://d1.awsstatic.com/apac/events/2022/case-study/fancode-case-study-img.a3692ec21e829432cb8a9b249834da1187788aee.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/6zsV3CGb' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/VHedd31' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/vk88pTx' }
+                 ]
+             },
+             {
+                 id: 'prod_22',
+                 name: 'Hoichoi',
+                 category: 'ott apps', // New category
+                 image: 'https://www.animationxpress.com/wp-content/uploads/2020/02/Hoichoi-1.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/U3Sh0gBE' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/6LmEl3b' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/rICUe8c' }
+                 ]
+             },
+             {
+                 id: 'prod_23',
+                 name: 'ullu',
+                 category: 'ott apps', // New category
+                 image: 'https://www.livemint.com/lm-img/img/2024/02/15/600x338/ul_1708002611549_1708002704809.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/9t26eAXg' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/3tYefiC' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/B3BbeTv' }
+                 ]
+             },
+             {
+                 id: 'prod_24',
+                 name: 'Shemaro',
+                 category: 'ott apps', // New category
+                 image: 'https://i.gadgets360cdn.com/large/shemaroome-logo_1545397866714.jpg?', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/RIJYyFG' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/GU9YRGT9' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/6PKXzLUi' }
+                 ]
+             },
+             {
+                 id: 'prod_25',
+                 name: 'Watcho',
+                 category: 'ott apps', // New category
+                 image: 'https://www.medianews4u.com/wp-content/uploads/2021/02/WATCHO-registers-massive-growth-celebrates-15-million-users.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/7qkd9X4' }
+                 ]
+             },
+             {
+                 id: 'prod_26',
+                 name: 'Crickbuzz',
+                 category: 'ott apps', // New category
+                 image: 'https://tse2.mm.bing.net/th/id/OIP.odBaly_A-YPc5bjZMlFxOwHaDn?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/zq2T96po' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/M6ccZ1X4' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/0RoM3qrF' }
+                 ]
+             },
+             {
+                 id: 'prod_27',
+                 name: 'aha gold',
+                 category: 'ott apps', // New category
+                 image: 'https://www.financialexpress.com/wp-content/uploads/2022/08/aha.jpg?resize=100', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/ugNLddd' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/gtr3nkl' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/qSaMbiU' }
+                 ]
+             },
+             {
+                 id: 'prod_28',
+                 name: 'Brazzers',
+                 category: '', // New category
+                 image: 'https://tse1.mm.bing.net/th/id/OIP.cNPVxtUucwLJ-dSTRxSZRwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/SZzfDsF' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/VusKHhQa' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/v7VLO7j' }
+                 ]
+             },
+             {
+                 id: 'prod_29',
+                 name: 'Pornhub',
+                 category: '', // New category
+                 image: 'https://tse2.mm.bing.net/th/id/OIP.ETr9x2AUVUpELIt2AhRWQgAAAA?w=400&h=225&rs=1&pid=ImgDetMain&o=7&rm=3', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/zQaQAPn' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/KkmHSiD' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/e0AH0PL' }
+                 ]
+             },
+             {
+                 id: 'prod_30',
+                 name: 'x hamster',
+                 category: '', // New category
+                 image: 'https://www.vpnfan.com/wp-content/uploads/2019/07/xhamster-logo-1-1068x601.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/WOkFjQQ' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/LZePIlE' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/auevDP8' }
+                 ]
+             },
+             {
+                 id: 'prod_31',
+                 name: 'Reality king',
+                 category: 'ott apps', // New category
+                 image: 'https://vectorseek.com/wp-content/uploads/2023/08/Realitykings-Logo-Vector.svg-.png', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/NIlLqhl' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/z9iB7Ycc' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/26JN3xf' }
+                 ]
+             },
+             {
+                 id: 'prod_32',
+                 name: 'Fakehub',
+                 category: 'ott apps', // New category
+                 image: 'https://i.ytimg.com/vi/PssK3ged0GM/maxresdefault.jpg', // Gold for gaming
+                 description: 'Powerful engine for developing immersive 2D and 3D games.',
+                 variants: [
+                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/oozPVSS' },
+                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/wow6IqQ' },
+                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/CJWVKdso' }
+                 ]
+             }
         ];
 
         const staticCategories = [
             { name: 'ott apps', image: 'https://www.smarther.co/wp-content/uploads/2023/03/online-streaming-ott-app.jpg' },
             { name: 'Software', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzx5RrU4WlutjrfmD16xnxFq-xVo-s5mrwNQ&s' },
             { name: 'music', image: 'https://cdn.shopify.com/s/files/1/0657/3100/2634/files/papierpeintmusique-casqueaudio.png?v=1715586351' },
-             { name: 'adult content', image: 'https://images.prismic.io/ghostery/90fe4b64-cae3-4371-98e0-9d32ec9c3875_how-to-watch-porn-safely-on-ios.png?auto=compress,format' },
+            { name: 'adult content', image: 'https://images.prismic.io/ghostery/90fe4b64-cae3-4371-98e0-9d32ec9c3875_how-to-watch-porn-safely-on-ios.png?auto=compress,format' },
             { name: 'Gaming', image: 'https://i.pcmag.com/imagery/roundups/06pbrFQKnLsVI0PIgatg35X-34..v1707500494.jpg' }
         ];
 
@@ -496,8 +768,6 @@
         let products = [...staticProducts]; // Copy to allow filtering
         let categories = [...staticCategories];
         let currentCategory = 'All';
-        let isLoggedIn = false; // Simple login state
-        let loggedInUserEmail = ''; // Stores a mock email for display
         let selectedProduct = null; // Stores the product currently in quick view
         let selectedVariant = null; // Stores the selected variant for the product in quick view
 
@@ -583,14 +853,14 @@
                 console.warn("No product or variant selected for purchase.");
                 return;
             }
+            
+            localStorage.setItem('purchasedProduct', selectedProduct.name);
 
-            // Open the specific payment link for the selected variant immediately
             let paymentWindow = null;
             if (selectedVariant.paymentLink) {
                 try {
                     paymentWindow = window.open(selectedVariant.paymentLink, '_blank');
                     if (!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed == 'undefined') {
-                        // Pop-up blocked
                         console.warn("Pop-up blocked. Please allow pop-ups for this site.");
                         document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Pop-up blocked. Please allow pop-ups for this site and try again.";
                     }
@@ -604,7 +874,6 @@
                 try {
                     paymentWindow = window.open(mockPaymentUrl, '_blank');
                     if (!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed == 'undefined') {
-                        // Pop-up blocked
                         console.warn("Pop-up blocked. Please allow pop-ups for this site.");
                         document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Pop-up blocked. Please allow pop-ups for this site and try again.";
                     }
@@ -614,37 +883,27 @@
                 }
             }
 
-            // Show payment processing modal
             const paymentProcessingOverlay = document.getElementById('payment-processing-overlay');
             paymentProcessingOverlay.classList.remove('hidden');
             
-            // Close the quick view modal immediately
             closeQuickViewModal();
 
-            // Simulate a delay for payment processing, regardless of pop-up success
             await new Promise(resolve => setTimeout(resolve, 3000)); 
 
-            paymentProcessingOverlay.classList.add('hidden'); // Hide payment processing modal
+            paymentProcessingOverlay.classList.add('hidden');
             
-            // Show thank you modal after redirection (assuming successful payment)
-            document.getElementById('thank-you-overlay').classList.remove('hidden');
+            const thankYouOverlay = document.getElementById('thank-you-overlay');
+            thankYouOverlay.classList.remove('hidden');
+
+            setTimeout(() => {
+                window.location.href = './success.html';
+            }, 2000); 
         }
 
-        // --- User Authentication Logic (mock) ---
+        // --- User Authentication Modal Logic ---
         const openUserModal = () => document.getElementById('user-modal').classList.remove('opacity-0', 'pointer-events-none');
         const closeUserModal = () => document.getElementById('user-modal').classList.add('opacity-0', 'pointer-events-none');
 
-        function updateAuthUI() {
-            if (isLoggedIn) {
-                document.getElementById('auth-view').classList.add('hidden');
-                document.getElementById('signed-in-view').classList.remove('hidden');
-                userEmailDisplay.textContent = `Signed in as ${loggedInUserEmail}`;
-            } else {
-                document.getElementById('auth-view').classList.remove('hidden');
-                document.getElementById('signed-in-view').classList.add('hidden');
-                userEmailDisplay.textContent = '';
-            }
-        }
 
         // --- Quick View Modal Logic ---
         function openQuickViewModal(productId) {
@@ -659,27 +918,25 @@
             quickViewName.textContent = selectedProduct.name;
             quickViewDescription.textContent = selectedProduct.description;
 
-            // Render variants
             variantOptionsContainer.innerHTML = '';
-            selectedVariant = null; // Reset selected variant
-            quickViewBuyNowBtn.disabled = true; // Disable buy now until variant is selected
+            selectedVariant = null; 
+            quickViewBuyNowBtn.disabled = true;
 
             if (selectedProduct.variants && selectedProduct.variants.length > 0) {
                 selectedProduct.variants.forEach((variant, index) => {
                     const variantBtn = document.createElement('button');
                     variantBtn.className = `px-4 py-2 border border-gray-300 rounded-md hover:border-brand-accent transition-all duration-200 text-sm`;
-                    variantBtn.textContent = `${variant.name}`; // Display only variant name, price will be updated below
-                    variantBtn.dataset.variantIndex = index; // Store index to easily retrieve variant object
+                    variantBtn.textContent = `${variant.name}`;
+                    variantBtn.dataset.variantIndex = index;
                     variantBtn.addEventListener('click', () => {
                         document.querySelectorAll('#variant-options button').forEach(btn => btn.classList.remove('selected-option'));
                         variantBtn.classList.add('selected-option');
                         selectedVariant = selectedProduct.variants[index];
                         quickViewPrice.textContent = `₹${selectedVariant.price.toLocaleString('en-IN')}`;
-                        quickViewBuyNowBtn.disabled = false; // Enable buy now
+                        quickViewBuyNowBtn.disabled = false;
                     });
                     variantOptionsContainer.appendChild(variantBtn);
                 });
-                // Auto-select first variant if available
                 if (selectedProduct.variants.length > 0) {
                     variantOptionsContainer.querySelector('button').click();
                 }
@@ -707,7 +964,6 @@
             renderTestimonials(staticTestimonials);
             renderHero(staticHeroContent);
             promotionBar.textContent = staticPromotionText;
-            updateAuthUI(); // Initialize auth UI
 
             // --- UI Elements ---
             const mobileMenuButton = document.getElementById('mobile-menu-button');
@@ -730,9 +986,8 @@
             const confirmPasswordContainer = document.getElementById('confirm-password-container');
             const userFormFeedback = document.getElementById('user-form-feedback');
             const signOutBtn = document.getElementById('sign-out-btn');
-            const closeThankYouBtn = document.getElementById('close-thank-you-btn');
             const closeQuickViewBtn = document.getElementById('close-quick-view-btn');
-            let isSignUp = false; // State to toggle between sign-in and sign-up forms
+            let isSignUp = false;
 
             // --- Event Handlers ---
             mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
@@ -756,10 +1011,8 @@
                 renderProducts(filteredProducts);
             });
 
-            // Delegate event for "View Details" buttons on product grid
             productGrid.addEventListener('click', (e) => {
                 const viewDetailsButton = e.target.closest('.view-details-btn');
-
                 if (viewDetailsButton) {
                     openQuickViewModal(viewDetailsButton.dataset.productId);
                 }
@@ -783,18 +1036,36 @@
             closeUserModalBtn.addEventListener('click', closeUserModal);
             userModal.addEventListener('click', (e) => { if (e.target === userModal) closeUserModal(); });
 
-            // Quick View modal close
             closeQuickViewBtn.addEventListener('click', closeQuickViewModal);
             quickViewModal.addEventListener('click', (e) => { if (e.target === quickViewModal) closeQuickViewModal(); });
 
-            // Buy Now from Quick View modal
             quickViewBuyNowBtn.addEventListener('click', handleBuyNow);
 
+            // --- Firebase Auth UI Logic ---
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // User is signed in
+                    document.getElementById('auth-view').classList.add('hidden');
+                    document.getElementById('signed-in-view').classList.remove('hidden');
+                    userEmailDisplay.textContent = `Signed in as ${user.email}`;
+                    localStorage.setItem('customer', user.email);
+                } else {
+                    // User is signed out
+                    document.getElementById('auth-view').classList.remove('hidden');
+                    document.getElementById('signed-in-view').classList.add('hidden');
+                    userEmailDisplay.textContent = '';
+                    localStorage.removeItem('customer');
+                }
+            });
+
             signOutBtn.addEventListener('click', () => {
-                isLoggedIn = false;
-                loggedInUserEmail = '';
-                updateAuthUI();
-                closeUserModal();
+                signOut(auth).then(() => {
+                    console.log('User signed out.');
+                    closeUserModal();
+                }).catch((error) => {
+                    console.error('Sign out error', error);
+                });
             });
 
             userFormToggle.addEventListener('click', (e) => {
@@ -821,6 +1092,7 @@
                 e.preventDefault();
                 userFormFeedback.classList.remove('text-red-600', 'text-green-600');
                 userFormFeedback.textContent = '';
+
                 const email = document.getElementById('email').value;
                 const password = document.getElementById('password').value;
 
@@ -831,15 +1103,37 @@
                         userFormFeedback.classList.add('text-red-600');
                         return;
                     }
-                    userFormFeedback.textContent = 'Account created successfully (mock)!';
+
+                    createUserWithEmailAndPassword(auth, email, password)
+                        .then((userCredential) => {
+                            userFormFeedback.textContent = 'Account created successfully!';
+                            userFormFeedback.classList.add('text-green-600');
+                            setTimeout(() => {
+                                closeUserModal();
+                                window.location.href = './chatbot.html';
+                            }, 1500);
+                        })
+                        .catch((error) => {
+                            userFormFeedback.textContent = error.message;
+                            userFormFeedback.classList.add('text-red-600');
+                            console.error("Sign up error:", error.code, error.message);
+                        });
                 } else {
-                    userFormFeedback.textContent = 'Signed in successfully (mock)!';
+                    signInWithEmailAndPassword(auth, email, password)
+                        .then((userCredential) => {
+                            userFormFeedback.textContent = 'Signed in successfully!';
+                            userFormFeedback.classList.add('text-green-600');
+                            setTimeout(() => {
+                                closeUserModal();
+                                window.location.href = './chatbot.html';
+                            }, 1500);
+                        })
+                        .catch((error) => {
+                            userFormFeedback.textContent = error.message;
+                            userFormFeedback.classList.add('text-red-600');
+                            console.error("Sign in error:", error.code, error.message);
+                        });
                 }
-                userFormFeedback.classList.add('text-green-600');
-                isLoggedIn = true;
-                loggedInUserEmail = email;
-                updateAuthUI();
-                setTimeout(closeUserModal, 1500);
             });
 
             newsletterForm.addEventListener('submit', (e) => {
@@ -849,60 +1143,7 @@
                 setTimeout(() => newsletterFeedback.textContent = '', 5000);
             });
 
-            closeThankYouBtn.addEventListener('click', () => {
-                document.getElementById('thank-you-overlay').classList.add('hidden');
-            });
         });
     </script>
 </body>
-    <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx-ij6RuYOWuszS9dmJW8_taqP4GH34wrSHqXmQhsTYL-9j1c_GJy4TAW34ESECzboTkw/exec';
-
-    function showFeedback(message, color='red') {
-        const feedback = document.getElementById('feedback');
-        feedback.textContent = message;
-        feedback.className = `text-center text-sm mb-4 text-${color}-500`;
-    }
-
-    async function signup() {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-        if (!email || !password) {
-            showFeedback('Please fill both fields.');
-            return;
-        }
-
-        const response = await fetch(`${API_URL}?action=signup`, {
-            method: 'POST',
-            body: JSON.stringify({ email, password })
-        });
-        const result = await response.json();
-        showFeedback(result.message, result.status === 'success' ? 'green' : 'red');
-    }
-
-    async function login() {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-        if (!email || !password) {
-            showFeedback('Please fill both fields.');
-            return;
-        }
-
-        const response = await fetch(`${API_URL}?action=login`, {
-            method: 'POST',
-            body: JSON.stringify({ email, password })
-        });
-        const result = await response.json();
-        if (result.status === 'success') {
-            showFeedback(result.message, 'green');
-            alert('Login Successful!');
-            // Optionally hide login form and show dashboard
-            document.getElementById('login-section').style.display = 'none';
-            document.querySelector('main').style.display = 'block';  // Assuming you want to show main content after login
-        } else {
-            showFeedback(result.message, 'red');
-        }
-    }
-</script>
-
 </html>
