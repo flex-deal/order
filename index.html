@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digi Click - Software E-commerce</title>
+    <title>DigiClick - Software E-commerce</title>
     
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -34,100 +34,52 @@
         }
     </script>
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #ffffff;
-        }
-        i[data-lucide] {
-            width: 24px;
-            height: 24px;
-        }
-        .search-bar-container {
-            transition: all 0.3s ease-in-out;
-        }
-        .modal-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        .placeholder-glow::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-            animation: glow 1.5s infinite;
-        }
-        @keyframes glow {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        .active-category {
-            box-shadow: 0 0 0 3px #4a90e2;
-        }
-        .selected-option {
-            border: 2px solid #4a90e2;
-            box-shadow: 0 0 0 1px #4a90e2;
-        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
+        i[data-lucide] { width: 24px; height: 24px; }
+        .search-bar-container { transition: all 0.3s ease-in-out; }
+        .modal-overlay { transition: opacity 0.3s ease-in-out; }
+        .active-category { box-shadow: 0 0 0 3px #4a90e2; }
+        .selected-option { border: 2px solid #4a90e2; box-shadow: 0 0 0 1px #4a90e2; }
     </style>
 </head>
 <body class="bg-white text-brand-primary">
 
     <!-- Announcement Bar -->
     <div id="promotion-bar" class="bg-brand-primary text-white text-center py-2.5 text-sm font-medium">
-        Unlock Your Potential with Our Latest Software Deals!
+        Loading...
     </div>
 
     <!-- Header -->
     <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between h-20 relative">
-                <!-- Logo -->
-                <a href="#" class="text-2xl font-bold tracking-tight z-10">
-                    Digi Click
-                </a>
-
-                <!-- Desktop Navigation -->
+                <a href="#" class="text-2xl font-bold tracking-tight z-10">Digi Click</a>
                 <nav class="hidden md:flex items-center space-x-8">
                     <a href="#home" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Home</a>
                     <a href="#shop" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Shop</a>
-                    <a href="#about" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">about us</a>
-                    <a href="./chatbot.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">chat bot</a>
+                    <a href="#about" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">About Us</a>
+                    <a href="./chatbot.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Chat Bot</a>
                     <a href="./contect.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Contact</a>
                 </nav>
-                
-                <!-- Animated Search Bar -->
                 <div id="search-bar-container" class="search-bar-container absolute right-0 flex items-center justify-end w-full h-full bg-white opacity-0 pointer-events-none -z-10">
                     <input type="text" id="search-input" placeholder="Search for products..." class="w-full max-w-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent">
-                    <button id="close-search-btn" class="ml-2 text-gray-500 hover:text-brand-primary">
-                        <i data-lucide="x"></i>
-                    </button>
+                    <button id="close-search-btn" class="ml-2 text-gray-500 hover:text-brand-primary"><i data-lucide="x"></i></button>
                 </div>
-
-                <!-- Header Icons -->
                 <div id="header-icons" class="flex items-center space-x-5 z-10">
-                    <button id="search-btn" class="text-gray-500 hover:text-brand-accent">
-                        <i data-lucide="search"></i>
-                    </button>
-                    <button id="user-btn" class="text-gray-500 hover:text-brand-accent">
-                            <i data-lucide="user"></i>
-                    </button>
-                    <!-- Cart button and count removed as per single purchase model -->
-                    <!-- Mobile Menu Button -->
-                    <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-brand-accent">
-                        <i data-lucide="menu"></i>
-                    </button>
+                    <button id="search-btn" class="text-gray-500 hover:text-brand-accent"><i data-lucide="search"></i></button>
+                    <button id="user-btn" class="text-gray-500 hover:text-brand-accent"><i data-lucide="user"></i></button>
+                    <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-brand-accent"><i data-lucide="menu"></i></button>
                 </div>
             </div>
         </div>
-        <!-- Mobile Menu -->
         <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
             <nav class="flex flex-col p-4 space-y-4">
                 <a href="#home" class="text-gray-600 hover:text-brand-accent">Home</a>
                 <a href="#shop" class="text-gray-600 hover:text-brand-accent">Shop</a>
-                <a href="#about" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">about us</a>
-                <a href="./chatbot.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">chat bot</a>
-                    <a href="./contect.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Contact</a>
+                <a href="#about" class="text-gray-600 hover:text-brand-accent">About Us</a>
+                <a href="./chatbot.html" class="text-gray-600 hover:text-brand-accent">Chat Bot</a>
+                <a href="./contect.html" class="text-gray-600 hover:text-brand-accent">Contact</a>
             </nav>
         </div>
     </header>
@@ -139,9 +91,7 @@
             <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
                 <h1 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 leading-tight">Loading...</h1>
                 <p id="hero-subtitle" class="text-lg md:text-xl max-w-2xl mb-8">Please wait while we fetch the latest styles.</p>
-                <a href="#shop" class="bg-brand-accent hover:bg-brand-accent-hover text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 duration-300">
-                    Shop Now
-                </a>
+                <a href="#shop" class="bg-brand-accent hover:bg-brand-accent-hover text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 duration-300">Shop Now</a>
             </div>
         </section>
 
@@ -149,9 +99,7 @@
         <section id="shop" class="py-16 md:py-24 bg-brand-secondary">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl font-bold text-center mb-12">Shop by Category</h2>
-                <div id="category-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-8">
-                    <p class="col-span-full text-center">Loading categories...</p>
-                </div>
+                <div id="category-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-8"><p class="col-span-full text-center">Loading categories...</p></div>
             </div>
         </section>
 
@@ -159,9 +107,7 @@
         <section id="new-arrivals" class="py-16 md:py-24 bg-white">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl font-bold text-center mb-12">Our Best Sellers</h2>
-                <div id="product-grid" class="grid grid-cols-2 gap-4 md:gap-8">
-                    <p class="col-span-full text-center">Loading products...</p>
-                </div>
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"><p class="col-span-full text-center">Loading products...</p></div>
             </div>
         </section>
 
@@ -170,9 +116,7 @@
             <div class="container mx-auto px-4 py-16 text-center">
                 <h2 class="text-3xl md:text-4xl font-bold mb-2">LIMITED TIME OFFERS!</h2>
                 <p class="text-lg md:text-xl mb-6">Exclusive discounts on premium software. Don't miss out!</p>
-                <a href="#shop" class="bg-white text-brand-primary font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-200 transition-colors duration-300">
-                    Explore Deals
-                </a>
+                <a href="#shop" class="bg-white text-brand-primary font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-200 transition-colors duration-300">Explore Deals</a>
             </div>
         </section>
 
@@ -180,9 +124,7 @@
         <section id="about" class="py-16 md:py-24 bg-brand-secondary">
             <div class="container mx-auto px-4">
                 <h2 class="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
-                <div id="testimonial-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <p class="col-span-full text-center">Loading testimonials...</p>
-                </div>
+                <div id="testimonial-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"><p class="col-span-full text-center">Loading testimonials...</p></div>
             </div>
         </section>
         
@@ -200,156 +142,71 @@
                 </div>
             </div>
         </section>
-
     </main>
 
     <!-- Footer -->
     <footer class="bg-brand-primary text-white">
         <div class="container mx-auto px-4 py-16">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                <!-- About -->
-                <div>
-                    <h3 class="text-xl font-bold mb-4">digi click</h3>
-                    <p class="text-gray-400">Your destination for modern, stylish, and high-quality software solutions. We believe in empowering you with the best digital tools.</p>
-                </div>
-                <!-- Shop Links -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Shop</h3>
-                    <ul class="space-y-3">
-                        <li><a href="#new-arrivals" class="text-gray-400 hover:text-white">New Arrivals</a></li>
-                        <li><a href="#shop" class="text-gray-400 hover:text-white">Best Sellers</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Productivity</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Security</a></li>
-                    </ul>
-                </div>
-                <!-- Customer Service -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Customer Service</h3>
-                    <ul class="space-y-3">
-                        <li><a href="#contact" class="text-gray-400 hover:text-white">Contact Us</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">Support</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white">License Management</a></li>
-                    </ul>
-                </div>
-                <!-- Social Media -->
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
-                    <p class="text-gray-400 mb-4">Stay connected for the latest updates.</p>
-                    <div class="flex space-x-4">
-                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="facebook"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="instagram"></i></a>
-                        <a href="#" class="text-gray-400 hover:text-white"><i data-lucide="twitter"></i></a>
-                    </div>
-                </div>
+                <div><h3 class="text-xl font-bold mb-4">Digi Click</h3><p class="text-gray-400">Your destination for modern, stylish, and high-quality software solutions.</p></div>
+                <div><h3 class="text-lg font-semibold mb-4">Shop</h3><ul class="space-y-3"><li><a href="#new-arrivals" class="text-gray-400 hover:text-white">New Arrivals</a></li><li><a href="#shop" class="text-gray-400 hover:text-white">Best Sellers</a></li></ul></div>
+                <div><h3 class="text-lg font-semibold mb-4">Customer Service</h3><ul class="space-y-3"><li><a href="#contact" class="text-gray-400 hover:text-white">Contact Us</a></li><li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li></ul></div>
+                <div><h3 class="text-lg font-semibold mb-4">Follow Us</h3><div class="flex space-x-4"><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="facebook"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="instagram"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="twitter"></i></a></div></div>
             </div>
-            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500">
-                <p>© 2024 digi click. All Rights Reserved.</p>
-            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500"><p>© 2024 Digi Click. All Rights Reserved.</p></div>
         </div>
     </footer>
 
-    <!-- User Profile Modal (Firebase Authentication) -->
+    <!-- User Profile Modal -->
     <div id="user-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="user-modal-title" class="text-2xl font-bold">My Account</h2>
-                <button id="close-user-modal-btn" class="text-gray-500 hover:text-brand-primary">
-                    <i data-lucide="x"></i>
-                </button>
-            </div>
+            <div class="flex justify-between items-center mb-6"><h2 id="user-modal-title" class="text-2xl font-bold">My Account</h2><button id="close-user-modal-btn" class="text-gray-500 hover:text-brand-primary"><i data-lucide="x"></i></button></div>
             <div id="auth-view">
                 <form id="user-form">
-                    <div class="mb-4">
-                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                        <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent" placeholder="you@example.com" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                        <input type="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent" placeholder="••••••••" required>
-                    </div>
-                    <div id="confirm-password-container" class="mb-6 hidden">
-                        <label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
-                        <input type="password" id="confirm-password" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent" placeholder="••••••••">
-                    </div>
+                    <div class="mb-4"><label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label><input type="email" id="email" class="w-full px-3 py-2 border rounded-md" placeholder="you@example.com" required></div>
+                    <div class="mb-4"><label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label><input type="password" id="password" class="w-full px-3 py-2 border rounded-md" placeholder="••••••••" required></div>
+                    <div id="confirm-password-container" class="mb-6 hidden"><label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label><input type="password" id="confirm-password" class="w-full px-3 py-2 border rounded-md" placeholder="••••••••"></div>
                     <p id="user-form-feedback" class="mb-4 text-sm text-center"></p>
-                    <button id="user-form-submit" type="submit" class="w-full bg-brand-primary text-white font-bold py-3 rounded-md hover:bg-gray-800 transition-colors duration-300">Sign In</button>
-                    <p id="user-form-toggle" class="text-center text-sm text-gray-600 mt-4">
-                        Don't have an account? <a href="#" class="font-medium text-brand-accent hover:underline">Sign up</a>
-                    </p>
+                    <button id="user-form-submit" type="submit" class="w-full bg-brand-primary text-white font-bold py-3 rounded-md hover:bg-gray-800">Sign In</button>
+                    <p id="user-form-toggle" class="text-center text-sm text-gray-600 mt-4">Don't have an account? <a href="#" class="font-medium text-brand-accent hover:underline">Sign up</a></p>
                 </form>
             </div>
-            <div id="signed-in-view" class="hidden">
-                <p id="user-email-display" class="mb-4 text-center"></p>
-                <button id="sign-out-btn" class="w-full bg-red-500 text-white font-bold py-3 rounded-md hover:bg-red-600 transition-colors duration-300">Sign Out</button>
-            </div>
+            <div id="signed-in-view" class="hidden"><p id="user-email-display" class="mb-4 text-center"></p><button id="sign-out-btn" class="w-full bg-red-500 text-white font-bold py-3 rounded-md hover:bg-red-600">Sign Out</button></div>
         </div>
     </div>
     
     <!-- Quick View Modal -->
     <div id="quick-view-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
         <div class="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full flex flex-col md:flex-row gap-8 relative">
-            <button id="close-quick-view-btn" class="absolute top-4 right-4 text-gray-500 hover:text-brand-primary">
-                <i data-lucide="x"></i>
-            </button>
-            <div class="md:w-1/2">
-                <img id="quick-view-image" src="https://placehold.co/400x500/fecaca/333333?text=Product" alt="Product Image" class="w-full h-auto rounded-lg">
-            </div>
+            <button id="close-quick-view-btn" class="absolute top-4 right-4 text-gray-500 hover:text-brand-primary"><i data-lucide="x"></i></button>
+            <div class="md:w-1/2"><img id="quick-view-image" src="https://placehold.co/400x500/fecaca/333333?text=Product" alt="Product Image" class="w-full h-auto rounded-lg"></div>
             <div class="md:w-1/2 flex flex-col justify-between">
                 <div>
                     <h2 id="quick-view-name" class="text-3xl font-bold mb-2">Product Name</h2>
                     <p id="quick-view-price" class="text-2xl font-bold text-brand-accent mb-4">₹0</p>
                     <p id="quick-view-description" class="text-gray-600 mb-6">A brief description of the product.</p>
-
-                    <div id="quick-view-variants" class="mb-6">
-                        <h3 class="font-semibold text-lg mb-2">Select Variant:</h3>
-                        <div class="flex flex-wrap gap-2" id="variant-options">
-                            <!-- Variant options will be injected here -->
-                        </div>
-                    </div>
+                    <div id="quick-view-variants" class="mb-6"><h3 class="font-semibold text-lg mb-2">Select Variant:</h3><div class="flex flex-wrap gap-2" id="variant-options"></div></div>
                 </div>
                 <button id="quick-view-buy-now-btn" class="w-full bg-brand-accent text-white font-bold py-3 rounded-lg hover:bg-brand-accent-hover">Buy Now</button>
             </div>
         </div>
     </div>
 
-    <!-- Payment Processing Modal (Mock) -->
-    <div id="payment-processing-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
-            <i data-lucide="credit-card" class="w-16 h-16 text-brand-accent mx-auto mb-4 animate-pulse"></i>
-            <h2 class="text-2xl font-bold mb-2">Redirecting to Payment...</h2>
-            <p class="text-gray-600 mb-6">Please wait while we prepare your secure payment link. If a new window does not open, please check your browser's pop-up blocker settings.</p>
-            <p class="text-sm text-gray-500">You will be redirected shortly.</p>
-        </div>
-    </div>
-
-    <!-- Thank You Modal -->
-    <div id="thank-you-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
-            <i data-lucide="check-circle" class="w-16 h-16 text-green-500 mx-auto mb-4"></i>
-            <h2 class="text-2xl font-bold mb-2">Payment Processing...</h2>
-            <p class="text-gray-600">Your payment is being processed. You will be redirected shortly.</p>
-        </div>
-    </div>
-
+    <!-- Payment & Thank You Modals -->
+    <div id="payment-processing-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden"><div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center"><i data-lucide="credit-card" class="w-16 h-16 text-brand-accent mx-auto mb-4 animate-pulse"></i><h2 class="text-2xl font-bold mb-2">Redirecting...</h2><p class="text-gray-600">Please wait while we prepare your secure payment link.</p></div></div>
+    <div id="thank-you-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden"><div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center"><i data-lucide="check-circle" class="w-16 h-16 text-green-500 mx-auto mb-4"></i><h2 class="text-2xl font-bold mb-2">Payment Processing...</h2><p class="text-gray-600">You will be redirected shortly.</p></div></div>
 
     <script type="module">
         // --- Firebase Integration ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword,
-            signOut,
-            onAuthStateChanged
-        } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // Your web app's Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBgErP_g_ZqKraxqFAQi3W0YdwwkQdAZzg",
             authDomain: "my-chat-app-a9b9e.firebaseapp.com",
             projectId: "my-chat-app-a9b9e",
-            storageBucket: "my-chat-app-a9b9e.firebasestorage.app",
+            storageBucket: "my-chat-app-a9b9e.appspot.com",
             messagingSenderId: "292137527608",
             appId: "1:292137527608:web:692b165effa77e79bf79cd"
         };
@@ -357,419 +214,17 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
+        const productsCollection = collection(db, 'products');
+        const categoriesCollection = collection(db, 'categories');
+        const testimonialsCollection = collection(db, 'testimonials');
+        const siteContentDocRef = doc(db, 'siteContent', 'homepage');
 
-
-        // --- Static Data ---
-        const staticProducts = [
-             {
-                 id: 'prod_1',
-                 name: 'netflix',
-                 category: 'ott apps',
-                 image: 'https://i.pcmag.com/imagery/reviews/05cItXL96l4LE9n02WfDR0h-5.fit_lim.size_1050x591.v1582751026.png', // Light blue for software
-                 tag: 'NEW',
-                 description: 'An all-in-one software suite for enhanced productivity and collaboration.',
-                 variants: [
-                     { name: '1 month credentials ', price: 149, paymentLink: 'https://payments.cashfree.com/forms/anil6895895894' },
-                     { name: '6 month  idp', price: 799, paymentLink: 'https://mock-payment.com/productivity-lifetime' },
-                     { name: '1 month full acount', price: 799, paymentLink: 'https://mock-payment.com/productivity-lifetime' },
-                 ]
-             },
-             {
-                 id: 'prod_2',
-                 name: 'prime vedio',
-                 category: 'ott apps',
-                 image: 'https://www.ninja.it/wp-content/uploads/2023/02/nuova-identita-visiva-di-amazon-prime-video-14.jpg', // Light pink for security
-                 description: 'Comprehensive protection against viruses, malware, and cyber threats.',
-                 variants: [
-                     { name: '1 Device (1 month)credentials', price: 69, paymentLink: 'https://rzp.io/rzp/GZLLMs89' },
-                     { name: '3 Devices (6 month)on mail', price: 299, paymentLink: 'https://rzp.io/rzp/9kaJLqz' },
-                     { name: '3 Devices (1 Years)on mail', price: 399, paymentLink: 'https://mock-payment.com/security-5dev-2yr' }
-                 ]
-             },
-             {
-                 id: 'prod_3',
-                 name: 'you tube',
-                 category: 'ott apps', // New category
-                 image: 'https://www.appsinvo.com/blog/wp-content/uploads/2024/03/twitter-will-be-launch-for-video-app-2.png', // Light green for design
-                 tag: 'SALE',
-                 description: 'you tube will provided on your mail.',
-                 variants: [
-                     { name: '1 month on mail', price: 49, paymentLink: 'https://rzp.io/rzp/SQqn1vNh' },
-                     { name: '6 month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/sC5JW5LS' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/yYbnKJjs' }
-                 ]
-             },
-             {
-                 id: 'prod_4',
-                 name: 'hotstar',
-                 category: 'ott apps', // New category
-                 image: 'https://img.hotstar.com/image/upload/v1738215515/helpdesk/new/portal/jio_hotstar_1200_630.png', // Plum for cloud
-                 description: 'Secure and scalable cloud storage for all your files.',
-                 variants: [
-                     { name: '1 device (1Monthly)credentials', price: 69, paymentLink: 'https://rzp.io/rzp/GZLLMs89' },
-                     { name: ' (6 month )on number', price: 399, paymentLink: 'https://rzp.io/rzp/9kaJLqz' },
-                     { name: ' (Annual) on number', price: 499, paymentLink: 'https://mock-payment.com/cloud-1tb-annual' }
-                 ]
-             },
-             {
-                 id: 'prod_5',
-                 name: 'sony liv',
-                 category: 'ott apps', //o+Edito New category
-                 image: 'https://www.bizasialive.com/wp-content/uploads/2020/05/899ec721-sonylivnew001.jpg', // Powder blue for multimedia
-                 description: 'Professional video ott for stunning cinematic results.',
-                 variants: [
-                     { name: '1 month', price: 69, paymentLink: 'https://mock-payment.com/videoedit-basic' },
-                     { name: '6 month', price: 299, paymentLink: 'https://mock-payment.com/videoedit-creator' },
-                     { name: '1 year', price: 399, paymentLink: 'https://mock-payment.com/videoedit-studio' }
-                 ]
-             },
-             {
-                 id: 'prod_6',
-                 name: 'zee 5',
-                 category: 'ott apps', // New category
-                 image: 'https://www.themobileindian.com/wp-content/uploads/2021/07/zee5-1024x580.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: 'Indie License', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                     { name: 'Pro License', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                 ]
-             },
-              {
-                 id: 'prod_7',
-                 name: 'gta 5',
-                 category: 'Gaming', // New category
-                 image: 'https://lh4.googleusercontent.com/proxy/gT3325qQqvqB6WBtrcDpY_yjTy7KOlapI-xtn84u5ZziUeo2YSZ1fhqjYG_bEReMuOQQXigwKOkCehq8f9c_wsZatJKwpoHAZxwV7Mg6H6xShl1YDtLq1DBS44MxPW9Swrk7JOcEN5hPJ2AEH_yh5MfizDgUsRFDwjSi', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1 month', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                     { name: '3 month', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                 ]
-             },
-              {
-                 id: 'prod_8',
-                 name: 'you tube music',
-                 category: 'music', // New category
-                 image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQXNPpUMkJMluLa7E5W3BLepDz85W6yjfeUqP5okpziNcSXDicxTVLPD5EVJzPaDW6IHv4&usqp=CAUi', // Gold for gaming
-                 description: 'Powerful music.',
-                 variants: [
-                     { name: '1 month on mail', price: 39, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                     { name: '3 month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                 ]
-             },
-              {
-                 id: 'prod_9',
-                 name: 'spider man game',
-                 category: 'Gaming', // New category
-                 image: 'https://images2.alphacoders.com/134/1348557.jpeg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1 month', price: 2500, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                     { name: '3 month', price: 7500, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                 ]
-             },
-              {
-                 id: 'prod_10',
-                 name: 'spotify',
-                 category: 'music', // New category
-                 image: 'https://cdn.shopify.com/s/files/1/0267/6935/8923/products/spotify-card_2000x.png?v=1591691902', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1 month on mail', price: 79, paymentLink: 'https://mock-payment.com/gameengine-indie' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://mock-payment.com/gameengine-pro' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                 ]
-             },
-              {
-                 id: 'prod_11',
-                 name: 'gana plus',
-                 category: 'music', // New category
-                 image: 'https://www.visa.com/images/merchantoffers/2021-07/1626770738048.G-Gaana_plus_logo__1_.png', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://payments.cashfree.com/forms/damoo' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://mock-payment.com/gameengine-pro' }
-                 ]
-             },
-              {
-                 id: 'prod_12',
-                 name: 'alt balaji',
-                 category: 'ott apps', // New category
-                 image: 'https://tse1.mm.bing.net/th/id/OIP.LkKtJ0Zir6vcwCpY-s2Q4gHaDt?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/GZLLMs89' },
-                     { name: '6 month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/lvHWjsv9' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/JgYIrNS' }
-                 ]
-             },
-             {
-                 id: 'prod_13',
-                 name: 'curosity stream',
-                 category: '', // New category
-                 image: 'https://www.readersfusion.com/wp-content/uploads/2022/01/Curiosity-Stream-Review-scaled.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/sC5JW5LS' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/U1tT59D' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/FGn2aoc4' }
-                 ]
-             },
-             {
-                 id: 'prod_14',
-                 name: 'mubi premium',
-                 category: 'ott apps', // New category
-                 image: 'https://images.firstpost.com/wp-content/uploads/large_file_plugin/2019/11/1573896036_mubisocial.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/SQqn1vNh' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/1cyzSha' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/b5e6PBp' }
-                 ]
-             },
-             {
-                 id: 'prod_15',
-                 name: 'discovery+',
-                 category: 'ott apps', // New category
-                 image: 'https://www.techhive.com/wp-content/uploads/2023/04/4347802_original.jpg?quality=50&strip=all&w=1024', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/KoSKEfKk' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/Un406km' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/7Ez0qNs' }
-                 ]
-             },
-             {
-                 id: 'prod_16',
-                 name: 'lionsgate play',
-                 category: 'ott apps', // New category
-                 image: 'https://static.digit.in/default/ef9584d7beaabe815657acc3abd0ac85819fafc2.jpeg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/Quou8jl' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/rjqlWoQ' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/k9D4N7yy' }
-                 ]
-             },
-             {
-                 id: 'prod_17',
-                 name: 'magzter gold',
-                 category: 'ott apps', // New category
-                 image: 'https://akcdn.magzter.com/web/assets/images/fb/mg_gold.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/I6UsqZN' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/VGJya0pK' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/gqnjp6H' }
-                 ]
-             },
-             {
-                 id: 'prod_18',
-                 name: 'sunnext',
-                 category: 'ott apps', // New category
-                 image: 'https://images-na.ssl-images-amazon.com/images/I/A13sXw0T8qL.png', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/nshfRDFO' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/tRAODO7' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/QRmA9VVg' }
-                 ]
-             },
-             {
-                 id: 'prod_19',
-                 name: 'Tinkle',
-                 category: '', // New category
-                 image: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1657102469i/61401203.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/UAJmh8wr' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/uqVchot' }
-                 ]
-             },
-             {
-                 id: 'prod_20',
-                 name: 'Crunchyroll',
-                 category: 'ott apps', // New category
-                 image: 'https://wallpaperaccess.com/full/9508779.png', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/pDMiVfCq' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/FFa5qzKS' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/zwB7hn4L' }
-                 ]
-             },
-             {
-                 id: 'prod_21',
-                 name: 'Facode',
-                 category: '', // New category
-                 image: 'https://d1.awsstatic.com/apac/events/2022/case-study/fancode-case-study-img.a3692ec21e829432cb8a9b249834da1187788aee.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/6zsV3CGb' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/VHedd31' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/vk88pTx' }
-                 ]
-             },
-             {
-                 id: 'prod_22',
-                 name: 'Hoichoi',
-                 category: 'ott apps', // New category
-                 image: 'https://www.animationxpress.com/wp-content/uploads/2020/02/Hoichoi-1.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/U3Sh0gBE' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/6LmEl3b' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/rICUe8c' }
-                 ]
-             },
-             {
-                 id: 'prod_23',
-                 name: 'ullu',
-                 category: 'ott apps', // New category
-                 image: 'https://www.livemint.com/lm-img/img/2024/02/15/600x338/ul_1708002611549_1708002704809.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/9t26eAXg' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/3tYefiC' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/B3BbeTv' }
-                 ]
-             },
-             {
-                 id: 'prod_24',
-                 name: 'Shemaro',
-                 category: 'ott apps', // New category
-                 image: 'https://i.gadgets360cdn.com/large/shemaroome-logo_1545397866714.jpg?', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/RIJYyFG' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/GU9YRGT9' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/6PKXzLUi' }
-                 ]
-             },
-             {
-                 id: 'prod_25',
-                 name: 'Watcho',
-                 category: 'ott apps', // New category
-                 image: 'https://www.medianews4u.com/wp-content/uploads/2021/02/WATCHO-registers-massive-growth-celebrates-15-million-users.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/7qkd9X4' }
-                 ]
-             },
-             {
-                 id: 'prod_26',
-                 name: 'Crickbuzz',
-                 category: 'ott apps', // New category
-                 image: 'https://tse2.mm.bing.net/th/id/OIP.odBaly_A-YPc5bjZMlFxOwHaDn?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/zq2T96po' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/M6ccZ1X4' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/0RoM3qrF' }
-                 ]
-             },
-             {
-                 id: 'prod_27',
-                 name: 'aha gold',
-                 category: 'ott apps', // New category
-                 image: 'https://www.financialexpress.com/wp-content/uploads/2022/08/aha.jpg?resize=100', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/ugNLddd' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/gtr3nkl' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/qSaMbiU' }
-                 ]
-             },
-             {
-                 id: 'prod_28',
-                 name: 'Brzers',
-                 category: '', // New category
-                 image: 'https://tse1.mm.bing.net/th/id/OIP.cNPVxtUucwLJ-dSTRxSZRwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/SZzfDsF' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/VusKHhQa' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/v7VLO7j' }
-                 ]
-             },
-             {
-                 id: 'prod_29',
-                 name: 'Poub',
-                 category: '', // New category
-                 image: 'https://tse2.mm.bing.net/th/id/OIP.ETr9x2AUVUpELIt2AhRWQgAAAA?w=400&h=225&rs=1&pid=ImgDetMain&o=7&rm=3', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/zQaQAPn' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/KkmHSiD' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/e0AH0PL' }
-                 ]
-             },
-             {
-                 id: 'prod_30',
-                 name: 'mster',
-                 category: '', // New category
-                 image: 'https://www.vpnfan.com/wp-content/uploads/2019/07/xhamster-logo-1-1068x601.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/WOkFjQQ' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/LZePIlE' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/auevDP8' }
-                 ]
-             },
-             {
-                 id: 'prod_31',
-                 name: 'Reaity king',
-                 category: 'ott apps', // New category
-                 image: 'https://vectorseek.com/wp-content/uploads/2023/08/Realitykings-Logo-Vector.svg-.png', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/NIlLqhl' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/z9iB7Ycc' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/26JN3xf' }
-                 ]
-             },
-             {
-                 id: 'prod_32',
-                 name: 'Fakb',
-                 category: 'adult', // New category
-                 image: 'https://i.ytimg.com/vi/PssK3ged0GM/maxresdefault.jpg', // Gold for gaming
-                 description: 'Powerful engine for developing immersive 2D and 3D games.',
-                 variants: [
-                     { name: '1  month on mail', price: 79, paymentLink: 'https://rzp.io/rzp/oozPVSS' },
-                     { name: '6  month on mail', price: 299, paymentLink: 'https://rzp.io/rzp/wow6IqQ' },
-                     { name: '12 month on mail', price: 399, paymentLink: 'https://rzp.io/rzp/CJWVKdso' }
-                 ]
-             }
-        ];
-
-        const staticCategories = [
-            { name: 'ott apps', image: 'https://www.smarther.co/wp-content/uploads/2023/03/online-streaming-ott-app.jpg' },
-            { name: 'Software', image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzx5RrU4WlutjrfmD16xnxFq-xVo-s5mrwNQ&s' },
-            { name: 'music', image: 'https://cdn.shopify.com/s/files/1/0657/3100/2634/files/papierpeintmusique-casqueaudio.png?v=1715586351' },
-            { name: 'adult content', image: 'https://images.prismic.io/ghostery/90fe4b64-cae3-4371-98e0-9d32ec9c3875_how-to-watch-porn-safely-on-ios.png?auto=compress,format' },
-            { name: 'Gaming', image: 'https://i.pcmag.com/imagery/roundups/06pbrFQKnLsVI0PIgatg35X-34..v1707500494.jpg' }
-        ];
-
-        const staticTestimonials = [
-            { name: 'Jessica Miller', location: 'New York, NY', text: "Absolutely love the quality and style. My order arrived faster than expected. Will definitely shop here again!", image: 'https://placehold.co/100x100/f0f9ff/333333?text=User+1' },
-            { name: 'Alex Chen', location: 'San Francisco, CA', text: "The best online store for trendy clothes. The customer service was amazing when I had a question about sizing.", image: 'https://placehold.co/100x100/ecfdf5/333333?text=User+2' },
-            { name: 'Samantha Brown', location: 'Chicago, IL', text: "I'm so impressed with the variety. Found the perfect dress for a wedding. Great prices and beautiful products.", image: 'https://placehold.co/100x100/fefce8/333333?text=User+3' }
-        ];
-
-        const staticHeroContent = {
-            title: 'Your Digital Journey Starts Here',
-            subtitle: 'Explore cutting-edge software solutions for every need, from productivity to creativity.',
-            backgroundImage: 'https://blog.flicknexs.com/wp-content/uploads/2023/05/498307841-ott-service-providersthe-ultimate-guide-for-beginners-1.webp' // Updated hero image URL
-        };
-
-        const staticPromotionText = 'Special Launch Offer: Get 20% off on all new software licenses!';
-
-        // --- Global State Variables ---
-        let products = [...staticProducts]; // Copy to allow filtering
-        let categories = [...staticCategories];
+        // --- Global State ---
+        let allProducts = [];
         let currentCategory = 'All';
-        let selectedProduct = null; // Stores the product currently in quick view
-        let selectedVariant = null; // Stores the selected variant for the product in quick view
+        let selectedProduct = null;
+        let selectedVariant = null;
 
         // --- UI Elements ---
         const productGrid = document.getElementById('product-grid');
@@ -779,370 +234,153 @@
         const heroSubtitle = document.getElementById('hero-subtitle');
         const heroSection = document.getElementById('hero-section');
         const promotionBar = document.getElementById('promotion-bar');
-        const userEmailDisplay = document.getElementById('user-email-display');
-
         const quickViewModal = document.getElementById('quick-view-modal');
-        const quickViewImage = document.getElementById('quick-view-image');
-        const quickViewName = document.getElementById('quick-view-name');
-        const quickViewPrice = document.getElementById('quick-view-price');
-        const quickViewDescription = document.getElementById('quick-view-description');
-        const variantOptionsContainer = document.getElementById('variant-options');
-        const quickViewBuyNowBtn = document.getElementById('quick-view-buy-now-btn');
 
-        // --- Data Rendering Functions ---
+        // --- Data Rendering ---
         function renderProducts(productsToRender) {
-            if (!productsToRender || productsToRender.length === 0) {
-                productGrid.innerHTML = '<p class="col-span-full text-center text-gray-600">No products found in this category.</p>';
-                return;
-            }
-            productGrid.innerHTML = productsToRender.map(p => `
+            productGrid.innerHTML = productsToRender.length ? productsToRender.map(p => `
                 <div class="product-card group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                    <div class="relative overflow-hidden">
-                        <img src="${p.image}" alt="${p.name}" class="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-110">
-                        ${p.tag ? `<div class="absolute top-3 left-3 ${p.tag === 'SALE' ? 'bg-red-500' : 'bg-green-500'} text-white text-xs font-bold px-2 py-1 rounded">${p.tag}</div>` : ''}
-                        <div class="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex justify-center space-x-2">
+                    <div class="relative overflow-hidden h-48">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/f3f3f3/999999?text=Image+Error';">
+                        ${p.tag ? `<div class="absolute top-3 left-3 ${p.tag.toLowerCase() === 'sale' ? 'bg-red-500' : 'bg-green-500'} text-white text-xs font-bold px-2 py-1 rounded">${p.tag}</div>` : ''}
+                        <div class="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex justify-center">
                             <button class="view-details-btn bg-white text-brand-primary py-2 px-4 rounded-lg font-semibold text-sm hover:bg-gray-200" data-product-id="${p.id}">View Details</button>
                         </div>
                     </div>
-                    <div class="p-4 text-center">
-                        <h3 class="product-name text-lg font-semibold text-gray-800 mb-1">${p.name}</h3>
-                        <p class="text-brand-accent font-bold">Starts from ₹${p.variants[0].price.toLocaleString('en-IN')}</p> <!-- Display price of first variant -->
-                    </div>
-                </div>
-            `).join('');
+                    <div class="p-4 text-center"><h3 class="product-name text-lg font-semibold text-gray-800 mb-1 truncate">${p.name}</h3><p class="text-brand-accent font-bold">Starts from ₹${p.variants[0].price.toLocaleString('en-IN')}</p></div>
+                </div>`).join('') : '<p class="col-span-full text-center text-gray-600">No products found.</p>';
         }
         
-        function renderCategories(categories) {
-            let html = `<button data-category="All" class="category-btn group relative overflow-hidden rounded-lg active-category">
-                <div class="absolute inset-0 bg-brand-primary flex items-center justify-center">
-                    <h3 class="text-white text-2xl font-bold">All</h3>
-                </div>
-            </button>`;
-
-            html += categories.map(c => `
-                <button data-category="${c.name}" class="category-btn group relative overflow-hidden rounded-lg">
-                    <img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-                        <h3 class="text-white text-2xl font-bold">${c.name}</h3>
-                    </div>
-                </button>
-            `).join('');
+        function renderCategories(categoriesData) {
+            let html = `<button data-category="All" class="category-btn group relative overflow-hidden rounded-lg active-category aspect-video"><div class="absolute inset-0 bg-brand-primary flex items-center justify-center"><h3 class="text-white text-xl font-bold">All</h3></div></button>`;
+            html += categoriesData.map(c => `
+                <button data-category="${c.name}" class="category-btn group relative overflow-hidden rounded-lg aspect-video">
+                    <img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/300x200/cccccc/333333?text=${c.name}';">
+                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center p-2"><h3 class="text-white text-xl font-bold text-center">${c.name}</h3></div>
+                </button>`).join('');
             categoryGrid.innerHTML = html;
         }
         
         function renderTestimonials(testimonials) {
-            testimonialGrid.innerHTML = testimonials.map(t => `
+            testimonialGrid.innerHTML = testimonials.length ? testimonials.map(t => `
                 <div class="bg-white p-8 rounded-lg shadow-md text-center">
-                    <img src="${t.image}" class="w-20 h-20 rounded-full mx-auto mb-4" alt="${t.name}">
-                    <p class="text-gray-600 mb-4">"${t.text}"</p>
-                    <h4 class="font-bold text-lg">${t.name}</h4>
-                    <p class="text-sm text-gray-500">${t.location}</p>
-                </div>
-            `).join('');
+                    <img src="${t.image}" class="w-20 h-20 rounded-full mx-auto mb-4" alt="${t.name}" onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/333333?text=User';">
+                    <p class="text-gray-600 mb-4">"${t.text}"</p><h4 class="font-bold text-lg">${t.name}</h4><p class="text-sm text-gray-500">${t.location}</p>
+                </div>`).join('') : '<p class="col-span-full text-center">No testimonials yet.</p>';
         }
 
-        function renderHero(heroData) {
-            heroTitle.textContent = heroData.title;
-            heroSubtitle.textContent = heroData.subtitle;
-            heroSection.style.backgroundImage = `url('${heroData.backgroundImage}')`;
+        function renderSiteContent(data) {
+            heroTitle.textContent = data.heroTitle || 'Welcome to DigiClick';
+            heroSubtitle.textContent = data.heroSubtitle || 'Your one-stop shop for software.';
+            heroSection.style.backgroundImage = `url('${data.heroBackgroundImage || ''}')`;
+            promotionBar.textContent = data.promotionText || 'Check out our latest deals!';
         }
 
-        // --- Purchase Logic (Single Item) ---
+        // --- Purchase & Modal Logic ---
         async function handleBuyNow() {
-            if (!selectedProduct || !selectedVariant) {
-                console.warn("No product or variant selected for purchase.");
-                return;
-            }
-            
-            localStorage.setItem('purchasedProduct', selectedProduct.name);
-
-            let paymentWindow = null;
-            if (selectedVariant.paymentLink) {
-                try {
-                    paymentWindow = window.open(selectedVariant.paymentLink, '_blank');
-                    if (!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed == 'undefined') {
-                        console.warn("Pop-up blocked. Please allow pop-ups for this site.");
-                        document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Pop-up blocked. Please allow pop-ups for this site and try again.";
-                    }
-                } catch (e) {
-                    console.error("Error opening payment window:", e);
-                    document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Error opening payment window. Please try again.";
-                }
-            } else {
-                console.warn("No payment link found for the selected variant. Opening generic mock link.");
-                const mockPaymentUrl = `https://mock-payment-gateway.com/pay?product_id=${selectedProduct.id}&variant_name=${encodeURIComponent(selectedVariant.name)}&amount=${selectedVariant.price}&currency=INR`;
-                try {
-                    paymentWindow = window.open(mockPaymentUrl, '_blank');
-                    if (!paymentWindow || paymentWindow.closed || typeof paymentWindow.closed == 'undefined') {
-                        console.warn("Pop-up blocked. Please allow pop-ups for this site.");
-                        document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Pop-up blocked. Please allow pop-ups for this site and try again.";
-                    }
-                } catch (e) {
-                    console.error("Error opening payment window:", e);
-                    document.getElementById('payment-processing-overlay').querySelector('p:last-child').textContent = "Error opening payment window. Please try again.";
-                }
-            }
-
+            if (!selectedProduct || !selectedVariant) return;
+            if (!selectedVariant.paymentLink) { alert("No payment link configured."); return; }
+            try {
+                const paymentWindow = window.open(selectedVariant.paymentLink, '_blank');
+                if (!paymentWindow) alert("Pop-up blocked. Please allow pop-ups.");
+            } catch (e) { alert("Error opening payment window."); }
             const paymentProcessingOverlay = document.getElementById('payment-processing-overlay');
             paymentProcessingOverlay.classList.remove('hidden');
-            
             closeQuickViewModal();
-
-            await new Promise(resolve => setTimeout(resolve, 3000)); 
-
+            await new Promise(resolve => setTimeout(resolve, 3000));
             paymentProcessingOverlay.classList.add('hidden');
-            
             const thankYouOverlay = document.getElementById('thank-you-overlay');
             thankYouOverlay.classList.remove('hidden');
-
-            setTimeout(() => {
-                window.location.href = './success.html';
-            }, 2000); 
+            setTimeout(() => thankYouOverlay.classList.add('hidden'), 3000);
         }
 
-        // --- User Authentication Modal Logic ---
-        const openUserModal = () => document.getElementById('user-modal').classList.remove('opacity-0', 'pointer-events-none');
-        const closeUserModal = () => document.getElementById('user-modal').classList.add('opacity-0', 'pointer-events-none');
-
-
-        // --- Quick View Modal Logic ---
         function openQuickViewModal(productId) {
-            selectedProduct = staticProducts.find(p => p.id === productId);
-            if (!selectedProduct) {
-                console.error(`Product with ID ${productId} not found for quick view.`);
-                return;
-            }
-
-            quickViewImage.src = selectedProduct.image;
-            quickViewImage.alt = selectedProduct.name;
-            quickViewName.textContent = selectedProduct.name;
-            quickViewDescription.textContent = selectedProduct.description;
-
+            selectedProduct = allProducts.find(p => p.id === productId);
+            if (!selectedProduct) return;
+            document.getElementById('quick-view-image').src = selectedProduct.image;
+            document.getElementById('quick-view-name').textContent = selectedProduct.name;
+            document.getElementById('quick-view-description').textContent = selectedProduct.description;
+            const variantOptionsContainer = document.getElementById('variant-options');
             variantOptionsContainer.innerHTML = '';
-            selectedVariant = null; 
-            quickViewBuyNowBtn.disabled = true;
-
-            if (selectedProduct.variants && selectedProduct.variants.length > 0) {
+            selectedVariant = null;
+            document.getElementById('quick-view-buy-now-btn').disabled = true;
+            if (selectedProduct.variants?.length) {
                 selectedProduct.variants.forEach((variant, index) => {
-                    const variantBtn = document.createElement('button');
-                    variantBtn.className = `px-4 py-2 border border-gray-300 rounded-md hover:border-brand-accent transition-all duration-200 text-sm`;
-                    variantBtn.textContent = `${variant.name}`;
-                    variantBtn.dataset.variantIndex = index;
-                    variantBtn.addEventListener('click', () => {
-                        document.querySelectorAll('#variant-options button').forEach(btn => btn.classList.remove('selected-option'));
-                        variantBtn.classList.add('selected-option');
+                    const btn = document.createElement('button');
+                    btn.className = `px-4 py-2 border rounded-md hover:border-brand-accent text-sm`;
+                    btn.textContent = variant.name;
+                    btn.addEventListener('click', () => {
+                        variantOptionsContainer.querySelectorAll('button').forEach(b => b.classList.remove('selected-option'));
+                        btn.classList.add('selected-option');
                         selectedVariant = selectedProduct.variants[index];
-                        quickViewPrice.textContent = `₹${selectedVariant.price.toLocaleString('en-IN')}`;
-                        quickViewBuyNowBtn.disabled = false;
+                        document.getElementById('quick-view-price').textContent = `₹${selectedVariant.price.toLocaleString('en-IN')}`;
+                        document.getElementById('quick-view-buy-now-btn').disabled = false;
                     });
-                    variantOptionsContainer.appendChild(variantBtn);
+                    variantOptionsContainer.appendChild(btn);
                 });
-                if (selectedProduct.variants.length > 0) {
-                    variantOptionsContainer.querySelector('button').click();
-                }
-            } else {
-                variantOptionsContainer.innerHTML = '<p class="text-gray-500 text-sm">No variants available for this product.</p>';
-                quickViewPrice.textContent = '₹N/A';
+                variantOptionsContainer.querySelector('button').click();
             }
-
             quickViewModal.classList.remove('opacity-0', 'pointer-events-none');
         }
 
-        function closeQuickViewModal() {
-            quickViewModal.classList.add('opacity-0', 'pointer-events-none');
-            selectedProduct = null;
-            selectedVariant = null;
-        }
+        function closeQuickViewModal() { quickViewModal.classList.add('opacity-0', 'pointer-events-none'); }
 
         // --- DOM Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons(); // Initialize Lucide icons on page load
+            lucide.createIcons();
 
-            // Initial rendering of static content
-            renderProducts(products);
-            renderCategories(categories);
-            renderTestimonials(staticTestimonials);
-            renderHero(staticHeroContent);
-            promotionBar.textContent = staticPromotionText;
+            // Fetch dynamic content from Firestore
+            onSnapshot(productsCollection, snap => { allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderProducts(allProducts); });
+            onSnapshot(categoriesCollection, snap => renderCategories(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+            onSnapshot(testimonialsCollection, snap => renderTestimonials(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
+            onSnapshot(siteContentDocRef, doc => { if (doc.exists()) renderSiteContent(doc.data()); });
 
-            // --- UI Elements ---
-            const mobileMenuButton = document.getElementById('mobile-menu-button');
-            const mobileMenu = document.getElementById('mobile-menu');
-            const searchBtn = document.getElementById('search-btn');
-            const closeSearchBtn = document.getElementById('close-search-btn');
-            const searchInput = document.getElementById('search-input');
-            const searchBarContainer = document.getElementById('search-bar-container');
-            const headerIcons = document.getElementById('header-icons');
-            const userBtn = document.getElementById('user-btn');
-            const userModal = document.getElementById('user-modal');
-            const closeUserModalBtn = document.getElementById('close-user-modal-btn');
-            const newsletterForm = document.getElementById('newsletter-form');
-            const newsletterEmail = document.getElementById('newsletter-email');
-            const newsletterFeedback = document.getElementById('newsletter-feedback');
-            const userModalTitle = document.getElementById('user-modal-title');
-            const userForm = document.getElementById('user-form');
-            const userFormSubmit = document.getElementById('user-form-submit');
-            const userFormToggle = document.getElementById('user-form-toggle');
-            const confirmPasswordContainer = document.getElementById('confirm-password-container');
-            const userFormFeedback = document.getElementById('user-form-feedback');
-            const signOutBtn = document.getElementById('sign-out-btn');
-            const closeQuickViewBtn = document.getElementById('close-quick-view-btn');
-            let isSignUp = false;
+            // General UI event listeners
+            document.getElementById('mobile-menu-button').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
+            document.getElementById('search-btn').addEventListener('click', () => document.getElementById('search-bar-container').classList.remove('opacity-0', 'pointer-events-none', '-z-10'));
+            document.getElementById('close-search-btn').addEventListener('click', () => document.getElementById('search-bar-container').classList.add('opacity-0', 'pointer-events-none', '-z-10'));
+            document.getElementById('search-input').addEventListener('keyup', (e) => renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(e.target.value.toLowerCase()))));
+            productGrid.addEventListener('click', e => { if (e.target.closest('.view-details-btn')) openQuickViewModal(e.target.closest('.view-details-btn').dataset.productId); });
+            categoryGrid.addEventListener('click', e => {
+                const btn = e.target.closest('.category-btn');
+                if (btn) {
+                    currentCategory = btn.dataset.category;
+                    renderProducts(currentCategory === 'All' ? allProducts : allProducts.filter(p => p.category === currentCategory));
+                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active-category'));
+                    btn.classList.add('active-category');
+                }
+            });
 
-            // --- Event Handlers ---
-            mobileMenuButton.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+            // Modal event listeners
+            document.getElementById('user-btn').addEventListener('click', () => document.getElementById('user-modal').classList.remove('opacity-0', 'pointer-events-none'));
+            document.getElementById('close-user-modal-btn').addEventListener('click', () => document.getElementById('user-modal').classList.add('opacity-0', 'pointer-events-none'));
+            document.getElementById('close-quick-view-btn').addEventListener('click', closeQuickViewModal);
+            document.getElementById('quick-view-buy-now-btn').addEventListener('click', handleBuyNow);
             
-            searchBtn.addEventListener('click', () => {
-                searchBarContainer.classList.remove('opacity-0', 'pointer-events-none', '-z-10');
-                searchBarContainer.classList.add('z-20');
-                headerIcons.classList.add('opacity-0', 'pointer-events-none');
-                searchInput.focus();
+            // Firebase Auth UI
+            const userForm = document.getElementById('user-form');
+            let isSignUp = false;
+            onAuthStateChanged(auth, user => {
+                document.getElementById('auth-view').classList.toggle('hidden', !!user);
+                document.getElementById('signed-in-view').classList.toggle('hidden', !user);
+                if (user) document.getElementById('user-email-display').textContent = `Signed in as ${user.email}`;
             });
-            closeSearchBtn.addEventListener('click', () => {
-                searchBarContainer.classList.add('opacity-0', 'pointer-events-none', '-z-10');
-                searchBarContainer.classList.remove('z-20');
-                headerIcons.classList.remove('opacity-0', 'pointer-events-none');
-                searchInput.value = '';
-                renderProducts(products);
+            document.getElementById('sign-out-btn').addEventListener('click', () => signOut(auth));
+            document.getElementById('user-form-toggle').addEventListener('click', e => {
+                e.preventDefault(); isSignUp = !isSignUp;
+                document.getElementById('user-modal-title').textContent = isSignUp ? 'Create Account' : 'My Account';
+                document.getElementById('user-form-submit').textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                document.getElementById('confirm-password-container').classList.toggle('hidden', !isSignUp);
             });
-            searchInput.addEventListener('keyup', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const filteredProducts = staticProducts.filter(p => p.name.toLowerCase().includes(searchTerm));
-                renderProducts(filteredProducts);
-            });
-
-            productGrid.addEventListener('click', (e) => {
-                const viewDetailsButton = e.target.closest('.view-details-btn');
-                if (viewDetailsButton) {
-                    openQuickViewModal(viewDetailsButton.dataset.productId);
-                }
-            });
-
-            categoryGrid.addEventListener('click', (e) => {
-                const button = e.target.closest('.category-btn');
-                if (button) {
-                    currentCategory = button.dataset.category;
-                    const filtered = currentCategory === 'All' 
-                        ? staticProducts 
-                        : staticProducts.filter(p => p.category === currentCategory);
-                    renderProducts(filtered);
-
-                    document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active-category'));
-                    button.classList.add('active-category');
-                }
-            });
-
-            userBtn.addEventListener('click', openUserModal);
-            closeUserModalBtn.addEventListener('click', closeUserModal);
-            userModal.addEventListener('click', (e) => { if (e.target === userModal) closeUserModal(); });
-
-            closeQuickViewBtn.addEventListener('click', closeQuickViewModal);
-            quickViewModal.addEventListener('click', (e) => { if (e.target === quickViewModal) closeQuickViewModal(); });
-
-            quickViewBuyNowBtn.addEventListener('click', handleBuyNow);
-
-            // --- Firebase Auth UI Logic ---
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    // User is signed in
-                    document.getElementById('auth-view').classList.add('hidden');
-                    document.getElementById('signed-in-view').classList.remove('hidden');
-                    userEmailDisplay.textContent = `Signed in as ${user.email}`;
-                    localStorage.setItem('customer', user.email);
-                } else {
-                    // User is signed out
-                    document.getElementById('auth-view').classList.remove('hidden');
-                    document.getElementById('signed-in-view').classList.add('hidden');
-                    userEmailDisplay.textContent = '';
-                    localStorage.removeItem('customer');
-                }
-            });
-
-            signOutBtn.addEventListener('click', () => {
-                signOut(auth).then(() => {
-                    console.log('User signed out.');
-                    closeUserModal();
-                }).catch((error) => {
-                    console.error('Sign out error', error);
-                });
-            });
-
-            userFormToggle.addEventListener('click', (e) => {
+            userForm.addEventListener('submit', e => {
                 e.preventDefault();
-                isSignUp = !isSignUp;
-                userForm.reset();
-                userFormFeedback.textContent = '';
-                if (isSignUp) {
-                    userModalTitle.textContent = 'Create Account';
-                    userFormSubmit.textContent = 'Sign Up';
-                    confirmPasswordContainer.classList.remove('hidden');
-                    document.getElementById('confirm-password').required = true;
-                    userFormToggle.innerHTML = `Already have an account? <a href="#" class="font-medium text-brand-accent hover:underline">Sign in</a>`;
-                } else {
-                    userModalTitle.textContent = 'My Account';
-                    userFormSubmit.textContent = 'Sign In';
-                    confirmPasswordContainer.classList.add('hidden');
-                    document.getElementById('confirm-password').required = false;
-                    userFormToggle.innerHTML = `Don't have an account? <a href="#" class="font-medium text-brand-accent hover:underline">Sign up</a>`;
-                }
+                const email = userForm.email.value, password = userForm.password.value;
+                const feedbackEl = document.getElementById('user-form-feedback');
+                const authFn = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
+                authFn(auth, email, password)
+                    .then(() => { feedbackEl.textContent = 'Success!'; setTimeout(() => document.getElementById('user-modal').classList.add('opacity-0', 'pointer-events-none'), 1500); })
+                    .catch(err => { feedbackEl.textContent = err.message; });
             });
-
-            userForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                userFormFeedback.classList.remove('text-red-600', 'text-green-600');
-                userFormFeedback.textContent = '';
-
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                if (isSignUp) {
-                    const confirmPassword = document.getElementById('confirm-password').value;
-                    if (password !== confirmPassword) {
-                        userFormFeedback.textContent = 'Passwords do not match.';
-                        userFormFeedback.classList.add('text-red-600');
-                        return;
-                    }
-
-                    createUserWithEmailAndPassword(auth, email, password)
-                        .then((userCredential) => {
-                            userFormFeedback.textContent = 'Account created successfully!';
-                            userFormFeedback.classList.add('text-green-600');
-                            setTimeout(() => {
-                                closeUserModal();
-                                window.location.href = './chatbot.html';
-                            }, 1500);
-                        })
-                        .catch((error) => {
-                            userFormFeedback.textContent = error.message;
-                            userFormFeedback.classList.add('text-red-600');
-                            console.error("Sign up error:", error.code, error.message);
-                        });
-                } else {
-                    signInWithEmailAndPassword(auth, email, password)
-                        .then((userCredential) => {
-                            userFormFeedback.textContent = 'Signed in successfully!';
-                            userFormFeedback.classList.add('text-green-600');
-                            setTimeout(() => {
-                                closeUserModal();
-                                window.location.href = './chatbot.html';
-                            }, 1500);
-                        })
-                        .catch((error) => {
-                            userFormFeedback.textContent = error.message;
-                            userFormFeedback.classList.add('text-red-600');
-                            console.error("Sign in error:", error.code, error.message);
-                        });
-                }
-            });
-
-            newsletterForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                newsletterFeedback.textContent = `Thank you! ${newsletterEmail.value} has been subscribed (mock).`;
-                newsletterEmail.value = '';
-                setTimeout(() => newsletterFeedback.textContent = '', 5000);
-            });
-
         });
     </script>
 </body>
