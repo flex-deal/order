@@ -238,17 +238,20 @@
 
         // --- Data Rendering ---
         function renderProducts(productsToRender) {
-            productGrid.innerHTML = productsToRender.length ? productsToRender.map(p => `
-                <div class="product-card group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
-                    <div class="relative overflow-hidden h-48">
-                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/400x400/f3f3f3/999999?text=Image+Error';">
-                        ${p.tag ? `<div class="absolute top-3 left-3 ${p.tag.toLowerCase() === 'sale' ? 'bg-red-500' : 'bg-green-500'} text-white text-xs font-bold px-2 py-1 rounded">${p.tag}</div>` : ''}
-                        <div class="absolute inset-x-0 bottom-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex justify-center">
-                            <button class="view-details-btn bg-white text-brand-primary py-2 px-4 rounded-lg font-semibold text-sm hover:bg-gray-200" data-product-id="${p.id}">View Details</button>
-                        </div>
+            productGrid.innerHTML = productsToRender.length ? productsToRender.map(p => {
+                const tagColor = p.tag?.toLowerCase() === 'sale' ? 'bg-red-500' : p.tag?.toLowerCase() === 'new' ? 'bg-green-500' : 'bg-blue-500';
+                return `
+                <div class="product-card group bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300 cursor-pointer" data-product-id="${p.id}">
+                    <div class="relative overflow-hidden aspect-video">
+                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/400x225/f3f3f3/999999?text=Image+Error';">
+                        ${p.tag ? `<div class="absolute top-2 left-2 ${tagColor} text-white text-xs font-bold px-2.5 py-1 rounded">${p.tag.toUpperCase()}</div>` : ''}
                     </div>
-                    <div class="p-4 text-center"><h3 class="product-name text-lg font-semibold text-gray-800 mb-1 truncate">${p.name}</h3><p class="text-brand-accent font-bold">Starts from ₹${p.variants[0].price.toLocaleString('en-IN')}</p></div>
-                </div>`).join('') : '<p class="col-span-full text-center text-gray-600">No products found.</p>';
+                    <div class="p-4 text-center bg-white">
+                        <h3 class="product-name text-md font-semibold text-gray-900 capitalize mb-1 truncate" title="${p.name}">${p.name}</h3>
+                        <p class="text-sm text-blue-600 font-semibold">Starts from ₹${p.variants[0].price.toLocaleString('en-IN')}</p>
+                    </div>
+                </div>
+            `}).join('') : '<p class="col-span-full text-center text-gray-600">No products found.</p>';
         }
         
         function renderCategories(categoriesData) {
@@ -340,7 +343,14 @@
             document.getElementById('search-btn').addEventListener('click', () => document.getElementById('search-bar-container').classList.remove('opacity-0', 'pointer-events-none', '-z-10'));
             document.getElementById('close-search-btn').addEventListener('click', () => document.getElementById('search-bar-container').classList.add('opacity-0', 'pointer-events-none', '-z-10'));
             document.getElementById('search-input').addEventListener('keyup', (e) => renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(e.target.value.toLowerCase()))));
-            productGrid.addEventListener('click', e => { if (e.target.closest('.view-details-btn')) openQuickViewModal(e.target.closest('.view-details-btn').dataset.productId); });
+            
+            productGrid.addEventListener('click', e => {
+                const card = e.target.closest('.product-card');
+                if (card) {
+                    openQuickViewModal(card.dataset.productId);
+                }
+            });
+
             categoryGrid.addEventListener('click', e => {
                 const btn = e.target.closest('.category-btn');
                 if (btn) {
