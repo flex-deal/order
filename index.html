@@ -38,7 +38,18 @@
         body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
         i[data-lucide] { width: 24px; height: 24px; }
         .search-bar-container { transition: all 0.3s ease-in-out; }
-        .modal-overlay { transition: opacity 0.3s ease-in-out; }
+        
+        /* Modal Animation Styles */
+        .modal-overlay { 
+            transition: opacity 0.3s ease-in-out; 
+        }
+        .modal-content {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .modal-overlay.opacity-0 .modal-content {
+            transform: scale(0.95);
+            opacity: 0;
+        }
         .active-category { box-shadow: 0 0 0 3px #4a90e2; }
         .selected-option { border: 2px solid #4a90e2; box-shadow: 0 0 0 1px #4a90e2; }
     </style>
@@ -153,13 +164,13 @@
                 <div><h3 class="text-lg font-semibold mb-4">Customer Service</h3><ul class="space-y-3"><li><a href="#contact" class="text-gray-400 hover:text-white">Contact Us</a></li><li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li></ul></div>
                 <div><h3 class="text-lg font-semibold mb-4">Follow Us</h3><div class="flex space-x-4"><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="facebook"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="instagram"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="twitter"></i></a></div></div>
             </div>
-            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500"><p>© 2024 Digi Click. All Rights Reserved.</p></div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500"><p>© 2024 Digi Click. All Rights Reserved.<br> powered by flexdeal</p></div>
         </div>
     </footer>
 
     <!-- User Profile Modal -->
     <div id="user-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full modal-content">
             <div class="flex justify-between items-center mb-6"><h2 id="user-modal-title" class="text-2xl font-bold">My Account</h2><button id="close-user-modal-btn" class="text-gray-500 hover:text-brand-primary"><i data-lucide="x"></i></button></div>
             <div id="auth-view">
                 <form id="user-form">
@@ -176,18 +187,23 @@
     </div>
     
     <!-- Quick View Modal -->
-    <div id="quick-view-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full flex flex-col md:flex-row gap-8 relative">
-            <button id="close-quick-view-btn" class="absolute top-4 right-4 text-gray-500 hover:text-brand-primary"><i data-lucide="x"></i></button>
-            <div class="md:w-1/2"><img id="quick-view-image" src="https://placehold.co/400x500/fecaca/333333?text=Product" alt="Product Image" class="w-full h-auto rounded-lg"></div>
-            <div class="md:w-1/2 flex flex-col justify-between">
-                <div>
-                    <h2 id="quick-view-name" class="text-3xl font-bold mb-2">Product Name</h2>
-                    <p id="quick-view-price" class="text-2xl font-bold text-brand-accent mb-4">₹0</p>
-                    <p id="quick-view-description" class="text-gray-600 mb-6">A brief description of the product.</p>
-                    <div id="quick-view-variants" class="mb-6"><h3 class="font-semibold text-lg mb-2">Select Variant:</h3><div class="flex flex-wrap gap-2" id="variant-options"></div></div>
+    <div id="quick-view-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
+        <div class="modal-content bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <div class="relative">
+                <img id="quick-view-image" src="https://placehold.co/600x400/cccccc/333333?text=Product" alt="Product Image" class="w-full h-48 object-cover rounded-t-xl">
+                <button id="close-quick-view-btn" class="absolute top-3 right-3 bg-gray-900 bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-75 transition-colors">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <h2 id="quick-view-name" class="text-3xl font-bold mb-2">Product Name</h2>
+                <p id="quick-view-price" class="text-2xl font-bold text-brand-accent mb-4">₹0</p>
+                <div id="quick-view-description" class="text-gray-600 mb-6 space-y-2"></div>
+                <div id="quick-view-variants" class="mb-6">
+                    <h3 class="font-semibold text-lg mb-3">Select Variant:</h3>
+                    <div class="flex flex-wrap gap-3" id="variant-options"></div>
                 </div>
-                <button id="quick-view-buy-now-btn" class="w-full bg-brand-accent text-white font-bold py-3 rounded-lg hover:bg-brand-accent-hover">Buy Now</button>
+                <button id="quick-view-buy-now-btn" class="w-full bg-brand-accent text-white font-bold py-3.5 rounded-lg hover:bg-brand-accent-hover transition-colors text-lg">Buy Now</button>
             </div>
         </div>
     </div>
@@ -304,17 +320,31 @@
         function openQuickViewModal(productId) {
             selectedProduct = allProducts.find(p => p.id === productId);
             if (!selectedProduct) return;
+            
             document.getElementById('quick-view-image').src = selectedProduct.image;
             document.getElementById('quick-view-name').textContent = selectedProduct.name;
-            document.getElementById('quick-view-description').textContent = selectedProduct.description;
+            
+            // To create the feature list, we assume the description is a string of points separated by newlines.
+            const descriptionContainer = document.getElementById('quick-view-description');
+            descriptionContainer.innerHTML = selectedProduct.description
+                .split('\n')
+                .filter(line => line.trim() !== '')
+                .map(line => `
+                    <div class="flex items-start">
+                        <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5"></i>
+                        <span>${line}</span>
+                    </div>
+                `).join('');
+
             const variantOptionsContainer = document.getElementById('variant-options');
             variantOptionsContainer.innerHTML = '';
             selectedVariant = null;
             document.getElementById('quick-view-buy-now-btn').disabled = true;
+
             if (selectedProduct.variants?.length) {
                 selectedProduct.variants.forEach((variant, index) => {
                     const btn = document.createElement('button');
-                    btn.className = `px-4 py-2 border rounded-md hover:border-brand-accent text-sm`;
+                    btn.className = `px-4 py-2 border rounded-md hover:border-brand-accent text-sm transition-colors`;
                     btn.textContent = variant.name;
                     btn.addEventListener('click', () => {
                         variantOptionsContainer.querySelectorAll('button').forEach(b => b.classList.remove('selected-option'));
@@ -325,12 +355,19 @@
                     });
                     variantOptionsContainer.appendChild(btn);
                 });
-                variantOptionsContainer.querySelector('button').click();
+                // Automatically select the first variant
+                if (variantOptionsContainer.firstChild) {
+                    variantOptionsContainer.firstChild.click();
+                }
             }
+            
             quickViewModal.classList.remove('opacity-0', 'pointer-events-none');
+            lucide.createIcons(); // Re-render icons for the new checkmarks
         }
 
-        function closeQuickViewModal() { quickViewModal.classList.add('opacity-0', 'pointer-events-none'); }
+        function closeQuickViewModal() { 
+            quickViewModal.classList.add('opacity-0', 'pointer-events-none'); 
+        }
 
         // --- DOM Event Listeners ---
         document.addEventListener('DOMContentLoaded', () => {
