@@ -3,439 +3,919 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DigiClick - Software E-commerce</title>
-    
-    <!-- Tailwind CSS CDN -->
+    <title>ToyTopia Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Lucide Icons CDN (Vanilla JS version) -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        'brand-primary': '#1a1a1a',
-                        'brand-secondary': '#f3f3f3',
-                        'brand-accent': '#4a90e2',
-                        'brand-accent-hover': '#357abd',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
     <style>
-        html { scroll-behavior: smooth; }
-        body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
-        i[data-lucide] { width: 24px; height: 24px; }
-        .search-bar-container { transition: all 0.3s ease-in-out; }
-        
-        /* Modal Animation Styles */
-        .modal-overlay { 
-            transition: opacity 0.3s ease-in-out; 
+        body { font-family: 'Nunito', sans-serif; }
+        .modal { display: none; }
+        .modal.flex { display: flex; }
+        .admin-tab.active {
+            border-color: #0ea5e9;
+            background-color: #e0f2fe;
+            color: #0284c7;
         }
-        .modal-content {
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-        }
-        .modal-overlay.opacity-0 .modal-content {
-            transform: scale(0.95);
-            opacity: 0;
-        }
-        .active-category { box-shadow: 0 0 0 3px #4a90e2; }
-        .selected-option { border: 2px solid #4a90e2; box-shadow: 0 0 0 1px #4a90e2; }
     </style>
 </head>
-<body class="bg-white text-brand-primary">
+<body class="bg-gray-100">
 
-    <!-- Announcement Bar -->
-    <div id="promotion-bar" class="bg-brand-primary text-white text-center py-2.5 text-sm font-medium">
-        Loading...
+    <!-- Login Form -->
+    <div id="login-form-container" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-sm">
+            <div class="flex justify-center mb-6">
+                 <i data-feather="box" class="w-12 h-12 text-sky-500"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-1">Admin Login</h2>
+            <p class="text-center text-gray-500 mb-6">Welcome to the ToyTopia Panel</p>
+            <form id="login-form">
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                    <input type="email" id="email" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                </div>
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                    <input type="password" id="password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                </div>
+                <p id="login-error" class="text-red-500 text-sm mb-4 hidden">Invalid email or password. Please try again.</p>
+                <button type="submit" class="w-full bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition">Login</button>
+            </form>
+        </div>
     </div>
 
-    <!-- Header -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div class="container mx-auto px-4">
-            <div class="flex items-center justify-between h-20 relative">
-                <a href="#" class="text-2xl font-bold tracking-tight z-10">Digi Click</a>
-                <nav class="hidden md:flex items-center space-x-8">
-                    <a href="#home" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Home</a>
-                    <a href="#shop" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Shop</a>
-                    <a href="#about" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">About Us</a>
-                    <a href="./chatbot.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Chat Bot</a>
-                    <a href="./contect.html" class="text-gray-600 hover:text-brand-accent transition-colors duration-300 font-medium">Contact</a>
-                </nav>
-                <div id="search-bar-container" class="search-bar-container absolute right-0 flex items-center justify-end w-full h-full bg-white opacity-0 pointer-events-none -z-10">
-                    <input type="text" id="search-input" placeholder="Search for products..." class="w-full max-w-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-accent">
-                    <button id="close-search-btn" class="ml-2 text-gray-500 hover:text-brand-primary"><i data-lucide="x"></i></button>
-                </div>
-                <div id="header-icons" class="flex items-center space-x-5 z-10">
-                    <button id="search-btn" class="text-gray-500 hover:text-brand-accent"><i data-lucide="search"></i></button>
-                    <button id="user-btn" class="text-gray-500 hover:text-brand-accent"><i data-lucide="user"></i></button>
-                    <button id="mobile-menu-button" class="md:hidden text-gray-500 hover:text-brand-accent"><i data-lucide="menu"></i></button>
-                </div>
-            </div>
-        </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
-            <nav class="flex flex-col p-4 space-y-4">
-                <a href="#home" class="text-gray-600 hover:text-brand-accent">Home</a>
-                <a href="#shop" class="text-gray-600 hover:text-brand-accent">Shop</a>
-                <a href="#about" class="text-gray-600 hover:text-brand-accent">About Us</a>
-                <a href="./chatbot.html" class="text-gray-600 hover:text-brand-accent">Chat Bot</a>
-                <a href="./contect.html" class="text-gray-600 hover:text-brand-accent">Contact</a>
+    <!-- Admin Panel Container -->
+    <div id="admin-panel" class="hidden container mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+        <!-- Admin Tabs -->
+        <div class="mb-6 border-b border-gray-200">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                <button data-tab="products" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Products</button>
+                <button data-tab="categories" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Categories</button>
+                <button data-tab="customers" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Customers</button>
+                <button data-tab="reviews" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Reviews</button>
+                <button data-tab="discounts" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Discounts</button>
+                <button data-tab="payments" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Payment Gateway</button>
+                <button data-tab="settings" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Site Settings</button>
             </nav>
         </div>
-    </header>
 
-    <main id="home">
-        <!-- Hero Section -->
-        <section id="hero-section" class="relative h-[60vh] md:h-[80vh] bg-cover bg-center text-white bg-gray-300">
-            <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-            <div class="relative z-10 flex flex-col items-center justify-center h-full text-center px-4">
-                <h1 id="hero-title" class="text-4xl md:text-6xl lg:text-7xl font-extrabold mb-4 leading-tight">Loading...</h1>
-                <p id="hero-subtitle" class="text-lg md:text-xl max-w-2xl mb-8">Please wait while we fetch the latest styles.</p>
-                <a href="#shop" class="bg-brand-accent hover:bg-brand-accent-hover text-white font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105 duration-300">Shop Now</a>
-            </div>
-        </section>
-
-        <!-- Featured Categories -->
-        <section id="shop" class="py-16 md:py-24 bg-brand-secondary">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center mb-12">Shop by Category</h2>
-                <div id="category-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-8"><p class="col-span-full text-center">Loading categories...</p></div>
-            </div>
-        </section>
-
-        <!-- Best Sellers -->
-        <section id="new-arrivals" class="py-16 md:py-24 bg-white">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center mb-12">Our Best Sellers</h2>
-                <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"><p class="col-span-full text-center">Loading products...</p></div>
-            </div>
-        </section>
-
-        <!-- Sale Banner -->
-        <section class="bg-brand-primary text-white">
-            <div class="container mx-auto px-4 py-16 text-center">
-                <h2 class="text-3xl md:text-4xl font-bold mb-2">LIMITED TIME OFFERS!</h2>
-                <p class="text-lg md:text-xl mb-6">Exclusive discounts on premium software. Don't miss out!</p>
-                <a href="#shop" class="bg-white text-brand-primary font-bold py-3 px-8 rounded-lg text-lg hover:bg-gray-200 transition-colors duration-300">Explore Deals</a>
-            </div>
-        </section>
-
-        <!-- Testimonials -->
-        <section id="about" class="py-16 md:py-24 bg-brand-secondary">
-            <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
-                <div id="testimonial-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8"><p class="col-span-full text-center">Loading testimonials...</p></div>
-            </div>
-        </section>
-        
-        <!-- Newsletter Subscription -->
-        <section id="contact" class="py-16 bg-white">
-            <div class="container mx-auto px-4">
-                <div class="max-w-2xl mx-auto text-center">
-                    <h2 class="text-3xl font-bold mb-4">Join Our Newsletter</h2>
-                    <p class="text-gray-600 mb-8">Subscribe to get the latest on sales, new releases and more.</p>
-                    <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4">
-                        <input type="email" id="newsletter-email" placeholder="Enter your email" class="flex-grow w-full px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-accent" required>
-                        <button type="submit" class="bg-brand-primary text-white font-bold py-3 px-8 rounded-md hover:bg-gray-800 transition-colors duration-300">Subscribe</button>
-                    </form>
-                    <p id="newsletter-feedback" class="mt-4 text-green-600"></p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-brand-primary text-white">
-        <div class="container mx-auto px-4 py-16">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
-                <div><h3 class="text-xl font-bold mb-4">Digi Click</h3><p class="text-gray-400">Your destination for modern, stylish, and high-quality software solutions.</p></div>
-                <div><h3 class="text-lg font-semibold mb-4">Shop</h3><ul class="space-y-3"><li><a href="#new-arrivals" class="text-gray-400 hover:text-white">New Arrivals</a></li><li><a href="#shop" class="text-gray-400 hover:text-white">Best Sellers</a></li></ul></div>
-                <div><h3 class="text-lg font-semibold mb-4">Customer Service</h3><ul class="space-y-3"><li><a href="#contact" class="text-gray-400 hover:text-white">Contact Us</a></li><li><a href="#" class="text-gray-400 hover:text-white">FAQ</a></li></ul></div>
-                <div><h3 class="text-lg font-semibold mb-4">Follow Us</h3><div class="flex space-x-4"><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="facebook"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="instagram"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-lucide="twitter"></i></a></div></div>
-            </div>
-            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500"><p>© 2024 Digi Click. All Rights Reserved.<br> powered by flexdeal</p></div>
-        </div>
-    </footer>
-
-    <!-- User Profile Modal -->
-    <div id="user-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full modal-content">
-            <div class="flex justify-between items-center mb-6"><h2 id="user-modal-title" class="text-2xl font-bold">My Account</h2><button id="close-user-modal-btn" class="text-gray-500 hover:text-brand-primary"><i data-lucide="x"></i></button></div>
-            <div id="auth-view">
-                <form id="user-form">
-                    <div class="mb-4"><label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label><input type="email" id="email" class="w-full px-3 py-2 border rounded-md" placeholder="you@example.com" required></div>
-                    <div class="mb-4"><label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label><input type="password" id="password" class="w-full px-3 py-2 border rounded-md" placeholder="••••••••" required></div>
-                    <div id="confirm-password-container" class="mb-6 hidden"><label for="confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label><input type="password" id="confirm-password" class="w-full px-3 py-2 border rounded-md" placeholder="••••••••"></div>
-                    <p id="user-form-feedback" class="mb-4 text-sm text-center"></p>
-                    <button id="user-form-submit" type="submit" class="w-full bg-brand-primary text-white font-bold py-3 rounded-md hover:bg-gray-800">Sign In</button>
-                    <p id="user-form-toggle" class="text-center text-sm text-gray-600 mt-4">Don't have an account? <a href="#" class="font-medium text-brand-accent hover:underline">Sign up</a></p>
-                </form>
-            </div>
-            <div id="signed-in-view" class="hidden"><p id="user-email-display" class="mb-4 text-center"></p><button id="sign-out-btn" class="w-full bg-red-500 text-white font-bold py-3 rounded-md hover:bg-red-600">Sign Out</button></div>
-        </div>
-    </div>
-    
-    <!-- Quick View Modal -->
-    <div id="quick-view-modal" class="modal-overlay fixed inset-0 bg-black bg-opacity-60 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none">
-        <div class="modal-content bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-            <div class="relative">
-                <img id="quick-view-image" src="https://placehold.co/600x400/cccccc/333333?text=Product" alt="Product Image" class="w-full h-48 object-cover rounded-t-xl">
-                <button id="close-quick-view-btn" class="absolute top-3 right-3 bg-gray-900 bg-opacity-50 text-white rounded-full p-2 hover:bg-opacity-75 transition-colors">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+        <!-- Products Section -->
+        <div id="products-section" class="admin-section">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-black text-gray-800">Product Management</h1>
+                <button id="add-product-btn" class="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition flex items-center space-x-2">
+                    <i data-feather="plus-circle" class="w-5 h-5"></i>
+                    <span>Add New Product</span>
                 </button>
             </div>
-            <div class="p-6">
-                <h2 id="quick-view-name" class="text-3xl font-bold mb-2">Product Name</h2>
-                <p id="quick-view-price" class="text-2xl font-bold text-brand-accent mb-4">₹0</p>
-                <div id="quick-view-description" class="text-gray-600 mb-6 space-y-2"></div>
-                <div id="quick-view-variants" class="mb-6">
-                    <h3 class="font-semibold text-lg mb-3">Select Variant:</h3>
-                    <div class="flex flex-wrap gap-3" id="variant-options"></div>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Product Name</th>
+                                <th scope="col" class="px-6 py-3">Category</th>
+                                <th scope="col" class="px-6 py-3">Price</th>
+                                <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body"></tbody>
+                    </table>
                 </div>
-                <button id="quick-view-buy-now-btn" class="w-full bg-brand-accent text-white font-bold py-3.5 rounded-lg hover:bg-brand-accent-hover transition-colors text-lg">Buy Now</button>
+            </div>
+        </div>
+
+        <!-- Categories Section -->
+        <div id="categories-section" class="admin-section hidden">
+             <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-black text-gray-800">Category Management</h1>
+                <div class="flex space-x-2">
+                    <input type="text" id="new-category-name" placeholder="New category name" class="border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                    <button id="add-category-btn" class="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition">Add Category</button>
+                </div>
+            </div>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <ul id="category-list" class="divide-y divide-gray-200">
+                    <!-- Category items will be injected here -->
+                </ul>
+            </div>
+        </div>
+
+        <!-- Customers Section -->
+        <div id="customers-section" class="admin-section hidden">
+            <h1 class="text-4xl font-black text-gray-800 mb-6">Customer Data</h1>
+             <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Name</th>
+                                <th scope="col" class="px-6 py-3">Phone</th>
+                                <th scope="col" class="px-6 py-3">Address</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div id="reviews-section" class="admin-section hidden">
+            <h1 class="text-4xl font-black text-gray-800 mb-6">Review Management</h1>
+            <div id="review-list" class="space-y-6">
+                <!-- Review cards will be injected here -->
+            </div>
+        </div>
+
+        <!-- Discounts Section -->
+        <div id="discounts-section" class="admin-section hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h1 class="text-4xl font-black text-gray-800">Discount Management</h1>
+                <button id="add-discount-btn" class="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition flex items-center space-x-2">
+                    <i data-feather="tag" class="w-5 h-5"></i>
+                    <span>Add New Discount</span>
+                </button>
+            </div>
+            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3">Code</th>
+                                <th scope="col" class="px-6 py-3">Type</th>
+                                <th scope="col" class="px-6 py-3">Value</th>
+                                <th scope="col" class="px-6 py-3">Expiry</th>
+                                <th scope="col" class="px-6 py-3">Active</th>
+                                <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="discounts-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment Gateway Section -->
+        <div id="payments-section" class="admin-section hidden">
+            <h1 class="text-4xl font-black text-gray-800 mb-6">Payment Gateway Settings (Razorpay)</h1>
+            <div class="bg-white rounded-xl shadow-md">
+                <form id="payment-settings-form" class="p-6 space-y-4">
+                    <div>
+                        <label for="razorpayKeyId" class="block text-sm font-medium text-gray-700">Razorpay Key ID</label>
+                        <input type="text" id="razorpayKeyId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500" placeholder="rzp_test_XXXXXXXXXXXXXXXX">
+                    </div>
+                    <div>
+                        <label for="razorpayKeySecret" class="block text-sm font-medium text-gray-700">Razorpay Key Secret</label>
+                        <input type="text" id="razorpayKeySecret" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500" placeholder="XXXXXXXXXXXXXXXXXXXXXX">
+                    </div>
+                    <div class="pt-4 flex justify-end">
+                        <button type="submit" class="bg-green-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-600 transition">Save Payment Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Site Settings Section -->
+        <div id="settings-section" class="admin-section hidden">
+            <h1 class="text-4xl font-black text-gray-800 mb-6">Site Settings</h1>
+            <div class="bg-white rounded-xl shadow-md">
+                <form id="site-settings-form" class="p-6 space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="heroTitle" class="block text-sm font-medium text-gray-700">Hero Title</label>
+                            <input type="text" id="heroTitle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        </div>
+                        <div>
+                            <label for="heroSubtitle" class="block text-sm font-medium text-gray-700">Hero Subtitle</label>
+                            <input type="text" id="heroSubtitle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        </div>
+                        <div>
+                            <label for="contactEmail" class="block text-sm font-medium text-gray-700">Contact Email</label>
+                            <input type="email" id="contactEmail" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        </div>
+                        <div>
+                            <label for="contactPhone" class="block text-sm font-medium text-gray-700">Contact Phone</label>
+                            <input type="text" id="contactPhone" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        </div>
+                         <div>
+                            <label for="facebookUrl" class="block text-sm font-medium text-gray-700">Facebook URL</label>
+                            <input type="url" id="facebookUrl" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        </div>
+                         <div>
+                            <label for="instagramUrl" class="block text-sm font-medium text-gray-700">Instagram URL</label>
+                            <input type="url" id="instagramUrl" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        </div>
+                         <div>
+                            <label for="twitterUrl" class="block text-sm font-medium text-gray-700">Twitter URL</label>
+                            <input type="url" id="twitterUrl" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        </div>
+                    </div>
+                    <div class="pt-4 flex justify-end">
+                        <button type="submit" class="bg-green-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-600 transition">Save Settings</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Payment & Thank You Modals -->
-    <div id="payment-processing-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden"><div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center"><i data-lucide="credit-card" class="w-16 h-16 text-brand-accent mx-auto mb-4 animate-pulse"></i><h2 class="text-2xl font-bold mb-2">Redirecting...</h2><p class="text-gray-600">Please wait while we prepare your secure payment link.</p></div></div>
-    <div id="thank-you-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-50 flex items-center justify-center p-4 hidden"><div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center"><i data-lucide="check-circle" class="w-16 h-16 text-green-500 mx-auto mb-4"></i><h2 class="text-2xl font-bold mb-2">Payment Processing...</h2><p class="text-gray-600">You will be redirected shortly.</p></div></div>
-
-    <script type="module">
-        // --- Firebase Integration ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyBgErP_g_ZqKraxqFAQi3W0YdwwkQdAZzg",
-            authDomain: "my-chat-app-a9b9e.firebaseapp.com",
-            projectId: "my-chat-app-a9b9e",
-            storageBucket: "my-chat-app-a9b9e.appspot.com",
-            messagingSenderId: "292137527608",
-            appId: "1:292137527608:web:692b165effa77e79bf79cd"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const productsCollection = collection(db, 'products');
-        const categoriesCollection = collection(db, 'categories');
-        const testimonialsCollection = collection(db, 'testimonials');
-        const siteContentDocRef = doc(db, 'siteContent', 'homepage');
-
-        // --- Global State ---
-        let allProducts = [];
-        let currentCategory = 'All';
-        let selectedProduct = null;
-        let selectedVariant = null;
-
-        // --- UI Elements ---
-        const productGrid = document.getElementById('product-grid');
-        const categoryGrid = document.getElementById('category-grid');
-        const testimonialGrid = document.getElementById('testimonial-grid');
-        const heroTitle = document.getElementById('hero-title');
-        const heroSubtitle = document.getElementById('hero-subtitle');
-        const heroSection = document.getElementById('hero-section');
-        const promotionBar = document.getElementById('promotion-bar');
-        const quickViewModal = document.getElementById('quick-view-modal');
-
-        // --- Data Rendering ---
-        function renderProducts(productsToRender) {
-            productGrid.innerHTML = productsToRender.length ? productsToRender.map(p => {
-                const tagColor = p.tag?.toLowerCase() === 'sale' ? 'bg-red-500' : p.tag?.toLowerCase() === 'new' ? 'bg-green-500' : 'bg-blue-500';
-                return `
-                <div class="product-card group bg-white rounded-lg overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300" data-product-id="${p.id}">
-                    <div class="relative overflow-hidden aspect-video">
-                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" onerror="this.onerror=null;this.src='https://placehold.co/400x225/f3f3f3/999999?text=Image+Error';">
-                        ${p.tag ? `<div class="absolute top-2 left-2 ${tagColor} text-white text-xs font-bold px-2.5 py-1 rounded">${p.tag.toUpperCase()}</div>` : ''}
-                        <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                           <button class="view-details-btn bg-white text-gray-800 font-bold py-2 px-6 rounded-md transform scale-90 group-hover:scale-100 transition-transform duration-300 ease-in-out">View Details</button>
-                        </div>
+    <!-- Add/Edit Product Modal -->
+    <div id="product-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 justify-center items-start p-4 overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8">
+            <form id="product-form" class="p-6">
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h2 id="modal-title" class="text-2xl font-bold">Add New Product</h2>
+                    <button type="button" id="close-modal-btn" class="text-gray-400 hover:text-gray-800"><i data-feather="x" class="w-8 h-8"></i></button>
+                </div>
+                <div class="mt-6 space-y-4">
+                    <input type="hidden" id="productId">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
+                        <input type="text" id="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
                     </div>
-                    <div class="p-4 text-center bg-white">
-                        <h3 class="product-name text-md font-semibold text-gray-900 capitalize mb-1 truncate" title="${p.name}">${p.name}</h3>
-                        <p class="text-sm text-blue-600 font-semibold">Starts from ₹${p.variants[0].price.toLocaleString('en-IN')}</p>
+                    <div>
+                        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
+                        <select id="category" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500"></select>
+                    </div>
+                    <div>
+                        <label for="price" class="block text-sm font-medium text-gray-700">Price (INR)</label>
+                        <input type="number" id="price" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                    </div>
+                    <div>
+                        <label for="images" class="block text-sm font-medium text-gray-700">Image URLs (comma-separated)</label>
+                        <textarea id="images" rows="3" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500" placeholder="https://placehold.co/img1.png, https://placehold.co/img2.png"></textarea>
+                    </div>
+                    <div>
+                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                        <textarea id="description" rows="4" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500"></textarea>
+                    </div>
+                     <div>
+                        <label for="specifications" class="block text-sm font-medium text-gray-700">Specifications (use &lt;li&gt; tags)</label>
+                        <textarea id="specifications" rows="4" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500" placeholder="<li>Spec 1</li><li>Spec 2</li>"></textarea>
                     </div>
                 </div>
-            `;
-            }).join('') : '<p class="col-span-full text-center text-gray-600">No products found.</p>';
-        }
-        
-        function renderCategories(categoriesData) {
-            let html = `<button data-category="All" class="category-btn group relative overflow-hidden rounded-lg active-category aspect-video"><div class="absolute inset-0 bg-brand-primary flex items-center justify-center"><h3 class="text-white text-xl font-bold">All</h3></div></button>`;
-            html += categoriesData.map(c => `
-                <button data-category="${c.name}" class="category-btn group relative overflow-hidden rounded-lg aspect-video">
-                    <img src="${c.image}" alt="${c.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" onerror="this.onerror=null;this.src='https://placehold.co/300x200/cccccc/333333?text=${c.name}';">
-                    <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center p-2"><h3 class="text-white text-xl font-bold text-center">${c.name}</h3></div>
-                </button>`).join('');
-            categoryGrid.innerHTML = html;
-        }
-        
-        function renderTestimonials(testimonials) {
-            testimonialGrid.innerHTML = testimonials.length ? testimonials.map(t => `
-                <div class="bg-white p-8 rounded-lg shadow-md text-center">
-                    <img src="${t.image}" class="w-20 h-20 rounded-full mx-auto mb-4" alt="${t.name}" onerror="this.onerror=null;this.src='https://placehold.co/100x100/cccccc/333333?text=User';">
-                    <p class="text-gray-600 mb-4">"${t.text}"</p><h4 class="font-bold text-lg">${t.name}</h4><p class="text-sm text-gray-500">${t.location}</p>
-                </div>`).join('') : '<p class="col-span-full text-center">No testimonials yet.</p>';
-        }
+                <div class="pt-6 border-t mt-6 flex justify-end space-x-2">
+                    <button type="button" id="cancel-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                    <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        function renderSiteContent(data) {
-            heroTitle.textContent = data.heroTitle || 'Welcome to DigiClick';
-            heroSubtitle.textContent = data.heroSubtitle || 'Your one-stop shop for software.';
-            heroSection.style.backgroundImage = `url('${data.heroBackgroundImage || ''}')`;
-            promotionBar.textContent = data.promotionText || 'Check out our latest deals!';
-        }
-
-        // --- Purchase & Modal Logic ---
-        async function handleBuyNow() {
-            if (!selectedProduct || !selectedVariant) return;
-            if (!selectedVariant.paymentLink) { alert("No payment link configured."); return; }
-            try {
-                const paymentWindow = window.open(selectedVariant.paymentLink, '_blank');
-                if (!paymentWindow) alert("Pop-up blocked. Please allow pop-ups.");
-            } catch (e) { alert("Error opening payment window."); }
-            const paymentProcessingOverlay = document.getElementById('payment-processing-overlay');
-            paymentProcessingOverlay.classList.remove('hidden');
-            closeQuickViewModal();
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            paymentProcessingOverlay.classList.add('hidden');
-            const thankYouOverlay = document.getElementById('thank-you-overlay');
-            thankYouOverlay.classList.remove('hidden');
-            setTimeout(() => thankYouOverlay.classList.add('hidden'), 3000);
-        }
-
-        function openQuickViewModal(productId) {
-            selectedProduct = allProducts.find(p => p.id === productId);
-            if (!selectedProduct) return;
-            
-            document.getElementById('quick-view-image').src = selectedProduct.image;
-            document.getElementById('quick-view-name').textContent = selectedProduct.name;
-            
-            // To create the feature list, we assume the description is a string of points separated by newlines.
-            const descriptionContainer = document.getElementById('quick-view-description');
-            descriptionContainer.innerHTML = selectedProduct.description
-                .split('\n')
-                .filter(line => line.trim() !== '')
-                .map(line => `
-                    <div class="flex items-start">
-                        <i data-lucide="check" class="w-5 h-5 text-green-500 mr-2 flex-shrink-0 mt-0.5"></i>
-                        <span>${line}</span>
+    <!-- Add/Edit Discount Modal -->
+    <div id="discount-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 justify-center items-start p-4 overflow-y-auto">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8">
+            <form id="discount-form" class="p-6">
+                <div class="flex justify-between items-center pb-4 border-b">
+                    <h2 id="discount-modal-title" class="text-2xl font-bold">Add New Discount</h2>
+                    <button type="button" id="close-discount-modal-btn" class="text-gray-400 hover:text-gray-800"><i data-feather="x" class="w-8 h-8"></i></button>
+                </div>
+                <div class="mt-6 space-y-4">
+                    <input type="hidden" id="discountId">
+                    <div>
+                        <label for="discountCode" class="block text-sm font-medium text-gray-700">Discount Code</label>
+                        <input type="text" id="discountCode" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
                     </div>
-                `).join('');
+                    <div>
+                        <label for="discountType" class="block text-sm font-medium text-gray-700">Discount Type</label>
+                        <select id="discountType" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <option value="percentage">Percentage (%)</option>
+                            <option value="fixed">Fixed Amount (₹)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="discountValue" class="block text-sm font-medium text-gray-700">Value</label>
+                        <input type="number" id="discountValue" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                    </div>
+                    <div>
+                        <label for="discountExpiry" class="block text-sm font-medium text-gray-700">Expiry Date</label>
+                        <input type="date" id="discountExpiry" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="discountActive" class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded">
+                        <label for="discountActive" class="ml-2 block text-sm text-gray-900">Is Active</label>
+                    </div>
+                </div>
+                <div class="pt-6 border-t mt-6 flex justify-end space-x-2">
+                    <button type="button" id="cancel-discount-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                    <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">Save Discount</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-            const variantOptionsContainer = document.getElementById('variant-options');
-            variantOptionsContainer.innerHTML = '';
-            selectedVariant = null;
-            document.getElementById('quick-view-buy-now-btn').disabled = true;
 
-            if (selectedProduct.variants?.length) {
-                selectedProduct.variants.forEach((variant, index) => {
-                    const btn = document.createElement('button');
-                    btn.className = `px-4 py-2 border rounded-md hover:border-brand-accent text-sm transition-colors`;
-                    btn.textContent = variant.name;
-                    btn.addEventListener('click', () => {
-                        variantOptionsContainer.querySelectorAll('button').forEach(b => b.classList.remove('selected-option'));
-                        btn.classList.add('selected-option');
-                        selectedVariant = selectedProduct.variants[index];
-                        document.getElementById('quick-view-price').textContent = `₹${selectedVariant.price.toLocaleString('en-IN')}`;
-                        document.getElementById('quick-view-buy-now-btn').disabled = false;
-                    });
-                    variantOptionsContainer.appendChild(btn);
-                });
-                // Automatically select the first variant
-                if (variantOptionsContainer.firstChild) {
-                    variantOptionsContainer.firstChild.click();
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, addDoc, doc, getDoc, setDoc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC6d4IFA1q5JLQjWiCI46CYr_zWdklvoNs",
+            authDomain: "tddd-ff95c.firebaseapp.com",
+            projectId: "tddd-ff95c",
+            storageBucket: "tddd-ff95c.appspot.com",
+            messagingSenderId: "739673617101",
+            appId: "1:739673617101:web:2840eb62258a6ca4feef84"
+        };
+
+        // --- Main App Initialization ---
+        async function main() {
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+            const auth = getAuth(app);
+            
+            // Firebase Collection References
+            const productsCollection = collection(db, 'products');
+            const categoriesCollection = collection(db, 'categories');
+            const customersCollection = collection(db, 'customers');
+            const discountsCollection = collection(db, 'discounts'); // New: Discounts Collection
+            const siteContentRef = doc(db, 'site_content', 'main');
+
+            // --- UI Elements ---
+            const loginContainer = document.getElementById('login-form-container');
+            const adminPanel = document.getElementById('admin-panel');
+            const loginForm = document.getElementById('login-form');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const loginError = document.getElementById('login-error');
+            
+            const productModal = document.getElementById('product-modal');
+            const productForm = document.getElementById('product-form');
+            const modalTitle = document.getElementById('modal-title');
+            const productsTableBody = document.getElementById('products-table-body');
+            const siteSettingsForm = document.getElementById('site-settings-form');
+            const paymentSettingsForm = document.getElementById('payment-settings-form'); // New: Payment Settings Form
+            const categoryList = document.getElementById('category-list');
+            const customersTableBody = document.getElementById('customers-table-body');
+            const reviewList = document.getElementById('review-list');
+            const discountsTableBody = document.getElementById('discounts-table-body'); // New: Discounts Table Body
+            const discountModal = document.getElementById('discount-modal'); // New: Discount Modal
+            const discountForm = document.getElementById('discount-form'); // New: Discount Form
+            const discountModalTitle = document.getElementById('discount-modal-title'); // New: Discount Modal Title
+
+
+            // --- Helper for custom alert/confirm ---
+            function showMessage(message, type = 'info') {
+                const messageBox = document.createElement('div');
+                messageBox.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white z-[1000] transition-all duration-300 ease-in-out`;
+                if (type === 'info') {
+                    messageBox.classList.add('bg-blue-500');
+                } else if (type === 'success') {
+                    messageBox.classList.add('bg-green-500');
+                } else if (type === 'error') {
+                    messageBox.classList.add('bg-red-500');
                 }
+
+                messageBox.textContent = message;
+                document.body.appendChild(messageBox);
+
+                setTimeout(() => {
+                    messageBox.classList.add('opacity-0');
+                    messageBox.addEventListener('transitionend', () => messageBox.remove());
+                }, 3000);
             }
-            
-            quickViewModal.classList.remove('opacity-0', 'pointer-events-none');
-            lucide.createIcons(); // Re-render icons for the new checkmarks
-        }
 
-        function closeQuickViewModal() { 
-            quickViewModal.classList.add('opacity-0', 'pointer-events-none'); 
-        }
+            async function showConfirmation(message) {
+                return new Promise((resolve) => {
+                    const confirmModal = document.createElement('div');
+                    confirmModal.className = `fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4`;
+                    confirmModal.innerHTML = `
+                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
+                            <p class="text-lg font-semibold text-gray-800 mb-6">${message}</p>
+                            <div class="flex justify-end space-x-4">
+                                <button id="confirm-cancel" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Cancel</button>
+                                <button id="confirm-ok" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition">Confirm</button>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(confirmModal);
 
-        // --- DOM Event Listeners ---
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
+                    document.getElementById('confirm-ok').addEventListener('click', () => {
+                        confirmModal.remove();
+                        resolve(true);
+                    });
+                    document.getElementById('confirm-cancel').addEventListener('click', () => {
+                        confirmModal.remove();
+                        resolve(false);
+                    });
+                });
+            }
 
-            // Fetch dynamic content from Firestore
-            onSnapshot(productsCollection, snap => { allProducts = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderProducts(allProducts); });
-            onSnapshot(categoriesCollection, snap => renderCategories(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
-            onSnapshot(testimonialsCollection, snap => renderTestimonials(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
-            onSnapshot(siteContentDocRef, doc => { if (doc.exists()) renderSiteContent(doc.data()); });
 
-            // General UI event listeners
-            document.getElementById('mobile-menu-button').addEventListener('click', () => document.getElementById('mobile-menu').classList.toggle('hidden'));
-            document.getElementById('search-btn').addEventListener('click', () => document.getElementById('search-bar-container').classList.remove('opacity-0', 'pointer-events-none', '-z-10'));
-            document.getElementById('close-search-btn').addEventListener('click', () => document.getElementById('search-bar-container').classList.add('opacity-0', 'pointer-events-none', '-z-10'));
-            document.getElementById('search-input').addEventListener('keyup', (e) => renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(e.target.value.toLowerCase()))));
-            
-            productGrid.addEventListener('click', e => {
-                const detailsButton = e.target.closest('.view-details-btn');
-                if (detailsButton) {
-                    const card = detailsButton.closest('.product-card');
-                    if (card) {
-                        openQuickViewModal(card.dataset.productId);
+            // --- Authentication ---
+            const showAdminPanel = () => {
+                loginContainer.classList.add('hidden');
+                adminPanel.classList.remove('hidden');
+                // Simulate click on products tab to show it by default
+                document.querySelector('.admin-tab[data-tab="products"]').click();
+                feather.replace();
+
+                // Load Site Settings and Payment Settings
+                loadSiteSettings();
+                loadPaymentSettings();
+
+                // Attach real-time listeners
+                onSnapshot(productsCollection, (snapshot) => {
+                    window.productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderProducts(window.productsData);
+                    renderAllReviews(window.productsData);
+                });
+                onSnapshot(categoriesCollection, (snapshot) => {
+                    window.categoriesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderCategories(window.categoriesData);
+                    populateCategoryDropdown(window.categoriesData);
+                });
+                onSnapshot(customersCollection, (snapshot) => {
+                    const customersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderCustomers(customersData);
+                });
+                // New: Listen for discount changes
+                onSnapshot(discountsCollection, (snapshot) => {
+                    const discountsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderDiscounts(discountsData);
+                });
+            };
+
+            const showLoginForm = () => {
+                adminPanel.classList.add('hidden');
+                loginContainer.classList.remove('hidden');
+                feather.replace();
+            }
+
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                loginError.classList.add('hidden');
+                try {
+                    await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+                } catch (error) {
+                    console.error("Login failed:", error);
+                    loginError.classList.remove('hidden');
+                }
+            });
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    showAdminPanel();
+                } else {
+                    showLoginForm();
+                }
+            });
+
+            // --- Tab Switching ---
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
+                    document.getElementById(`${tab.dataset.tab}-section`).classList.remove('hidden');
+                    feather.replace(); // Re-render icons on tab switch
+                });
+            });
+
+            // --- Site Settings ---
+            const loadSiteSettings = async () => {
+                const docSnap = await getDoc(siteContentRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('heroTitle').value = data.heroTitle || '';
+                    document.getElementById('heroSubtitle').value = data.heroSubtitle || '';
+                    document.getElementById('contactEmail').value = data.contactEmail || '';
+                    document.getElementById('contactPhone').value = data.contactPhone || '';
+                    document.getElementById('facebookUrl').value = data.facebookUrl || '';
+                    document.getElementById('instagramUrl').value = data.instagramUrl || '';
+                    document.getElementById('twitterUrl').value = data.twitterUrl || '';
+                }
+            };
+
+            siteSettingsForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const settingsData = {
+                    heroTitle: document.getElementById('heroTitle').value,
+                    heroSubtitle: document.getElementById('heroSubtitle').value,
+                    contactEmail: document.getElementById('contactEmail').value,
+                    contactPhone: document.getElementById('contactPhone').value,
+                    facebookUrl: document.getElementById('facebookUrl').value,
+                    instagramUrl: document.getElementById('instagramUrl').value,
+                    twitterUrl: document.getElementById('twitterUrl').value,
+                };
+                try {
+                    await setDoc(siteContentRef, settingsData, { merge: true });
+                    showMessage('Site settings saved successfully!', 'success');
+                } catch (error) {
+                    console.error("Error saving site settings:", error);
+                    showMessage('Error saving site settings.', 'error');
+                }
+            });
+
+            // --- Payment Gateway Settings ---
+            const loadPaymentSettings = async () => {
+                const docSnap = await getDoc(siteContentRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('razorpayKeyId').value = data.razorpayKeyId || '';
+                    document.getElementById('razorpayKeySecret').value = data.razorpayKeySecret || '';
+                }
+            };
+
+            paymentSettingsForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const paymentData = {
+                    razorpayKeyId: document.getElementById('razorpayKeyId').value,
+                    razorpayKeySecret: document.getElementById('razorpayKeySecret').value,
+                };
+                try {
+                    await setDoc(siteContentRef, paymentData, { merge: true });
+                    showMessage('Payment gateway settings saved successfully!', 'success');
+                } catch (error) {
+                    console.error("Error saving payment settings:", error);
+                    showMessage('Error saving payment settings.', 'error');
+                }
+            });
+
+
+            // --- Modal Logic (Product) ---
+            const openProductModal = () => productModal.classList.add('flex');
+            const closeProductModal = () => {
+                productModal.classList.remove('flex');
+                productForm.reset();
+                document.getElementById('productId').value = '';
+            };
+
+            document.getElementById('add-product-btn').addEventListener('click', () => {
+                modalTitle.textContent = 'Add New Product';
+                openProductModal();
+            });
+            document.getElementById('close-modal-btn').addEventListener('click', closeProductModal);
+            document.getElementById('cancel-btn').addEventListener('click', closeProductModal);
+
+            // --- Product CRUD ---
+            const renderProducts = (products) => {
+                productsTableBody.innerHTML = '';
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b';
+                    row.innerHTML = `
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${product.name}</th>
+                        <td class="px-6 py-4">${product.category}</td>
+                        <td class="px-6 py-4">₹${product.price ? product.price.toLocaleString('en-IN') : 'N/A'}</td>
+                        <td class="px-6 py-4 text-right space-x-2">
+                            <button data-id="${product.id}" class="edit-btn font-medium text-blue-600 hover:underline">Edit</button>
+                            <button data-id="${product.id}" class="delete-btn font-medium text-red-600 hover:underline">Delete</button>
+                        </td>
+                    `;
+                    productsTableBody.appendChild(row);
+                });
+            };
+
+            productForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = document.getElementById('productId').value;
+                
+                const productData = {
+                    name: document.getElementById('name').value,
+                    category: document.getElementById('category').value,
+                    price: parseFloat(document.getElementById('price').value),
+                    images: document.getElementById('images').value.split(',').map(url => url.trim()),
+                    details: {
+                        description: document.getElementById('description').value,
+                        specifications: document.getElementById('specifications').value
+                    }
+                };
+
+                try {
+                    if (id) {
+                        const docRef = doc(db, 'products', id);
+                        const docSnap = await getDoc(docRef);
+                        if (docSnap.exists()) {
+                            const existingData = docSnap.data();
+                            const updatedData = { ...existingData, ...productData };
+                            await updateDoc(docRef, updatedData);
+                            showMessage('Product updated successfully!', 'success');
+                        }
+                    } else {
+                        await addDoc(productsCollection, { ...productData, reviews: [], relatedProducts: [], offer: null });
+                        showMessage('Product added successfully!', 'success');
+                    }
+                    closeProductModal();
+                } catch (error) {
+                    console.error("Error saving product:", error);
+                    showMessage('Error saving product.', 'error');
+                }
+            });
+
+            productsTableBody.addEventListener('click', async (e) => {
+                const target = e.target;
+                const id = target.dataset.id;
+                if (!id) return;
+
+                if (target.classList.contains('edit-btn')) {
+                    const product = window.productsData.find(p => p.id === id);
+                    if (product) {
+                        modalTitle.textContent = 'Edit Product';
+                        document.getElementById('productId').value = product.id;
+                        document.getElementById('name').value = product.name;
+                        document.getElementById('category').value = product.category;
+                        document.getElementById('price').value = product.price;
+                        document.getElementById('images').value = product.images.join(', ');
+                        document.getElementById('description').value = product.details.description;
+                        document.getElementById('specifications').value = product.details.specifications;
+                        openProductModal();
+                    }
+                }
+
+                if (target.classList.contains('delete-btn')) {
+                    const confirmed = await showConfirmation('Are you sure you want to delete this product?');
+                    if (confirmed) {
+                        try {
+                            await deleteDoc(doc(db, 'products', id));
+                            showMessage('Product deleted successfully!', 'success');
+                        } catch (error) {
+                            console.error("Error deleting product:", error);
+                            showMessage('Error deleting product.', 'error');
+                        }
                     }
                 }
             });
 
-            categoryGrid.addEventListener('click', e => {
-                const btn = e.target.closest('.category-btn');
-                if (btn) {
-                    currentCategory = btn.dataset.category;
-                    renderProducts(currentCategory === 'All' ? allProducts : allProducts.filter(p => p.category === currentCategory));
-                    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active-category'));
-                    btn.classList.add('active-category');
+            // --- Category CRUD ---
+            const renderCategories = (categories) => {
+                categoryList.innerHTML = '';
+                categories.forEach(cat => {
+                    const li = document.createElement('li');
+                    li.className = 'px-6 py-4 flex justify-between items-center';
+                    li.innerHTML = `
+                        <span>${cat.name}</span>
+                        <div class="space-x-2">
+                            <button data-id="${cat.id}" data-name="${cat.name}" class="edit-cat-btn font-medium text-blue-600 hover:underline">Edit</button>
+                            <button data-id="${cat.id}" class="delete-cat-btn font-medium text-red-600 hover:underline">Delete</button>
+                        </div>
+                    `;
+                    categoryList.appendChild(li);
+                });
+            };
+
+            const populateCategoryDropdown = (categories) => {
+                const select = document.getElementById('category');
+                select.innerHTML = '<option value="">Select a category</option>';
+                categories.forEach(cat => {
+                    select.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
+                });
+            };
+
+            document.getElementById('add-category-btn').addEventListener('click', async () => {
+                const input = document.getElementById('new-category-name');
+                if (input.value.trim()) {
+                    try {
+                        await addDoc(categoriesCollection, { name: input.value.trim() });
+                        input.value = '';
+                        showMessage('Category added successfully!', 'success');
+                    } catch (error) {
+                        console.error("Error adding category:", error);
+                        showMessage('Error adding category.', 'error');
+                    }
                 }
             });
 
-            // Modal event listeners
-            document.getElementById('user-btn').addEventListener('click', () => document.getElementById('user-modal').classList.remove('opacity-0', 'pointer-events-none'));
-            document.getElementById('close-user-modal-btn').addEventListener('click', () => document.getElementById('user-modal').classList.add('opacity-0', 'pointer-events-none'));
-            document.getElementById('close-quick-view-btn').addEventListener('click', closeQuickViewModal);
-            document.getElementById('quick-view-buy-now-btn').addEventListener('click', handleBuyNow);
-            
-            // Firebase Auth UI
-            const userForm = document.getElementById('user-form');
-            let isSignUp = false;
-            onAuthStateChanged(auth, user => {
-                document.getElementById('auth-view').classList.toggle('hidden', !!user);
-                document.getElementById('signed-in-view').classList.toggle('hidden', !user);
-                if (user) document.getElementById('user-email-display').textContent = `Signed in as ${user.email}`;
+            categoryList.addEventListener('click', async (e) => {
+                const target = e.target;
+                const id = target.dataset.id;
+                if (!id) return;
+
+                if (target.classList.contains('edit-cat-btn')) {
+                    const newName = prompt('Enter new category name:', target.dataset.name); // Using prompt for simplicity. Consider custom modal.
+                    if (newName && newName.trim()) {
+                        try {
+                            await updateDoc(doc(db, 'categories', id), { name: newName.trim() });
+                            showMessage('Category updated successfully!', 'success');
+                        } catch (error) {
+                            console.error("Error updating category:", error);
+                            showMessage('Error updating category.', 'error');
+                        }
+                    }
+                }
+
+                if (target.classList.contains('delete-cat-btn')) {
+                    const confirmed = await showConfirmation('Are you sure you want to delete this category?');
+                    if (confirmed) {
+                        try {
+                            await deleteDoc(doc(db, 'categories', id));
+                            showMessage('Category deleted successfully!', 'success');
+                        } catch (error) {
+                            console.error("Error deleting category:", error);
+                            showMessage('Error deleting category.', 'error');
+                        }
+                    }
+                }
             });
-            document.getElementById('sign-out-btn').addEventListener('click', () => signOut(auth));
-            document.getElementById('user-form-toggle').addEventListener('click', e => {
-                e.preventDefault(); isSignUp = !isSignUp;
-                document.getElementById('user-modal-title').textContent = isSignUp ? 'Create Account' : 'My Account';
-                document.getElementById('user-form-submit').textContent = isSignUp ? 'Sign Up' : 'Sign In';
-                document.getElementById('confirm-password-container').classList.toggle('hidden', !isSignUp);
+
+            // --- Customer Data ---
+            const renderCustomers = (customers) => {
+                customersTableBody.innerHTML = '';
+                customers.forEach(customer => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 font-medium text-gray-900">${customer.fullName}</td>
+                        <td class="px-6 py-4">${customer.phone}</td>
+                        <td class="px-6 py-4">${customer.address}, ${customer.city}, ${customer.pincode}</td>
+                    `;
+                    customersTableBody.appendChild(row);
+                });
+            };
+
+            // --- Review Management ---
+            const renderAllReviews = (products) => {
+                reviewList.innerHTML = '';
+                products.forEach(product => {
+                    if (product.reviews && product.reviews.length > 0) {
+                        product.reviews.forEach((review, index) => {
+                            const reviewCard = document.createElement('div');
+                            reviewCard.className = 'bg-white p-4 rounded-lg shadow';
+                            let stars = Array(5).fill(0).map((_, i) => `<i data-feather="star" class="w-4 h-4 ${i < review.rating ? 'text-amber-500 fill-current' : 'text-gray-300'}"></i>`).join('');
+                            
+                            let replySection = `
+                                <div class="mt-4">
+                                    <button data-product-id="${product.id}" data-review-index="${index}" class="reply-btn text-sm text-blue-600 font-semibold">Reply</button>
+                                    <div class="reply-form-container hidden mt-2">
+                                        <textarea class="w-full border-gray-300 rounded-md shadow-sm text-sm" rows="2" placeholder="Write your reply..."></textarea>
+                                        <button data-product-id="${product.id}" data-review-index="${index}" class="submit-reply-btn mt-2 bg-green-500 text-white text-xs font-bold py-1 px-3 rounded-md hover:bg-green-600">Submit Reply</button>
+                                    </div>
+                                </div>`;
+
+                            if (review.adminReply) {
+                                replySection = `<div class="mt-3 pt-3 border-t bg-sky-50 p-3 rounded-md">
+                                    <p class="text-sm font-bold text-sky-800">Reply from ToyTopia:</p>
+                                    <p class="text-sm text-gray-600">${review.adminReply}</p>
+                                </div>`;
+                            }
+
+                            reviewCard.innerHTML = `
+                                <p class="font-bold text-gray-800">${product.name}</p>
+                                <div class="flex items-center my-1">
+                                    <div class="flex">${stars}</div>
+                                    <p class="ml-2 font-semibold text-gray-700">${review.user}</p>
+                                </div>
+                                <p class="text-gray-600 italic">"${review.comment}"</p>
+                                ${replySection}
+                            `;
+                            reviewList.appendChild(reviewCard);
+                        });
+                    }
+                });
+                feather.replace();
+            };
+
+            reviewList.addEventListener('click', async (e) => {
+                const target = e.target;
+
+                if (target.classList.contains('reply-btn')) {
+                    const formContainer = target.nextElementSibling;
+                    formContainer.classList.toggle('hidden');
+                }
+
+                if (target.classList.contains('submit-reply-btn')) {
+                    const productId = target.dataset.productId;
+                    const reviewIndex = parseInt(target.dataset.reviewIndex);
+                    const replyText = target.previousElementSibling.value;
+
+                    if (!replyText.trim()) {
+                        showMessage('Reply cannot be empty.', 'error');
+                        return;
+                    }
+
+                    const product = window.productsData.find(p => p.id === productId);
+                    if (product && product.reviews[reviewIndex]) {
+                        product.reviews[reviewIndex].adminReply = replyText.trim();
+                        const docRef = doc(db, 'products', productId);
+                        try {
+                            await updateDoc(docRef, { reviews: product.reviews });
+                            showMessage('Reply submitted successfully!', 'success');
+                            // The onSnapshot listener will automatically re-render the view
+                        } catch (error) {
+                            console.error("Error submitting reply:", error);
+                            showMessage('Error submitting reply.', 'error');
+                        }
+                    }
+                }
             });
-            userForm.addEventListener('submit', e => {
+
+            // --- Modal Logic (Discount) ---
+            const openDiscountModal = () => discountModal.classList.add('flex');
+            const closeDiscountModal = () => {
+                discountModal.classList.remove('flex');
+                discountForm.reset();
+                document.getElementById('discountId').value = '';
+                document.getElementById('discountActive').checked = true; // Default to active
+            };
+
+            document.getElementById('add-discount-btn').addEventListener('click', () => {
+                discountModalTitle.textContent = 'Add New Discount';
+                closeDiscountModal(); // Reset form
+                openDiscountModal();
+            });
+            document.getElementById('close-discount-modal-btn').addEventListener('click', closeDiscountModal);
+            document.getElementById('cancel-discount-btn').addEventListener('click', closeDiscountModal);
+
+            // --- Discount CRUD ---
+            const renderDiscounts = (discounts) => {
+                discountsTableBody.innerHTML = '';
+                discounts.forEach(discount => {
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b';
+                    const expiryDate = discount.expiryDate ? new Date(discount.expiryDate).toLocaleDateString() : 'N/A';
+                    const valueDisplay = discount.type === 'percentage' ? `${discount.value}%` : `₹${discount.value}`;
+                    const activeStatus = discount.isActive ? `<span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>` : `<span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>`;
+
+                    row.innerHTML = `
+                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${discount.code}</th>
+                        <td class="px-6 py-4">${discount.type}</td>
+                        <td class="px-6 py-4">${valueDisplay}</td>
+                        <td class="px-6 py-4">${expiryDate}</td>
+                        <td class="px-6 py-4">${activeStatus}</td>
+                        <td class="px-6 py-4 text-right space-x-2">
+                            <button data-id="${discount.id}" class="edit-discount-btn font-medium text-blue-600 hover:underline">Edit</button>
+                            <button data-id="${discount.id}" class="delete-discount-btn font-medium text-red-600 hover:underline">Delete</button>
+                        </td>
+                    `;
+                    discountsTableBody.appendChild(row);
+                });
+                feather.replace(); // Ensure icons are rendered for table
+            };
+
+            discountForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const email = userForm.email.value, password = userForm.password.value;
-                const feedbackEl = document.getElementById('user-form-feedback');
-                const authFn = isSignUp ? createUserWithEmailAndPassword : signInWithEmailAndPassword;
-                authFn(auth, email, password)
-                    .then(() => { feedbackEl.textContent = 'Success!'; setTimeout(() => document.getElementById('user-modal').classList.add('opacity-0', 'pointer-events-none'), 1500); })
-                    .catch(err => { feedbackEl.textContent = err.message; });
+                const id = document.getElementById('discountId').value;
+                
+                const discountData = {
+                    code: document.getElementById('discountCode').value.trim().toUpperCase(),
+                    type: document.getElementById('discountType').value,
+                    value: parseFloat(document.getElementById('discountValue').value),
+                    expiryDate: document.getElementById('discountExpiry').value, // YYYY-MM-DD string
+                    isActive: document.getElementById('discountActive').checked,
+                };
+
+                try {
+                    if (id) {
+                        const docRef = doc(db, 'discounts', id);
+                        await updateDoc(docRef, discountData);
+                        showMessage('Discount updated successfully!', 'success');
+                    } else {
+                        // Check for duplicate code before adding
+                        const existingDiscounts = await getDocs(discountsCollection);
+                        const isDuplicate = existingDiscounts.docs.some(d => d.data().code === discountData.code);
+                        if (isDuplicate) {
+                            showMessage('Discount code already exists. Please use a unique code.', 'error');
+                            return;
+                        }
+                        await addDoc(discountsCollection, discountData);
+                        showMessage('Discount added successfully!', 'success');
+                    }
+                    closeDiscountModal();
+                } catch (error) {
+                    console.error("Error saving discount:", error);
+                    showMessage('Error saving discount.', 'error');
+                }
             });
-        });
+
+            discountsTableBody.addEventListener('click', async (e) => {
+                const target = e.target;
+                const id = target.dataset.id;
+                if (!id) return;
+
+                if (target.classList.contains('edit-discount-btn')) {
+                    const discountDoc = await getDoc(doc(db, 'discounts', id));
+                    if (discountDoc.exists()) {
+                        const discount = discountDoc.data();
+                        discountModalTitle.textContent = 'Edit Discount';
+                        document.getElementById('discountId').value = discount.id;
+                        document.getElementById('discountCode').value = discount.code;
+                        document.getElementById('discountType').value = discount.type;
+                        document.getElementById('discountValue').value = discount.value;
+                        document.getElementById('discountExpiry').value = discount.expiryDate || ''; // Set date input
+                        document.getElementById('discountActive').checked = discount.isActive;
+                        openDiscountModal();
+                    }
+                }
+
+                if (target.classList.contains('delete-discount-btn')) {
+                    const confirmed = await showConfirmation('Are you sure you want to delete this discount?');
+                    if (confirmed) {
+                        try {
+                            await deleteDoc(doc(db, 'discounts', id));
+                            showMessage('Discount deleted successfully!', 'success');
+                        } catch (error) {
+                            console.error("Error deleting discount:", error);
+                            showMessage('Error deleting discount.', 'error');
+                        }
+                    }
+                }
+            });
+        }
+
+        main().catch(console.error);
     </script>
 </body>
 </html>
