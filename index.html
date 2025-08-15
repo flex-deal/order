@@ -5,16 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToyTopia Admin Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
     <style>
-        body { font-family: 'Nunito', sans-serif; }
+        /* Custom styles for the Inter font and improved scrollbars */
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Hide default scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px; /* width of the entire scrollbar */
+            height: 8px; /* height of the entire scrollbar for horizontal */
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; /* color of the tracking area */
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; /* color of the scroll thumb */
+            border-radius: 10px; /* roundness of the scroll thumb */
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; /* color of the scroll thumb on hover */
+        }
+
         .modal { display: none; }
         .modal.flex { display: flex; }
+        .admin-tab {
+            transition: all 0.2s ease-in-out;
+            border-radius: 0.75rem; /* rounded-xl for consistent look */
+            padding: 0.75rem 1rem; /* More generous padding */
+            justify-content: flex-start; /* Align text to start */
+        }
         .admin-tab.active {
             border-color: #0ea5e9;
             background-color: #e0f2fe;
             color: #0284c7;
+            font-weight: 600; /* Semi-bold for active tab */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* subtle shadow */
         }
 
         /* Mobile specific styles for navigation */
@@ -25,97 +62,132 @@
             .nav-links-mobile-flex {
                 display: flex;
                 flex-direction: column;
-                position: absolute; /* Position relative to its parent */
-                top: 100%; /* Below the header/tab bar */
+                position: absolute;
+                top: 100%;
                 left: 0;
                 right: 0;
-                background-color: white; /* Match panel background */
-                border-bottom-left-radius: 0.75rem; /* rounded-xl */
-                border-bottom-right-radius: 0.75rem; /* rounded-xl */
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+                background-color: white;
+                border-bottom-left-radius: 0.75rem;
+                border-bottom-right-radius: 0.75rem;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
                 padding: 1rem 0;
+                z-index: 40; /* Ensure mobile menu is above other content */
             }
             .nav-links-mobile-flex .admin-tab {
                 width: 100%;
-                text-align: center;
-                border-bottom: none; /* Remove individual tab borders */
-                padding: 0.75rem 1rem;
-                justify-content: center; /* Center content */
+                text-align: left; /* Align text to left in mobile menu */
+                border-bottom: none;
+                padding: 0.75rem 1.5rem; /* More padding for tap targets */
+                margin-bottom: 0.25rem; /* Small gap between tabs */
+            }
+            .nav-links-mobile-flex .admin-tab:last-child {
+                 margin-bottom: 0; /* No margin for the last item */
             }
             .nav-links-mobile-flex .admin-tab.active {
-                background-color: #f0f9ff; /* bg-sky-50 for active tab in mobile */
+                background-color: #f0f9ff;
             }
+        }
+
+        /* General button styling */
+        button {
+            transition: all 0.2s ease-in-out;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        button:active {
+            transform: translateY(0);
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-100 min-h-screen">
 
     <!-- Login Form -->
-    <div id="login-form-container" class="min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-xl shadow-md w-full max-w-sm">
+    <div id="login-form-container" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-sky-500 to-indigo-600">
+        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm transform transition-all duration-300 hover:scale-105">
             <div class="flex justify-center mb-6">
-                 <i data-feather="box" class="w-12 h-12 text-sky-500"></i>
+                 <i data-feather="box" class="w-16 h-16 text-sky-500 animate-bounce-slow"></i> <!-- Larger icon, subtle animation -->
             </div>
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-1">Admin Login</h2>
-            <p class="text-center text-gray-500 mb-6">Welcome to the ToyTopia Panel</p>
+            <h2 class="text-3xl font-extrabold text-center text-gray-800 mb-2">Admin Login</h2>
+            <p class="text-center text-gray-500 mb-8 text-sm">Welcome to the ToyTopia Panel</p>
             <form id="login-form">
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                    <input type="email" id="email" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                <div class="mb-5">
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="email" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                 </div>
-                <div class="mb-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
-                    <input type="password" id="password" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                <div class="mb-6">
+                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                    <input type="password" id="password" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                 </div>
-                <p id="login-error" class="text-red-500 text-sm mb-4 hidden">Invalid email or password. Please try again.</p>
-                <button type="submit" class="w-full bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition">Login</button>
+                <p id="login-error" class="text-red-600 text-sm mb-4 hidden bg-red-50 p-2 rounded-md border border-red-200">Invalid email or password. Please try again.</p>
+                <button type="submit" class="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-sky-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sky-300">Login to Dashboard</button>
             </form>
         </div>
     </div>
 
     <!-- Admin Panel Container -->
-    <div id="admin-panel" class="hidden container mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+    <div id="admin-panel" class="hidden container mx-auto p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl">
         <!-- Admin Tabs -->
-        <div class="relative mb-6 border-b border-gray-200 bg-white sm:rounded-xl sm:shadow-md py-2 px-4">
-            <div class="flex justify-between items-center sm:hidden">
-                <h2 class="text-lg font-bold text-gray-800">Admin Menu</h2>
+        <div class="relative mb-6 border-b border-gray-200 bg-white sm:rounded-xl sm:shadow-lg py-2 px-4 z-50">
+            <div class="flex justify-between items-center sm:hidden p-2">
+                <h2 class="text-xl font-bold text-gray-800">Admin Menu</h2>
                 <button id="mobile-menu-toggle" class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-500">
-                    <i data-feather="menu" class="w-6 h-6 text-gray-700"></i>
+                    <i data-feather="menu" class="w-7 h-7 text-gray-700"></i>
                 </button>
             </div>
-            <nav id="admin-tabs-nav" class="-mb-px flex-col space-y-1 sm:space-y-0 sm:flex sm:flex-row sm:space-x-8 sm:p-0 nav-links-mobile-hidden" aria-label="Tabs">
-                <button data-tab="products" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Products</button>
-                <button data-tab="categories" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Categories</button>
-                <button data-tab="customers" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Customers</button>
-                <button data-tab="reviews" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Reviews</button>
-                <button data-tab="discounts" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Discounts</button>
-                <button data-tab="payments" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Payment Gateway</button>
-                <button data-tab="settings" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Site Settings</button>
+            <nav id="admin-tabs-nav" class="-mb-px flex-col space-y-1 sm:space-y-0 sm:flex sm:flex-row sm:space-x-4 sm:p-0 nav-links-mobile-hidden" aria-label="Tabs">
+                <button data-tab="products" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="box" class="w-5 h-5"></i><span>Products</span>
+                </button>
+                <button data-tab="categories" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="tag" class="w-5 h-5"></i><span>Categories</span>
+                </button>
+                <button data-tab="customers" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="users" class="w-5 h-5"></i><span>Customers</span>
+                </button>
+                <button data-tab="reviews" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="message-square" class="w-5 h-5"></i><span>Reviews</span>
+                </button>
+                <button data-tab="discounts" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="percent" class="w-5 h-5"></i><span>Discounts</span>
+                </button>
+                <button data-tab="payments" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="credit-card" class="w-5 h-5"></i><span>Payment Gateway</span>
+                </button>
+                <button data-tab="orders" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="shopping-cart" class="w-5 h-5"></i><span>Orders</span>
+                </button>
+                <button data-tab="gst" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="file-text" class="w-5 h-5"></i><span>GST Settings</span>
+                </button>
+                <button data-tab="settings" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
+                    <i data-feather="settings" class="w-5 h-5"></i><span>Site Settings</span>
+                </button>
             </nav>
         </div>
 
 
         <!-- Products Section -->
         <div id="products-section" class="admin-section">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-4xl font-black text-gray-800">Product Management</h1>
-                <button id="add-product-btn" class="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition flex items-center space-x-2">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Product Management</h1>
+                <button id="add-product-btn" class="bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700 transition-all duration-300 flex items-center space-x-2 shadow-md hover:shadow-lg">
                     <i data-feather="plus-circle" class="w-5 h-5"></i>
                     <span>Add New Product</span>
                 </button>
             </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3">Product Name</th>
-                                <th scope="col" class="px-6 py-3">Category</th>
-                                <th scope="col" class="px-6 py-3">Price</th>
-                                <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="products-table-body"></tbody>
+                        <tbody id="products-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
                 </div>
             </div>
@@ -123,14 +195,14 @@
 
         <!-- Categories Section -->
         <div id="categories-section" class="admin-section hidden">
-             <div class="flex justify-between items-center mb-6">
-                <h1 class="text-4xl font-black text-gray-800">Category Management</h1>
-                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
-                    <input type="text" id="new-category-name" placeholder="New category name" class="border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500 flex-grow">
-                    <button id="add-category-btn" class="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition">Add Category</button>
+             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Category Management</h1>
+                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                    <input type="text" id="new-category-name" placeholder="Enter new category name" class="border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 flex-grow p-2.5 text-gray-800">
+                    <button id="add-category-btn" class="bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700 transition-all duration-300 shadow-md hover:shadow-lg">Add Category</button>
                 </div>
             </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
                 <ul id="category-list" class="divide-y divide-gray-200">
                     <!-- Category items will be injected here -->
                 </ul>
@@ -139,18 +211,18 @@
 
         <!-- Customers Section -->
         <div id="customers-section" class="admin-section hidden">
-            <h1 class="text-4xl font-black text-gray-800 mb-6">Customer Data</h1>
-             <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Customer Data</h1>
+             <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3">Name</th>
-                                <th scope="col" class="px-6 py-3">Phone</th>
-                                <th scope="col" class="px-6 py-3">Address</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                             </tr>
                         </thead>
-                        <tbody id="customers-table-body"></tbody>
+                        <tbody id="customers-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
                 </div>
             </div>
@@ -158,7 +230,7 @@
 
         <!-- Reviews Section -->
         <div id="reviews-section" class="admin-section hidden">
-            <h1 class="text-4xl font-black text-gray-800 mb-6">Review Management</h1>
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Review Management</h1>
             <div id="review-list" class="space-y-6">
                 <!-- Review cards will be injected here -->
             </div>
@@ -166,27 +238,27 @@
 
         <!-- Discounts Section -->
         <div id="discounts-section" class="admin-section hidden">
-            <div class="flex justify-between items-center mb-6">
-                <h1 class="text-4xl font-black text-gray-800">Discount Management</h1>
-                <button id="add-discount-btn" class="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition flex items-center space-x-2">
-                    <i data-feather="tag" class="w-5 h-5"></i>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Discount Management</h1>
+                <button id="add-discount-btn" class="bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700 transition-all duration-300 flex items-center space-x-2 shadow-md hover:shadow-lg">
+                    <i data-feather="percent" class="w-5 h-5"></i>
                     <span>Add New Discount</span>
                 </button>
             </div>
-            <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th scope="col" class="px-6 py-3">Code</th>
-                                <th scope="col" class="px-6 py-3">Type</th>
-                                <th scope="col" class="px-6 py-3">Value</th>
-                                <th scope="col" class="px-6 py-3">Expiry</th>
-                                <th scope="col" class="px-6 py-3">Active</th>
-                                <th scope="col" class="px-6 py-3 text-right">Actions</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Active</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
-                        <tbody id="discounts-table-body"></tbody>
+                        <tbody id="discounts-table-body" class="bg-white divide-y divide-gray-200"></tbody>
                     </table>
                 </div>
             </div>
@@ -194,19 +266,90 @@
 
         <!-- Payment Gateway Section -->
         <div id="payments-section" class="admin-section hidden">
-            <h1 class="text-4xl font-black text-gray-800 mb-6">Payment Gateway Settings (Razorpay)</h1>
-            <div class="bg-white rounded-xl shadow-md">
-                <form id="payment-settings-form" class="p-6 space-y-4">
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Payment Gateway Settings (Razorpay)</h1>
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+                <form id="payment-settings-form" class="p-6 space-y-5">
                     <div>
-                        <label for="razorpayKeyId" class="block text-sm font-medium text-gray-700">Razorpay Key ID</label>
-                        <input type="text" id="razorpayKeyId" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500" placeholder="rzp_test_XXXXXXXXXXXXXXXX">
+                        <label for="razorpayKeyId" class="block text-sm font-medium text-gray-700 mb-1">Razorpay Key ID</label>
+                        <input type="text" id="razorpayKeyId" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="rzp_test_XXXXXXXXXXXXXXXX">
                     </div>
                     <div>
-                        <label for="razorpayKeySecret" class="block text-sm font-medium text-gray-700">Razorpay Key Secret</label>
-                        <input type="text" id="razorpayKeySecret" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500" placeholder="XXXXXXXXXXXXXXXXXXXXXX">
+                        <label for="razorpayKeySecret" class="block text-sm font-medium text-gray-700 mb-1">Razorpay Key Secret</label>
+                        <input type="text" id="razorpayKeySecret" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="XXXXXXXXXXXXXXXXXXXXXX">
                     </div>
                     <div class="pt-4 flex justify-end">
-                        <button type="submit" class="bg-green-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-600 transition">Save Payment Settings</button>
+                        <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-300">Save Payment Settings</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Orders Section (New) -->
+        <div id="orders-section" class="admin-section hidden">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Order Management</h1>
+                <!-- Removed Add Dummy Order button -->
+            </div>
+
+            <!-- Order Stats Area -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
+                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Total Orders</p>
+                        <p id="total-orders-count" class="text-3xl font-bold text-gray-800 mt-1">0</p>
+                    </div>
+                    <i data-feather="package" class="w-10 h-10 text-sky-500 opacity-75"></i>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Completed Orders</p>
+                        <p id="completed-orders-count" class="text-3xl font-bold text-green-600 mt-1">0</p>
+                    </div>
+                    <i data-feather="check-circle" class="w-10 h-10 text-green-500 opacity-75"></i>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200">
+                    <div>
+                        <p class="text-gray-500 text-sm font-medium">Pending Orders</p>
+                        <p id="pending-orders-count" class="text-3xl font-bold text-yellow-600 mt-1">0</p>
+                    </div>
+                    <i data-feather="clock" class="w-10 h-10 text-yellow-500 opacity-75"></i>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body" class="bg-white divide-y divide-gray-200"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- GST Settings Section (New) -->
+        <div id="gst-section" class="admin-section hidden">
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">GST Settings</h1>
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+                <form id="gst-settings-form" class="p-6 space-y-5">
+                    <div>
+                        <label for="gstNumber" class="block text-sm font-medium text-gray-700 mb-1">GST Number</label>
+                        <input type="text" id="gstNumber" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="GSTIN1234567890">
+                    </div>
+                    <div>
+                        <label for="gstPercentage" class="block text-sm font-medium text-gray-700 mb-1">GST Percentage (%)</label>
+                        <input type="number" id="gstPercentage" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" min="0" max="100" step="0.01">
+                    </div>
+                    <div class="pt-4 flex justify-end">
+                        <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-300">Save GST Settings</button>
                     </div>
                 </form>
             </div>
@@ -214,41 +357,41 @@
 
         <!-- Site Settings Section -->
         <div id="settings-section" class="admin-section hidden">
-            <h1 class="text-4xl font-black text-gray-800 mb-6">Site Settings</h1>
-            <div class="bg-white rounded-xl shadow-md">
-                <form id="site-settings-form" class="p-6 space-y-4">
+            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Site Settings</h1>
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200">
+                <form id="site-settings-form" class="p-6 space-y-5">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="heroTitle" class="block text-sm font-medium text-gray-700">Hero Title</label>
-                            <input type="text" id="heroTitle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <label for="heroTitle" class="block text-sm font-medium text-gray-700 mb-1">Hero Title</label>
+                            <input type="text" id="heroTitle" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                         </div>
                         <div>
-                            <label for="heroSubtitle" class="block text-sm font-medium text-gray-700">Hero Subtitle</label>
-                            <input type="text" id="heroSubtitle" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <label for="heroSubtitle" class="block text-sm font-medium text-gray-700 mb-1">Hero Subtitle</label>
+                            <input type="text" id="heroSubtitle" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                         </div>
                         <div>
-                            <label for="contactEmail" class="block text-sm font-medium text-gray-700">Contact Email</label>
-                            <input type="email" id="contactEmail" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
+                            <input type="email" id="contactEmail" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                         </div>
                         <div>
-                            <label for="contactPhone" class="block text-sm font-medium text-gray-700">Contact Phone</label>
-                            <input type="text" id="contactPhone" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <label for="contactPhone" class="block text-sm font-medium text-gray-700 mb-1">Contact Phone</label>
+                            <input type="text" id="contactPhone" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                         </div>
                          <div>
-                            <label for="facebookUrl" class="block text-sm font-medium text-gray-700">Facebook URL</label>
-                            <input type="url" id="facebookUrl" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <label for="facebookUrl" class="block text-sm font-medium text-gray-700 mb-1">Facebook URL</label>
+                            <input type="url" id="facebookUrl" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                         </div>
                          <div>
-                            <label for="instagramUrl" class="block text-sm font-medium text-gray-700">Instagram URL</label>
-                            <input type="url" id="instagramUrl" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <label for="instagramUrl" class="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
+                            <input type="url" id="instagramUrl" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                         </div>
                          <div>
-                            <label for="twitterUrl" class="block text-sm font-medium text-gray-700">Twitter URL</label>
-                            <input type="url" id="twitterUrl" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                            <label for="twitterUrl" class="block text-sm font-medium text-gray-700 mb-1">Twitter URL</label>
+                            <input type="url" id="twitterUrl" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                         </div>
                     </div>
                     <div class="pt-4 flex justify-end">
-                        <button type="submit" class="bg-green-500 text-white font-bold py-2 px-6 rounded-lg hover:bg-green-600 transition">Save Settings</button>
+                        <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-300">Save Settings</button>
                     </div>
                 </form>
             </div>
@@ -256,87 +399,129 @@
     </div>
 
     <!-- Add/Edit Product Modal -->
-    <div id="product-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 justify-center items-start p-4 overflow-y-auto">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8">
+    <div id="product-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
             <form id="product-form" class="p-6">
-                <div class="flex justify-between items-center pb-4 border-b">
-                    <h2 id="modal-title" class="text-2xl font-bold">Add New Product</h2>
-                    <button type="button" id="close-modal-btn" class="text-gray-400 hover:text-gray-800"><i data-feather="x" class="w-8 h-8"></i></button>
+                <div class="flex justify-between items-center pb-4 border-b border-gray-200">
+                    <h2 id="modal-title" class="text-2xl font-bold text-gray-800">Add New Product</h2>
+                    <button type="button" id="close-modal-btn" class="text-gray-400 hover:text-gray-800 transition-colors"><i data-feather="x" class="w-8 h-8"></i></button>
                 </div>
                 <div class="mt-6 space-y-4">
                     <input type="hidden" id="productId">
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700">Product Name</label>
-                        <input type="text" id="name" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
+                        <input type="text" id="name" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                     </div>
                     <div>
-                        <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
-                        <select id="category" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500"></select>
+                        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                        <select id="category" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800"></select>
                     </div>
                     <div>
-                        <label for="price" class="block text-sm font-medium text-gray-700">Price (INR)</label>
-                        <input type="number" id="price" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price (INR)</label>
+                        <input type="number" id="price" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                     </div>
                     <div>
-                        <label for="images" class="block text-sm font-medium text-gray-700">Image URLs (comma-separated)</label>
-                        <textarea id="images" rows="3" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500" placeholder="https://placehold.co/img1.png, https://placehold.co/img2.png"></textarea>
+                        <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Image URLs (comma-separated)</label>
+                        <textarea id="images" rows="3" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="https://placehold.co/img1.png, https://placehold.co/img2.png"></textarea>
                     </div>
                     <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-                        <textarea id="description" rows="4" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500"></textarea>
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="description" rows="4" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800"></textarea>
                     </div>
                      <div>
-                        <label for="specifications" class="block text-sm font-medium text-gray-700">Specifications (use &lt;li&gt; tags)</label>
-                        <textarea id="specifications" rows="4" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500" placeholder="<li>Spec 1</li><li>Spec 2</li>"></textarea>
+                        <label for="specifications" class="block text-sm font-medium text-gray-700 mb-1">Specifications (use &lt;li&gt; tags)</label>
+                        <textarea id="specifications" rows="4" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="<li>Spec 1</li><li>Spec 2</li>"></textarea>
                     </div>
                 </div>
-                <div class="pt-6 border-t mt-6 flex justify-end space-x-2">
-                    <button type="button" id="cancel-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Cancel</button>
-                    <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">Save Product</button>
+                <div class="pt-6 border-t border-gray-200 mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancel-btn" class="bg-gray-200 text-gray-700 font-bold py-2.5 px-5 rounded-xl hover:bg-gray-300 transition-all duration-300 shadow-md hover:shadow-lg">Cancel</button>
+                    <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg">Save Product</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Add/Edit Discount Modal -->
-    <div id="discount-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 justify-center items-start p-4 overflow-y-auto">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8">
+    <div id="discount-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
             <form id="discount-form" class="p-6">
-                <div class="flex justify-between items-center pb-4 border-b">
-                    <h2 id="discount-modal-title" class="text-2xl font-bold">Add New Discount</h2>
-                    <button type="button" id="close-discount-modal-btn" class="text-gray-400 hover:text-gray-800"><i data-feather="x" class="w-8 h-8"></i></button>
+                <div class="flex justify-between items-center pb-4 border-b border-gray-200">
+                    <h2 id="discount-modal-title" class="text-2xl font-bold text-gray-800">Add New Discount</h2>
+                    <button type="button" id="close-discount-modal-btn" class="text-gray-400 hover:text-gray-800 transition-colors"><i data-feather="x" class="w-8 h-8"></i></button>
                 </div>
                 <div class="mt-6 space-y-4">
                     <input type="hidden" id="discountId">
                     <div>
-                        <label for="discountCode" class="block text-sm font-medium text-gray-700">Discount Code</label>
-                        <input type="text" id="discountCode" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        <label for="discountCode" class="block text-sm font-medium text-gray-700 mb-1">Discount Code</label>
+                        <input type="text" id="discountCode" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                     </div>
                     <div>
-                        <label for="discountType" class="block text-sm font-medium text-gray-700">Discount Type</label>
-                        <select id="discountType" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        <label for="discountType" class="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
+                        <select id="discountType" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                             <option value="percentage">Percentage (%)</option>
                             <option value="fixed">Fixed Amount (₹)</option>
                         </select>
                     </div>
                     <div>
-                        <label for="discountValue" class="block text-sm font-medium text-gray-700">Value</label>
-                        <input type="number" id="discountValue" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        <label for="discountValue" class="block text-sm font-medium text-gray-700 mb-1">Value</label>
+                        <input type="number" id="discountValue" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                     </div>
                     <div>
-                        <label for="discountExpiry" class="block text-sm font-medium text-gray-700">Expiry Date</label>
-                        <input type="date" id="discountExpiry" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                        <label for="discountExpiry" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                        <input type="date" id="discountExpiry" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
                     </div>
                     <div class="flex items-center">
                         <input type="checkbox" id="discountActive" class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded">
                         <label for="discountActive" class="ml-2 block text-sm text-gray-900">Is Active</label>
                     </div>
                 </div>
-                <div class="pt-6 border-t mt-6 flex justify-end space-x-2">
-                    <button type="button" id="cancel-discount-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Cancel</button>
-                    <button type="submit" class="bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 transition">Save Discount</button>
+                <div class="pt-6 border-t border-gray-200 mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancel-discount-btn" class="bg-gray-200 text-gray-700 font-bold py-2.5 px-5 rounded-xl hover:bg-gray-300 transition-all duration-300 shadow-md hover:shadow-lg">Cancel</button>
+                    <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg">Save Discount</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Order Details Modal (New) -->
+    <div id="order-details-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+            <div class="p-6">
+                <div class="flex justify-between items-center pb-4 border-b border-gray-200">
+                    <h2 class="text-2xl font-bold text-gray-800">Order Details</h2>
+                    <button type="button" id="close-order-details-modal-btn" class="text-gray-400 hover:text-gray-800 transition-colors"><i data-feather="x" class="w-8 h-8"></i></button>
+                </div>
+                <div class="mt-6 space-y-4 text-gray-700 text-sm">
+                    <p><strong>Order ID:</strong> <span id="modal-order-id" class="font-semibold text-gray-900"></span></p>
+                    <p><strong>Customer Name:</strong> <span id="modal-customer-name" class="font-semibold text-gray-900"></span></p>
+                    <p><strong>Order Date:</strong> <span id="modal-order-date" class="font-semibold text-gray-900"></span></p>
+                    <p><strong>Status:</strong> <span id="modal-order-status" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"></span></p>
+                    
+                    <div class="border-t border-gray-200 pt-4">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Products:</h3>
+                        <ul id="modal-order-products" class="list-disc pl-5 space-y-2 text-gray-700"></ul>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-4">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Payment Information:</h3>
+                        <p><strong>Method:</strong> <span id="modal-payment-method" class="font-semibold text-gray-900"></span></p>
+                        <p><strong>Transaction ID:</strong> <span id="modal-transaction-id" class="font-semibold text-gray-900"></span></p>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-4">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Shipping Address:</h3>
+                        <p id="modal-shipping-address" class="text-gray-700"></p>
+                    </div>
+
+                    <div class="border-t border-gray-200 pt-4">
+                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Summary:</h3>
+                        <p class="flex justify-between items-center"><span><strong>Subtotal:</strong></span> <span class="font-semibold text-gray-900">₹<span id="modal-subtotal"></span></span></p>
+                        <p class="flex justify-between items-center"><span><strong>GST (<span id="modal-gst-percentage"></span>%):</strong></span> <span class="font-semibold text-gray-900">₹<span id="modal-gst-amount"></span></span></p>
+                        <p class="flex justify-between items-center text-xl font-bold mt-2 pt-2 border-t border-gray-200"><span><strong>Total Amount:</strong></span> <span class="text-sky-700">₹<span id="modal-total-amount"></span></span></p>
+                    </div>
+
+                </div>
+            </div>
         </div>
     </div>
 
@@ -369,6 +554,7 @@
             const categoriesCollection = collection(db, 'categories');
             const customersCollection = collection(db, 'customers');
             const discountsCollection = collection(db, 'discounts');
+            const ordersCollection = collection(db, 'orders');
             const siteContentRef = doc(db, 'site_content', 'main');
 
             // --- UI Elements ---
@@ -385,6 +571,7 @@
             const productsTableBody = document.getElementById('products-table-body');
             const siteSettingsForm = document.getElementById('site-settings-form');
             const paymentSettingsForm = document.getElementById('payment-settings-form');
+            const gstSettingsForm = document.getElementById('gst-settings-form'); // New: GST Settings Form
             const categoryList = document.getElementById('category-list');
             const customersTableBody = document.getElementById('customers-table-body');
             const reviewList = document.getElementById('review-list');
@@ -392,10 +579,35 @@
             const discountModal = document.getElementById('discount-modal');
             const discountForm = document.getElementById('discount-form');
             const discountModalTitle = document.getElementById('discount-modal-title');
+            const ordersTableBody = document.getElementById('orders-table-body');
+
+            // New: Order Details Modal Elements
+            const orderDetailsModal = document.getElementById('order-details-modal');
+            const closeOrderDetailsModalBtn = document.getElementById('close-order-details-modal-btn');
+            const modalOrderId = document.getElementById('modal-order-id');
+            const modalCustomerName = document.getElementById('modal-customer-name');
+            const modalOrderDate = document.getElementById('modal-order-date');
+            const modalOrderStatus = document.getElementById('modal-order-status');
+            const modalOrderProducts = document.getElementById('modal-order-products');
+            const modalPaymentMethod = document.getElementById('modal-payment-method');
+            const modalTransactionId = document.getElementById('modal-transaction-id');
+            const modalShippingAddress = document.getElementById('modal-shipping-address');
+            const modalSubtotal = document.getElementById('modal-subtotal');
+            const modalGstPercentage = document.getElementById('modal-gst-percentage');
+            const modalGstAmount = document.getElementById('modal-gst-amount');
+            const modalTotalAmount = document.getElementById('modal-total-amount');
+
+            // New: Order Count Elements
+            const totalOrdersCount = document.getElementById('total-orders-count');
+            const completedOrdersCount = document.getElementById('completed-orders-count');
+            const pendingOrdersCount = document.getElementById('pending-orders-count');
 
             // New: Mobile Menu Elements
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const adminTabsNav = document.getElementById('admin-tabs-nav');
+
+            // Global variable to store GST settings
+            window.gstSettings = { gstNumber: '', gstPercentage: 0 };
 
 
             // --- Helper for custom alert/confirm ---
@@ -454,9 +666,10 @@
                 document.querySelector('.admin-tab[data-tab="products"]').click();
                 feather.replace();
 
-                // Load Site Settings and Payment Settings
+                // Load Site Settings, Payment Settings, and GST Settings
                 loadSiteSettings();
                 loadPaymentSettings();
+                loadGstSettings(); // New: Load GST Settings
 
                 // Attach real-time listeners
                 onSnapshot(productsCollection, (snapshot) => {
@@ -477,6 +690,11 @@
                 onSnapshot(discountsCollection, (snapshot) => {
                     const discountsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderDiscounts(discountsData);
+                });
+                // New: Listen for order changes
+                onSnapshot(ordersCollection, (snapshot) => {
+                    const ordersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderOrders(ordersData);
                 });
             };
 
@@ -518,7 +736,7 @@
                     if (window.innerWidth < 768) {
                         adminTabsNav.classList.remove('nav-links-mobile-flex');
                         adminTabsNav.classList.add('nav-links-mobile-hidden');
-                        mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-6 h-6 text-gray-700"></i>';
+                        mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-7 h-7 text-gray-700"></i>'; // Reset icon
                         feather.replace();
                     }
                 });
@@ -530,11 +748,11 @@
                 if (isHidden) {
                     adminTabsNav.classList.remove('nav-links-mobile-hidden');
                     adminTabsNav.classList.add('nav-links-mobile-flex');
-                    mobileMenuToggle.innerHTML = '<i data-feather="x" class="w-6 h-6 text-gray-700"></i>';
+                    mobileMenuToggle.innerHTML = '<i data-feather="x" class="w-7 h-7 text-gray-700"></i>';
                 } else {
                     adminTabsNav.classList.remove('nav-links-mobile-flex');
                     adminTabsNav.classList.add('nav-links-mobile-hidden');
-                    mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-6 h-6 text-gray-700"></i>';
+                    mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-7 h-7 text-gray-700"></i>';
                 }
                 feather.replace();
             });
@@ -544,7 +762,7 @@
                 if (window.innerWidth >= 768) {
                     adminTabsNav.classList.remove('nav-links-mobile-flex');
                     adminTabsNav.classList.remove('nav-links-mobile-hidden'); // Ensure it's visible on desktop
-                    mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-6 h-6 text-gray-700"></i>'; // Reset icon
+                    mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-7 h-7 text-gray-700"></i>'; // Reset icon
                     feather.replace();
                 }
             });
@@ -610,13 +828,53 @@
                 }
             });
 
+            // --- GST Settings (New) ---
+            const loadGstSettings = async () => {
+                const docSnap = await getDoc(siteContentRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('gstNumber').value = data.gstNumber || '';
+                    document.getElementById('gstPercentage').value = data.gstPercentage !== undefined ? data.gstPercentage : 0;
+                    window.gstSettings = {
+                        gstNumber: data.gstNumber || '',
+                        gstPercentage: data.gstPercentage !== undefined ? data.gstPercentage : 0
+                    };
+                }
+            };
+
+            gstSettingsForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const gstData = {
+                    gstNumber: document.getElementById('gstNumber').value,
+                    gstPercentage: parseFloat(document.getElementById('gstPercentage').value)
+                };
+                try {
+                    await setDoc(siteContentRef, gstData, { merge: true });
+                    window.gstSettings = gstData; // Update global settings
+                    showMessage('GST settings saved successfully!', 'success');
+                } catch (error) {
+                    console.error("Error saving GST settings:", error);
+                    showMessage('Error saving GST settings.', 'error');
+                }
+            });
+
 
             // --- Modal Logic (Product) ---
-            const openProductModal = () => productModal.classList.add('flex');
+            const openProductModal = () => {
+                productModal.classList.add('flex');
+                setTimeout(() => { // Add a slight delay for transition
+                    productModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                    productModal.querySelector('div').classList.add('scale-100', 'opacity-100');
+                }, 50);
+            };
             const closeProductModal = () => {
-                productModal.classList.remove('flex');
-                productForm.reset();
-                document.getElementById('productId').value = '';
+                productModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
+                productModal.querySelector('div').classList.add('scale-95', 'opacity-0');
+                setTimeout(() => { // Delay hiding the modal until transition finishes
+                    productModal.classList.remove('flex');
+                    productForm.reset();
+                    document.getElementById('productId').value = '';
+                }, 300); // Match transition duration
             };
 
             document.getElementById('add-product-btn').addEventListener('click', () => {
@@ -631,14 +889,14 @@
                 productsTableBody.innerHTML = '';
                 products.forEach(product => {
                     const row = document.createElement('tr');
-                    row.className = 'bg-white border-b';
+                    row.className = 'bg-white border-b hover:bg-gray-50';
                     row.innerHTML = `
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${product.name}</th>
-                        <td class="px-6 py-4">${product.category}</td>
-                        <td class="px-6 py-4">₹${product.price ? product.price.toLocaleString('en-IN') : 'N/A'}</td>
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <button data-id="${product.id}" class="edit-btn font-medium text-blue-600 hover:underline">Edit</button>
-                            <button data-id="${product.id}" class="delete-btn font-medium text-red-600 hover:underline">Delete</button>
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${product.name}</td>
+                        <td class="px-6 py-4 text-gray-600">${product.category}</td>
+                        <td class="px-6 py-4 text-gray-600">₹${product.price ? product.price.toLocaleString('en-IN') : 'N/A'}</td>
+                        <td class="px-6 py-4 text-right space-x-3">
+                            <button data-id="${product.id}" class="edit-btn font-medium text-blue-600 hover:text-blue-800 hover:underline">Edit</button>
+                            <button data-id="${product.id}" class="delete-btn font-medium text-red-600 hover:text-red-800 hover:underline">Delete</button>
                         </td>
                     `;
                     productsTableBody.appendChild(row);
@@ -720,12 +978,12 @@
                 categoryList.innerHTML = '';
                 categories.forEach(cat => {
                     const li = document.createElement('li');
-                    li.className = 'px-6 py-4 flex justify-between items-center';
+                    li.className = 'px-6 py-4 flex justify-between items-center hover:bg-gray-50';
                     li.innerHTML = `
-                        <span>${cat.name}</span>
-                        <div class="space-x-2">
-                            <button data-id="${cat.id}" data-name="${cat.name}" class="edit-cat-btn font-medium text-blue-600 hover:underline">Edit</button>
-                            <button data-id="${cat.id}" class="delete-cat-btn font-medium text-red-600 hover:underline">Delete</button>
+                        <span class="text-gray-800 font-medium">${cat.name}</span>
+                        <div class="space-x-3">
+                            <button data-id="${cat.id}" data-name="${cat.name}" class="edit-cat-btn font-medium text-blue-600 hover:text-blue-800 hover:underline">Edit</button>
+                            <button data-id="${cat.id}" class="delete-cat-btn font-medium text-red-600 hover:text-red-800 hover:underline">Delete</button>
                         </div>
                     `;
                     categoryList.appendChild(li);
@@ -791,11 +1049,11 @@
                 customersTableBody.innerHTML = '';
                 customers.forEach(customer => {
                     const row = document.createElement('tr');
-                    row.className = 'bg-white border-b';
+                    row.className = 'bg-white border-b hover:bg-gray-50';
                     row.innerHTML = `
                         <td class="px-6 py-4 font-medium text-gray-900">${customer.fullName}</td>
-                        <td class="px-6 py-4">${customer.phone}</td>
-                        <td class="px-6 py-4">${customer.address}, ${customer.city}, ${customer.pincode}</td>
+                        <td class="px-6 py-4 text-gray-600">${customer.phone}</td>
+                        <td class="px-6 py-4 text-gray-600">${customer.address}, ${customer.city}, ${customer.pincode}</td>
                     `;
                     customersTableBody.appendChild(row);
                 });
@@ -808,32 +1066,32 @@
                     if (product.reviews && product.reviews.length > 0) {
                         product.reviews.forEach((review, index) => {
                             const reviewCard = document.createElement('div');
-                            reviewCard.className = 'bg-white p-4 rounded-lg shadow';
+                            reviewCard.className = 'bg-white p-6 rounded-xl shadow-md border border-gray-200';
                             let stars = Array(5).fill(0).map((_, i) => `<i data-feather="star" class="w-4 h-4 ${i < review.rating ? 'text-amber-500 fill-current' : 'text-gray-300'}"></i>`).join('');
                             
                             let replySection = `
-                                <div class="mt-4">
-                                    <button data-product-id="${product.id}" data-review-index="${index}" class="reply-btn text-sm text-blue-600 font-semibold">Reply</button>
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <button data-product-id="${product.id}" data-review-index="${index}" class="reply-btn text-sm text-blue-600 font-semibold hover:text-blue-800 hover:underline">Reply to Review</button>
                                     <div class="reply-form-container hidden mt-2">
-                                        <textarea class="w-full border-gray-300 rounded-md shadow-sm text-sm" rows="2" placeholder="Write your reply..."></textarea>
-                                        <button data-product-id="${product.id}" data-review-index="${index}" class="submit-reply-btn mt-2 bg-green-500 text-white text-xs font-bold py-1 px-3 rounded-md hover:bg-green-600">Submit Reply</button>
+                                        <textarea class="w-full border-gray-300 rounded-lg shadow-sm text-sm p-2.5 focus:border-sky-500 focus:ring-2 focus:ring-sky-200" rows="3" placeholder="Write your reply..."></textarea>
+                                        <button data-product-id="${product.id}" data-review-index="${index}" class="submit-reply-btn mt-3 bg-green-600 text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-sm">Submit Reply</button>
                                     </div>
                                 </div>`;
 
                             if (review.adminReply) {
-                                replySection = `<div class="mt-3 pt-3 border-t bg-sky-50 p-3 rounded-md">
-                                    <p class="text-sm font-bold text-sky-800">Reply from ToyTopia:</p>
-                                    <p class="text-sm text-gray-600">${review.adminReply}</p>
+                                replySection = `<div class="mt-3 pt-3 border-t border-gray-200 bg-sky-50 p-4 rounded-lg">
+                                    <p class="text-sm font-bold text-sky-800 mb-1">Reply from ToyTopia:</p>
+                                    <p class="text-sm text-gray-700">${review.adminReply}</p>
                                 </div>`;
                             }
 
                             reviewCard.innerHTML = `
-                                <p class="font-bold text-gray-800">${product.name}</p>
-                                <div class="flex items-center my-1">
-                                    <div class="flex">${stars}</div>
-                                    <p class="ml-2 font-semibold text-gray-700">${review.user}</p>
+                                <p class="font-bold text-lg text-gray-900">${product.name}</p>
+                                <div class="flex items-center my-2">
+                                    <div class="flex mr-2">${stars}</div>
+                                    <p class="font-semibold text-gray-700">${review.user}</p>
                                 </div>
-                                <p class="text-gray-600 italic">"${review.comment}"</p>
+                                <p class="text-gray-600 italic leading-relaxed">"${review.comment}"</p>
                                 ${replySection}
                             `;
                             reviewList.appendChild(reviewCard);
@@ -878,12 +1136,22 @@
             });
 
             // --- Modal Logic (Discount) ---
-            const openDiscountModal = () => discountModal.classList.add('flex');
+            const openDiscountModal = () => {
+                discountModal.classList.add('flex');
+                setTimeout(() => { // Add a slight delay for transition
+                    discountModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                    discountModal.querySelector('div').classList.add('scale-100', 'opacity-100');
+                }, 50);
+            };
             const closeDiscountModal = () => {
-                discountModal.classList.remove('flex');
-                discountForm.reset();
-                document.getElementById('discountId').value = '';
-                document.getElementById('discountActive').checked = true; // Default to active
+                discountModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
+                discountModal.querySelector('div').classList.add('scale-95', 'opacity-0');
+                setTimeout(() => { // Delay hiding the modal until transition finishes
+                    discountModal.classList.remove('flex');
+                    discountForm.reset();
+                    document.getElementById('discountId').value = '';
+                    document.getElementById('discountActive').checked = true; // Default to active
+                }, 300); // Match transition duration
             };
 
             document.getElementById('add-discount-btn').addEventListener('click', () => {
@@ -899,20 +1167,20 @@
                 discountsTableBody.innerHTML = '';
                 discounts.forEach(discount => {
                     const row = document.createElement('tr');
-                    row.className = 'bg-white border-b';
-                    const expiryDate = discount.expiryDate ? new Date(discount.expiryDate).toLocaleDateString() : 'N/A';
+                    row.className = 'bg-white border-b hover:bg-gray-50';
+                    const expiryDate = discount.expiryDate ? new Date(discount.expiryDate).toLocaleDateString('en-IN') : 'N/A';
                     const valueDisplay = discount.type === 'percentage' ? `${discount.value}%` : `₹${discount.value}`;
-                    const activeStatus = discount.isActive ? `<span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>` : `<span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>`;
+                    const activeStatus = discount.isActive ? `<span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>` : `<span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>`;
 
                     row.innerHTML = `
-                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${discount.code}</th>
-                        <td class="px-6 py-4">${discount.type}</td>
-                        <td class="px-6 py-4">${valueDisplay}</td>
-                        <td class="px-6 py-4">${expiryDate}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${discount.code}</td>
+                        <td class="px-6 py-4 text-gray-600">${discount.type}</td>
+                        <td class="px-6 py-4 text-gray-600">${valueDisplay}</td>
+                        <td class="px-6 py-4 text-gray-600">${expiryDate}</td>
                         <td class="px-6 py-4">${activeStatus}</td>
-                        <td class="px-6 py-4 text-right space-x-2">
-                            <button data-id="${discount.id}" class="edit-discount-btn font-medium text-blue-600 hover:underline">Edit</button>
-                            <button data-id="${discount.id}" class="delete-discount-btn font-medium text-red-600 hover:underline">Delete</button>
+                        <td class="px-6 py-4 text-right space-x-3">
+                            <button data-id="${discount.id}" class="edit-discount-btn font-medium text-blue-600 hover:text-blue-800 hover:underline">Edit</button>
+                            <button data-id="${discount.id}" class="delete-discount-btn font-medium text-red-600 hover:text-red-800 hover:underline">Delete</button>
                         </td>
                     `;
                     discountsTableBody.appendChild(row);
@@ -988,6 +1256,205 @@
                     }
                 }
             });
+
+            // --- Order Management (New) ---
+            const renderOrders = (orders) => {
+                ordersTableBody.innerHTML = '';
+                let total = 0;
+                let completed = 0;
+                let pending = 0;
+
+                orders.forEach(order => {
+                    total++; // Increment total for each order
+
+                    if (order.status === 'Delivered') {
+                        completed++;
+                    }
+                    if (order.status === 'Pending' || order.status === 'Processing') {
+                        pending++;
+                    }
+
+                    const row = document.createElement('tr');
+                    row.className = 'bg-white border-b hover:bg-gray-50';
+                    const orderDate = order.orderDate ? new Date(order.orderDate).toLocaleDateString('en-IN') : 'N/A';
+                    const totalAmount = order.totalAmount ? `₹${parseFloat(order.totalAmount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'N/A';
+                    let statusClass = '';
+                    if (order.status === 'Pending') {
+                        statusClass = 'bg-yellow-100 text-yellow-800';
+                    } else if (order.status === 'Processing') {
+                        statusClass = 'bg-blue-100 text-blue-800';
+                    } else if (order.status === 'Shipped') {
+                        statusClass = 'bg-indigo-100 text-indigo-800';
+                    } else if (order.status === 'Delivered') {
+                        statusClass = 'bg-green-100 text-green-800';
+                    } else if (order.status === 'Cancelled') {
+                        statusClass = 'bg-red-100 text-red-800';
+                    }
+
+                    // Defensive check for order.id
+                    const displayOrderId = order.id ? order.id.substring(0, 8) + '...' : 'N/A';
+
+                    // Conditionally show delete button for cancelled orders
+                    const deleteButtonHtml = order.status === 'Cancelled' ? 
+                        `<button data-id="${order.id || ''}" class="delete-order-btn font-medium text-red-600 hover:text-red-800 hover:underline ml-3">Delete</button>` : '';
+
+                    row.innerHTML = `
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${displayOrderId}</td>
+                        <td class="px-6 py-4 text-gray-600">${order.customerName}</td>
+                        <td class="px-6 py-4 text-gray-600">${orderDate}</td>
+                        <td class="px-6 py-4 text-gray-600">${totalAmount}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${order.status}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right flex items-center justify-end space-x-3">
+                            <button data-id="${order.id || ''}" class="view-order-btn font-medium text-sky-600 hover:text-sky-800 hover:underline">View Details</button>
+                            <select data-id="${order.id || ''}" class="update-order-status-select mt-1 block w-auto border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 text-sm p-2">
+                                <option value="">Update Status</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                            ${deleteButtonHtml}
+                        </td>
+                    `;
+                    ordersTableBody.appendChild(row);
+                });
+
+                // Update counts after rendering table
+                totalOrdersCount.textContent = total;
+                completedOrdersCount.textContent = completed;
+                pendingOrdersCount.textContent = pending;
+
+                feather.replace();
+            };
+
+            const saveOrder = async (orderData) => {
+                try {
+                    await addDoc(ordersCollection, orderData);
+                    showMessage('Order saved successfully!', 'success');
+                } catch (error) {
+                    console.error("Error saving order:", error);
+                    showMessage('Error saving order.', 'error');
+                }
+            };
+
+            // Event listener for updating order status and deleting cancelled orders
+            ordersTableBody.addEventListener('click', async (e) => {
+                const target = e.target;
+                const orderId = target.dataset.id;
+
+                if (!orderId) return; // Ensure an order ID is present
+
+                // Handle status update
+                if (target.classList.contains('update-order-status-select')) {
+                    const newStatus = target.value;
+                    if (newStatus) {
+                        try {
+                            const orderRef = doc(db, 'orders', orderId);
+                            await updateDoc(orderRef, { status: newStatus });
+                            showMessage(`Order ${orderId ? orderId.substring(0, 8) + '...' : 'N/A'} status updated to ${newStatus}!`, 'success');
+                        } catch (error) {
+                            console.error("Error updating order status:", error);
+                            showMessage('Error updating order status.', 'error');
+                        }
+                    }
+                    target.value = ""; // Reset dropdown after selection
+                }
+
+                // Handle delete cancelled order
+                if (target.classList.contains('delete-order-btn')) {
+                    const confirmed = await showConfirmation('Are you sure you want to delete this CANCELLED order? This action cannot be undone.');
+                    if (confirmed) {
+                        try {
+                            await deleteDoc(doc(db, 'orders', orderId));
+                            showMessage('Cancelled order deleted successfully!', 'success');
+                        } catch (error) {
+                            console.error("Error deleting order:", error);
+                            showMessage('Error deleting order.', 'error');
+                        }
+                    }
+                }
+            });
+
+
+            // Order Details Modal Logic
+            const openOrderDetailsModal = () => {
+                orderDetailsModal.classList.add('flex');
+                setTimeout(() => { // Add a slight delay for transition
+                    orderDetailsModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
+                    orderDetailsModal.querySelector('div').classList.add('scale-100', 'opacity-100');
+                }, 50);
+            };
+            const closeOrderDetailsModal = () => {
+                orderDetailsModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
+                orderDetailsModal.querySelector('div').classList.add('scale-95', 'opacity-0');
+                setTimeout(() => { // Delay hiding the modal until transition finishes
+                    orderDetailsModal.classList.remove('flex');
+                }, 300); // Match transition duration
+            };
+
+            closeOrderDetailsModalBtn.addEventListener('click', closeOrderDetailsModal);
+
+            ordersTableBody.addEventListener('click', async (e) => {
+                const target = e.target;
+                if (target.classList.contains('view-order-btn')) {
+                    const orderId = target.dataset.id;
+                    const orderDoc = await getDoc(doc(db, 'orders', orderId));
+                    if (orderDoc.exists()) {
+                        const order = orderDoc.data();
+                        
+                        // Populate modal with order data
+                        // Defensive check for order.id
+                        modalOrderId.textContent = order.id ? order.id.substring(0, 8) + '...' : 'N/A';
+                        modalCustomerName.textContent = order.customerName;
+                        modalOrderDate.textContent = new Date(order.orderDate).toLocaleDateString('en-IN');
+                        
+                        modalOrderStatus.textContent = order.status;
+                        modalOrderStatus.className = `px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full`;
+                        if (order.status === 'Pending') {
+                            modalOrderStatus.classList.add('bg-yellow-100', 'text-yellow-800');
+                        } else if (order.status === 'Processing') {
+                            modalOrderStatus.classList.add('bg-blue-100', 'text-blue-800');
+                        } else if (order.status === 'Shipped') {
+                            modalOrderStatus.classList.add('bg-indigo-100', 'text-indigo-800');
+                        } else if (order.status === 'Delivered') {
+                            modalOrderStatus.classList.add('bg-green-100', 'text-green-800');
+                        } else if (order.status === 'Cancelled') {
+                            modalOrderStatus.classList.add('bg-red-100', 'text-red-800');
+                        }
+
+                        modalOrderProducts.innerHTML = '';
+                        let subtotal = 0;
+                        order.products.forEach(p => {
+                            const listItem = document.createElement('li');
+                            listItem.textContent = `${p.name} (Qty: ${p.quantity}, Price: ₹${p.price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`;
+                            modalOrderProducts.appendChild(listItem);
+                            subtotal += p.quantity * p.price;
+                        });
+
+                        const gstPercentage = window.gstSettings.gstPercentage || 0; // Use global GST setting
+                        const gstAmount = subtotal * (gstPercentage / 100);
+                        const totalWithGST = subtotal + gstAmount;
+
+                        modalPaymentMethod.textContent = order.paymentInfo.method;
+                        modalTransactionId.textContent = order.paymentInfo.transactionId;
+                        modalShippingAddress.textContent = `${order.shippingAddress.street}, ${order.shippingAddress.city}, ${order.shippingAddress.state}, ${order.shippingAddress.pincode}`;
+                        
+                        modalSubtotal.textContent = subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        modalGstPercentage.textContent = gstPercentage;
+                        modalGstAmount.textContent = gstAmount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        modalTotalAmount.textContent = totalWithGST.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+                        openOrderDetailsModal();
+                        feather.replace(); // Re-render icons inside modal
+                    } else {
+                        showMessage('Order details not found.', 'error');
+                    }
+                }
+            });
+
         }
 
         main().catch(console.error);
