@@ -16,6 +16,36 @@
             background-color: #e0f2fe;
             color: #0284c7;
         }
+
+        /* Mobile specific styles for navigation */
+        @media (max-width: 767px) {
+            .nav-links-mobile-hidden {
+                display: none;
+            }
+            .nav-links-mobile-flex {
+                display: flex;
+                flex-direction: column;
+                position: absolute; /* Position relative to its parent */
+                top: 100%; /* Below the header/tab bar */
+                left: 0;
+                right: 0;
+                background-color: white; /* Match panel background */
+                border-bottom-left-radius: 0.75rem; /* rounded-xl */
+                border-bottom-right-radius: 0.75rem; /* rounded-xl */
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+                padding: 1rem 0;
+            }
+            .nav-links-mobile-flex .admin-tab {
+                width: 100%;
+                text-align: center;
+                border-bottom: none; /* Remove individual tab borders */
+                padding: 0.75rem 1rem;
+                justify-content: center; /* Center content */
+            }
+            .nav-links-mobile-flex .admin-tab.active {
+                background-color: #f0f9ff; /* bg-sky-50 for active tab in mobile */
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -46,17 +76,24 @@
     <!-- Admin Panel Container -->
     <div id="admin-panel" class="hidden container mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
         <!-- Admin Tabs -->
-        <div class="mb-6 border-b border-gray-200">
-            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                <button data-tab="products" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Products</button>
-                <button data-tab="categories" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Categories</button>
-                <button data-tab="customers" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Customers</button>
-                <button data-tab="reviews" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Reviews</button>
-                <button data-tab="discounts" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Discounts</button>
-                <button data-tab="payments" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Payment Gateway</button>
-                <button data-tab="settings" class="admin-tab whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">Site Settings</button>
+        <div class="relative mb-6 border-b border-gray-200 bg-white sm:rounded-xl sm:shadow-md py-2 px-4">
+            <div class="flex justify-between items-center sm:hidden">
+                <h2 class="text-lg font-bold text-gray-800">Admin Menu</h2>
+                <button id="mobile-menu-toggle" class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-500">
+                    <i data-feather="menu" class="w-6 h-6 text-gray-700"></i>
+                </button>
+            </div>
+            <nav id="admin-tabs-nav" class="-mb-px flex-col space-y-1 sm:space-y-0 sm:flex sm:flex-row sm:space-x-8 sm:p-0 nav-links-mobile-hidden" aria-label="Tabs">
+                <button data-tab="products" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Products</button>
+                <button data-tab="categories" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Categories</button>
+                <button data-tab="customers" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Customers</button>
+                <button data-tab="reviews" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Reviews</button>
+                <button data-tab="discounts" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Discounts</button>
+                <button data-tab="payments" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Payment Gateway</button>
+                <button data-tab="settings" class="admin-tab whitespace-nowrap py-2 px-1 border-b-2 font-medium text-sm text-gray-600 hover:text-gray-900 hover:border-gray-300 sm:py-4">Site Settings</button>
             </nav>
         </div>
+
 
         <!-- Products Section -->
         <div id="products-section" class="admin-section">
@@ -88,8 +125,8 @@
         <div id="categories-section" class="admin-section hidden">
              <div class="flex justify-between items-center mb-6">
                 <h1 class="text-4xl font-black text-gray-800">Category Management</h1>
-                <div class="flex space-x-2">
-                    <input type="text" id="new-category-name" placeholder="New category name" class="border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500">
+                <div class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+                    <input type="text" id="new-category-name" placeholder="New category name" class="border-gray-300 rounded-md shadow-sm focus:border-sky-500 focus:ring-sky-500 flex-grow">
                     <button id="add-category-btn" class="bg-sky-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-sky-600 transition">Add Category</button>
                 </div>
             </div>
@@ -331,7 +368,7 @@
             const productsCollection = collection(db, 'products');
             const categoriesCollection = collection(db, 'categories');
             const customersCollection = collection(db, 'customers');
-            const discountsCollection = collection(db, 'discounts'); // New: Discounts Collection
+            const discountsCollection = collection(db, 'discounts');
             const siteContentRef = doc(db, 'site_content', 'main');
 
             // --- UI Elements ---
@@ -347,14 +384,18 @@
             const modalTitle = document.getElementById('modal-title');
             const productsTableBody = document.getElementById('products-table-body');
             const siteSettingsForm = document.getElementById('site-settings-form');
-            const paymentSettingsForm = document.getElementById('payment-settings-form'); // New: Payment Settings Form
+            const paymentSettingsForm = document.getElementById('payment-settings-form');
             const categoryList = document.getElementById('category-list');
             const customersTableBody = document.getElementById('customers-table-body');
             const reviewList = document.getElementById('review-list');
-            const discountsTableBody = document.getElementById('discounts-table-body'); // New: Discounts Table Body
-            const discountModal = document.getElementById('discount-modal'); // New: Discount Modal
-            const discountForm = document.getElementById('discount-form'); // New: Discount Form
-            const discountModalTitle = document.getElementById('discount-modal-title'); // New: Discount Modal Title
+            const discountsTableBody = document.getElementById('discounts-table-body');
+            const discountModal = document.getElementById('discount-modal');
+            const discountForm = document.getElementById('discount-form');
+            const discountModalTitle = document.getElementById('discount-modal-title');
+
+            // New: Mobile Menu Elements
+            const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+            const adminTabsNav = document.getElementById('admin-tabs-nav');
 
 
             // --- Helper for custom alert/confirm ---
@@ -432,7 +473,7 @@
                     const customersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderCustomers(customersData);
                 });
-                // New: Listen for discount changes
+                // Listen for discount changes
                 onSnapshot(discountsCollection, (snapshot) => {
                     const discountsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderDiscounts(discountsData);
@@ -472,8 +513,42 @@
                     document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
                     document.getElementById(`${tab.dataset.tab}-section`).classList.remove('hidden');
                     feather.replace(); // Re-render icons on tab switch
+
+                    // Hide mobile menu after selecting a tab
+                    if (window.innerWidth < 768) {
+                        adminTabsNav.classList.remove('nav-links-mobile-flex');
+                        adminTabsNav.classList.add('nav-links-mobile-hidden');
+                        mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-6 h-6 text-gray-700"></i>';
+                        feather.replace();
+                    }
                 });
             });
+
+            // --- Mobile Menu Toggle ---
+            mobileMenuToggle.addEventListener('click', () => {
+                const isHidden = adminTabsNav.classList.contains('nav-links-mobile-hidden');
+                if (isHidden) {
+                    adminTabsNav.classList.remove('nav-links-mobile-hidden');
+                    adminTabsNav.classList.add('nav-links-mobile-flex');
+                    mobileMenuToggle.innerHTML = '<i data-feather="x" class="w-6 h-6 text-gray-700"></i>';
+                } else {
+                    adminTabsNav.classList.remove('nav-links-mobile-flex');
+                    adminTabsNav.classList.add('nav-links-mobile-hidden');
+                    mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-6 h-6 text-gray-700"></i>';
+                }
+                feather.replace();
+            });
+
+            // Close mobile menu if resized to desktop view
+            window.addEventListener('resize', () => {
+                if (window.innerWidth >= 768) {
+                    adminTabsNav.classList.remove('nav-links-mobile-flex');
+                    adminTabsNav.classList.remove('nav-links-mobile-hidden'); // Ensure it's visible on desktop
+                    mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-6 h-6 text-gray-700"></i>'; // Reset icon
+                    feather.replace();
+                }
+            });
+
 
             // --- Site Settings ---
             const loadSiteSettings = async () => {
