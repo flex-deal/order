@@ -7,519 +7,508 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Custom styles for the Inter font and improved scrollbars */
+        /* Custom styles for a more polished UI */
         body {
             font-family: 'Inter', sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            background-color: #f1f5f9; /* A slightly cooler gray background */
         }
 
-        /* Hide default scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px; /* width of the entire scrollbar */
-            height: 8px; /* height of the entire scrollbar for horizontal */
-        }
+        /* Custom scrollbar styling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
-        /* Track */
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; /* color of the tracking area */
-            border-radius: 10px;
-        }
-
-        /* Handle */
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1; /* color of the scroll thumb */
-            border-radius: 10px; /* roundness of the scroll thumb */
-        }
-
-        /* Handle on hover */
-        ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; /* color of the scroll thumb on hover */
-        }
-
+        /* Modal animation and styling */
         .modal { display: none; }
         .modal.flex { display: flex; }
-        .admin-tab {
-            transition: all 0.2s ease-in-out;
-            border-radius: 0.75rem; /* rounded-xl for consistent look */
-            padding: 0.75rem 1rem; /* More generous padding */
-            justify-content: flex-start; /* Align text to start */
-        }
-        .admin-tab.active {
-            border-color: #0ea5e9;
-            background-color: #e0f2fe;
-            color: #0284c7;
-            font-weight: 600; /* Semi-bold for active tab */
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* subtle shadow */
+        .modal-content {
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        /* Mobile specific styles for navigation */
-        @media (max-width: 767px) {
-            .nav-links-mobile-hidden {
-                display: none;
-            }
-            .nav-links-mobile-flex {
-                display: flex;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: white;
-                border-bottom-left-radius: 0.75rem;
-                border-bottom-right-radius: 0.75rem;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-                padding: 1rem 0;
-                z-index: 40; /* Ensure mobile menu is above other content */
-            }
-            .nav-links-mobile-flex .admin-tab {
-                width: 100%;
-                text-align: left; /* Align text to left in mobile menu */
-                border-bottom: none;
-                padding: 0.75rem 1.5rem; /* More padding for tap targets */
-                margin-bottom: 0.25rem; /* Small gap between tabs */
-            }
-            .nav-links-mobile-flex .admin-tab:last-child {
-                 margin-bottom: 0; /* No margin for the last item */
-            }
-            .nav-links-mobile-flex .admin-tab.active {
-                background-color: #f0f9ff;
-            }
+        /* Sidebar Tab styling */
+        .admin-tab {
+            transition: all 0.2s ease-in-out;
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 0.75rem 1rem;
+            justify-content: flex-start;
+            color: #cbd5e1; /* Lighter text for inactive tabs */
+            font-weight: 500;
+        }
+        .admin-tab:hover {
+            background-color: #334155; /* Darker hover for sidebar */
+            color: #f1f5f9;
+        }
+        .admin-tab.active {
+            background-color: #0ea5e9; /* Bright blue for active tab */
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
 
         /* General button styling */
-        button {
+        .btn {
             transition: all 0.2s ease-in-out;
         }
-        button:hover {
-            transform: translateY(-1px);
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        button:active {
+        .btn:active {
             transform: translateY(0);
+            box-shadow: none;
+        }
+
+        /* Dashboard Stat Card Styling */
+        .stat-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .stat-card .icon-bg {
+            transition: all 0.3s ease-in-out;
+        }
+        .stat-card:hover .icon-bg {
+            transform: scale(1.1);
+        }
+        
+        /* Mobile Menu Animation */
+        #mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+        #mobile-menu.open {
+            max-height: 100vh; /* A large enough value */
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-slate-100 min-h-screen">
 
     <!-- Login Form -->
-    <div id="login-form-container" class="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-sky-500 to-indigo-600">
-        <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-sm transform transition-all duration-300 hover:scale-105">
-            <div class="flex justify-center mb-6">
-                 <i data-feather="box" class="w-16 h-16 text-sky-500 animate-bounce-slow"></i> <!-- Larger icon, subtle animation -->
+    <div id="login-form-container" class="min-h-screen flex items-center justify-center p-4 bg-slate-200">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm">
+            <div class="flex flex-col items-center mb-6">
+                 <div class="bg-sky-100 p-3 rounded-full mb-4">
+                    <i data-feather="box" class="w-10 h-10 text-sky-600"></i>
+                 </div>
+                 <h2 class="text-3xl font-extrabold text-center text-slate-800">ToyTopia Panel</h2>
+                 <p class="text-center text-slate-500 mt-1">Please sign in to continue</p>
             </div>
-            <h2 class="text-3xl font-extrabold text-center text-gray-800 mb-2">Admin Login</h2>
-            <p class="text-center text-gray-500 mb-8 text-sm">Welcome to the ToyTopia Panel</p>
             <form id="login-form">
                 <div class="mb-5">
-                    <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                    <input type="email" id="email" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                    <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="email" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-3 text-slate-800">
                 </div>
                 <div class="mb-6">
-                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-                    <input type="password" id="password" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                    <label for="password" class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                    <input type="password" id="password" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-3 text-slate-800">
                 </div>
-                <p id="login-error" class="text-red-600 text-sm mb-4 hidden bg-red-50 p-2 rounded-md border border-red-200">Invalid email or password. Please try again.</p>
-                <button type="submit" class="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-sky-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-sky-300">Login to Dashboard</button>
+                <p id="login-error" class="text-red-600 text-sm mb-4 hidden bg-red-50 p-3 rounded-lg border border-red-200">Invalid email or password. Please try again.</p>
+                <button type="submit" class="w-full bg-sky-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 btn">Login</button>
             </form>
         </div>
     </div>
 
     <!-- Admin Panel Container -->
-    <div id="admin-panel" class="hidden container mx-auto p-4 sm:p-6 lg:p-8 space-y-8 max-w-7xl">
-        <!-- Admin Tabs -->
-        <div class="relative mb-6 border-b border-gray-200 bg-white sm:rounded-xl sm:shadow-lg py-2 px-4 z-50">
-            <div class="flex justify-between items-center sm:hidden p-2">
-                <h2 class="text-xl font-bold text-gray-800">Admin Menu</h2>
-                <button id="mobile-menu-toggle" class="p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-sky-500">
-                    <i data-feather="menu" class="w-7 h-7 text-gray-700"></i>
-                </button>
-            </div>
-            <nav id="admin-tabs-nav" class="-mb-px flex-col space-y-1 sm:space-y-0 sm:flex sm:flex-row sm:space-x-4 sm:p-0 nav-links-mobile-hidden" aria-label="Tabs">
-                <button data-tab="products" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="box" class="w-5 h-5"></i><span>Products</span>
-                </button>
-                <button data-tab="categories" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="tag" class="w-5 h-5"></i><span>Categories</span>
-                </button>
-                <button data-tab="customers" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="users" class="w-5 h-5"></i><span>Customers</span>
-                </button>
-                <button data-tab="reviews" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="message-square" class="w-5 h-5"></i><span>Reviews</span>
-                </button>
-                <button data-tab="discounts" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="percent" class="w-5 h-5"></i><span>Discounts</span>
-                </button>
-                <button data-tab="payments" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="credit-card" class="w-5 h-5"></i><span>Payment Gateway</span>
-                </button>
-                <button data-tab="orders" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="shopping-cart" class="w-5 h-5"></i><span>Orders</span>
-                </button>
-                <button data-tab="gst" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="file-text" class="w-5 h-5"></i><span>GST Settings</span>
-                </button>
-                <button data-tab="settings" class="admin-tab whitespace-nowrap text-gray-600 hover:text-gray-900 hover:bg-gray-50 flex items-center space-x-2">
-                    <i data-feather="settings" class="w-5 h-5"></i><span>Site Settings</span>
-                </button>
-            </nav>
-        </div>
-
-
-        <!-- Products Section -->
-        <div id="products-section" class="admin-section">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Product Management</h1>
-                <button id="add-product-btn" class="bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700 transition-all duration-300 flex items-center space-x-2 shadow-md hover:shadow-lg">
-                    <i data-feather="plus-circle" class="w-5 h-5"></i>
-                    <span>Add New Product</span>
-                </button>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Name</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="products-table-body" class="bg-white divide-y divide-gray-200"></tbody>
-                    </table>
+    <div id="admin-panel" class="hidden">
+        <div class="flex min-h-screen">
+            <!-- Sidebar Navigation (Desktop) -->
+            <aside class="w-64 bg-slate-800 text-white p-4 flex-shrink-0 flex-col hidden md:flex">
+                <div class="flex items-center space-x-3 mb-8">
+                    <div class="bg-sky-500 p-2 rounded-lg">
+                        <i data-feather="box" class="w-8 h-8 text-white"></i>
+                    </div>
+                    <span class="text-2xl font-bold">ToyTopia</span>
                 </div>
-            </div>
-        </div>
-
-        <!-- Categories Section -->
-        <div id="categories-section" class="admin-section hidden">
-             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Category Management</h1>
-                <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
-                    <input type="text" id="new-category-name" placeholder="Enter new category name" class="border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 flex-grow p-2.5 text-gray-800">
-                    <button id="add-category-btn" class="bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700 transition-all duration-300 shadow-md hover:shadow-lg">Add Category</button>
-                </div>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                <ul id="category-list" class="divide-y divide-gray-200">
-                    <!-- Category items will be injected here -->
-                </ul>
-            </div>
-        </div>
-
-        <!-- Customers Section -->
-        <div id="customers-section" class="admin-section hidden">
-            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Customer Data</h1>
-             <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
-                            </tr>
-                        </thead>
-                        <tbody id="customers-table-body" class="bg-white divide-y divide-gray-200"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reviews Section -->
-        <div id="reviews-section" class="admin-section hidden">
-            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Review Management</h1>
-            <div id="review-list" class="space-y-6">
-                <!-- Review cards will be injected here -->
-            </div>
-        </div>
-
-        <!-- Discounts Section -->
-        <div id="discounts-section" class="admin-section hidden">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Discount Management</h1>
-                <button id="add-discount-btn" class="bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700 transition-all duration-300 flex items-center space-x-2 shadow-md hover:shadow-lg">
-                    <i data-feather="percent" class="w-5 h-5"></i>
-                    <span>Add New Discount</span>
-                </button>
-            </div>
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Code</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Expiry</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Active</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="discounts-table-body" class="bg-white divide-y divide-gray-200"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- Payment Gateway Section -->
-        <div id="payments-section" class="admin-section hidden">
-            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Payment Gateway Settings (Razorpay)</h1>
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200">
-                <form id="payment-settings-form" class="p-6 space-y-5">
-                    <div>
-                        <label for="razorpayKeyId" class="block text-sm font-medium text-gray-700 mb-1">Razorpay Key ID</label>
-                        <input type="text" id="razorpayKeyId" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="rzp_test_XXXXXXXXXXXXXXXX">
+                <nav id="admin-tabs-nav" class="flex-grow space-y-2">
+                    <button data-tab="dashboard" class="admin-tab w-full flex items-center space-x-3"><i data-feather="home" class="w-5 h-5"></i><span>Dashboard</span></button>
+                    <button data-tab="orders" class="admin-tab w-full flex items-center space-x-3"><i data-feather="shopping-cart" class="w-5 h-5"></i><span>Orders</span></button>
+                    <button data-tab="products" class="admin-tab w-full flex items-center space-x-3"><i data-feather="package" class="w-5 h-5"></i><span>Products</span></button>
+                    <button data-tab="categories" class="admin-tab w-full flex items-center space-x-3"><i data-feather="tag" class="w-5 h-5"></i><span>Categories</span></button>
+                    <button data-tab="customers" class="admin-tab w-full flex items-center space-x-3"><i data-feather="users" class="w-5 h-5"></i><span>Customers</span></button>
+                    <button data-tab="reviews" class="admin-tab w-full flex items-center space-x-3"><i data-feather="message-square" class="w-5 h-5"></i><span>Reviews</span></button>
+                    <button data-tab="discounts" class="admin-tab w-full flex items-center space-x-3"><i data-feather="percent" class="w-5 h-5"></i><span>Discounts</span></button>
+                    <div class="pt-4 mt-4 border-t border-slate-700 space-y-2">
+                        <button data-tab="payments" class="admin-tab w-full flex items-center space-x-3"><i data-feather="credit-card" class="w-5 h-5"></i><span>Payment Gateway</span></button>
+                        <button data-tab="gst" class="admin-tab w-full flex items-center space-x-3"><i data-feather="file-text" class="w-5 h-5"></i><span>GST Settings</span></button>
+                        <button data-tab="settings" class="admin-tab w-full flex items-center space-x-3"><i data-feather="settings" class="w-5 h-5"></i><span>Site Settings</span></button>
                     </div>
-                    <div>
-                        <label for="razorpayKeySecret" class="block text-sm font-medium text-gray-700 mb-1">Razorpay Key Secret</label>
-                        <input type="text" id="razorpayKeySecret" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="XXXXXXXXXXXXXXXXXXXXXX">
-                    </div>
-                    <div class="pt-4 flex justify-end">
-                        <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-300">Save Payment Settings</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+                </nav>
+            </aside>
 
-        <!-- Orders Section (New) -->
-        <div id="orders-section" class="admin-section hidden">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <h1 class="text-4xl font-extrabold text-gray-800 mb-4 sm:mb-0">Order Management</h1>
-                <!-- Removed Add Dummy Order button -->
-            </div>
-
-            <!-- Order Stats Area -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
-                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">Total Orders</p>
-                        <p id="total-orders-count" class="text-3xl font-bold text-gray-800 mt-1">0</p>
-                    </div>
-                    <i data-feather="package" class="w-10 h-10 text-sky-500 opacity-75"></i>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">Completed Orders</p>
-                        <p id="completed-orders-count" class="text-3xl font-bold text-green-600 mt-1">0</p>
-                    </div>
-                    <i data-feather="check-circle" class="w-10 h-10 text-green-500 opacity-75"></i>
-                </div>
-                <div class="bg-white p-6 rounded-xl shadow-lg flex items-center justify-between border border-gray-200">
-                    <div>
-                        <p class="text-gray-500 text-sm font-medium">Pending Orders</p>
-                        <p id="pending-orders-count" class="text-3xl font-bold text-yellow-600 mt-1">0</p>
-                    </div>
-                    <i data-feather="clock" class="w-10 h-10 text-yellow-500 opacity-75"></i>
-                </div>
-            </div>
-
-            <div class="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200">
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="orders-table-body" class="bg-white divide-y divide-gray-200"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <!-- GST Settings Section (New) -->
-        <div id="gst-section" class="admin-section hidden">
-            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">GST Settings</h1>
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200">
-                <form id="gst-settings-form" class="p-6 space-y-5">
-                    <div>
-                        <label for="gstNumber" class="block text-sm font-medium text-gray-700 mb-1">GST Number</label>
-                        <input type="text" id="gstNumber" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="GSTIN1234567890">
-                    </div>
-                    <div>
-                        <label for="gstPercentage" class="block text-sm font-medium text-gray-700 mb-1">GST Percentage (%)</label>
-                        <input type="number" id="gstPercentage" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" min="0" max="100" step="0.01">
-                    </div>
-                    <div class="pt-4 flex justify-end">
-                        <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-300">Save GST Settings</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Site Settings Section -->
-        <div id="settings-section" class="admin-section hidden">
-            <h1 class="text-4xl font-extrabold text-gray-800 mb-6">Site Settings</h1>
-            <div class="bg-white rounded-xl shadow-lg border border-gray-200">
-                <form id="site-settings-form" class="p-6 space-y-5">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="heroTitle" class="block text-sm font-medium text-gray-700 mb-1">Hero Title</label>
-                            <input type="text" id="heroTitle" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+            <!-- Main Content Area -->
+            <main class="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto w-full">
+                <!-- Mobile Header -->
+                <div class="md:hidden flex justify-between items-center mb-6 p-2 bg-white rounded-lg shadow">
+                    <div class="flex items-center space-x-2">
+                        <div class="bg-sky-500 p-2 rounded-lg">
+                            <i data-feather="box" class="w-6 h-6 text-white"></i>
                         </div>
-                        <div>
-                            <label for="heroSubtitle" class="block text-sm font-medium text-gray-700 mb-1">Hero Subtitle</label>
-                            <input type="text" id="heroSubtitle" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <span class="text-xl font-bold text-slate-800">ToyTopia</span>
+                    </div>
+                    <button id="mobile-menu-toggle" class="p-2 rounded-md hover:bg-slate-200">
+                        <i data-feather="menu" class="w-6 h-6 text-slate-700"></i>
+                    </button>
+                </div>
+                <!-- Mobile Menu (hidden by default) -->
+                <div id="mobile-menu" class="md:hidden mb-6 bg-white rounded-lg shadow-md">
+                    <!-- Mobile nav links will be cloned here by JS -->
+                </div>
+
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="admin-section">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6">Dashboard</h1>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card bg-white p-6 rounded-xl shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm font-medium">Total Revenue</p>
+                                <p id="total-revenue" class="text-3xl font-bold text-green-600 mt-1">₹0</p>
+                            </div>
+                            <div class="icon-bg bg-green-100 p-3 rounded-full"><i data-feather="dollar-sign" class="w-8 h-8 text-green-500"></i></div>
                         </div>
-                        <div>
-                            <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-1">Contact Email</label>
-                            <input type="email" id="contactEmail" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <div class="stat-card bg-white p-6 rounded-xl shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm font-medium">Orders (7 Days)</p>
+                                <p id="new-orders" class="text-3xl font-bold text-sky-600 mt-1">0</p>
+                            </div>
+                            <div class="icon-bg bg-sky-100 p-3 rounded-full"><i data-feather="shopping-cart" class="w-8 h-8 text-sky-500"></i></div>
                         </div>
-                        <div>
-                            <label for="contactPhone" class="block text-sm font-medium text-gray-700 mb-1">Contact Phone</label>
-                            <input type="text" id="contactPhone" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <div class="stat-card bg-white p-6 rounded-xl shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm font-medium">Low Stock</p>
+                                <p id="low-stock-items" class="text-3xl font-bold text-red-600 mt-1">0</p>
+                            </div>
+                            <div class="icon-bg bg-red-100 p-3 rounded-full"><i data-feather="alert-triangle" class="w-8 h-8 text-red-500"></i></div>
                         </div>
-                         <div>
-                            <label for="facebookUrl" class="block text-sm font-medium text-gray-700 mb-1">Facebook URL</label>
-                            <input type="url" id="facebookUrl" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
-                        </div>
-                         <div>
-                            <label for="instagramUrl" class="block text-sm font-medium text-gray-700 mb-1">Instagram URL</label>
-                            <input type="url" id="instagramUrl" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
-                        </div>
-                         <div>
-                            <label for="twitterUrl" class="block text-sm font-medium text-gray-700 mb-1">Twitter URL</label>
-                            <input type="url" id="twitterUrl" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                         <div class="stat-card bg-white p-6 rounded-xl shadow-sm flex items-center justify-between">
+                            <div>
+                                <p class="text-slate-500 text-sm font-medium">Top Seller</p>
+                                <p id="top-selling-product" class="text-lg font-bold text-indigo-600 mt-1 truncate">N/A</p>
+                            </div>
+                            <div class="icon-bg bg-indigo-100 p-3 rounded-full"><i data-feather="award" class="w-8 h-8 text-indigo-500"></i></div>
                         </div>
                     </div>
-                    <div class="pt-4 flex justify-end">
-                        <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-green-300">Save Settings</button>
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                         <h2 class="text-xl font-bold text-slate-800 mb-4">Sales Overview (Last 30 Days)</h2>
+                         <div class="relative h-96">
+                            <canvas id="salesChart"></canvas>
+                         </div>
                     </div>
-                </form>
-            </div>
+                </div>
+
+                <!-- Products Section -->
+                <div id="products-section" class="admin-section hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4 sm:mb-0">Product Management</h1>
+                        <button id="add-product-btn" class="btn bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700 flex items-center space-x-2">
+                            <i data-feather="plus-circle" class="w-5 h-5"></i>
+                            <span>Add New Product</span>
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-200">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Product Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Category</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Price</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Stock</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other sections (Categories, Customers, etc.) -->
+                <!-- Categories Section -->
+                <div id="categories-section" class="admin-section hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4 sm:mb-0">Category Management</h1>
+                        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 w-full sm:w-auto">
+                            <input type="text" id="new-category-name" placeholder="Enter new category name" class="border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 flex-grow p-2.5 text-slate-800">
+                            <button id="add-category-btn" class="btn bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700">Add Category</button>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <ul id="category-list" class="divide-y divide-slate-200"></ul>
+                    </div>
+                </div>
+
+                <!-- Customers Section -->
+                <div id="customers-section" class="admin-section hidden">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6">Customer Data</h1>
+                     <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-200">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Name</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Phone</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customers-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div id="reviews-section" class="admin-section hidden">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6">Review Management</h1>
+                    <div id="review-list" class="space-y-6"></div>
+                </div>
+
+                <!-- Discounts Section -->
+                <div id="discounts-section" class="admin-section hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4 sm:mb-0">Discount Management</h1>
+                        <button id="add-discount-btn" class="btn bg-sky-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-sky-700 flex items-center space-x-2">
+                            <i data-feather="percent" class="w-5 h-5"></i>
+                            <span>Add New Discount</span>
+                        </button>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-200">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Code</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Type</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Value</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Expiry</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Active</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="discounts-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Gateway Section -->
+                <div id="payments-section" class="admin-section hidden">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6">Payment Gateway Settings</h1>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <form id="payment-settings-form" class="space-y-5">
+                            <div>
+                                <label for="razorpayKeyId" class="block text-sm font-medium text-slate-700 mb-1">Razorpay Key ID</label>
+                                <input type="text" id="razorpayKeyId" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="rzp_test_XXXXXXXXXXXXXXXX">
+                            </div>
+                            <div>
+                                <label for="razorpayKeySecret" class="block text-sm font-medium text-slate-700 mb-1">Razorpay Key Secret</label>
+                                <input type="text" id="razorpayKeySecret" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="XXXXXXXXXXXXXXXXXXXXXX">
+                            </div>
+                            <div class="pt-4 flex justify-end">
+                                <button type="submit" class="btn bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700">Save Payment Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Orders Section -->
+                <div id="orders-section" class="admin-section hidden">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4 sm:mb-0">Order Management</h1>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-slate-200">
+                                <thead class="bg-slate-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Order ID</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Customer</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Date</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Total</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">Status</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="orders-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GST Settings Section -->
+                <div id="gst-section" class="admin-section hidden">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6">GST Settings</h1>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <form id="gst-settings-form" class="space-y-5">
+                            <div>
+                                <label for="gstNumber" class="block text-sm font-medium text-slate-700 mb-1">GST Number</label>
+                                <input type="text" id="gstNumber" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="GSTIN1234567890">
+                            </div>
+                            <div>
+                                <label for="gstPercentage" class="block text-sm font-medium text-slate-700 mb-1">GST Percentage (%)</label>
+                                <input type="number" id="gstPercentage" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" min="0" max="100" step="0.01">
+                            </div>
+                            <div class="pt-4 flex justify-end">
+                                <button type="submit" class="btn bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700">Save GST Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Site Settings Section -->
+                <div id="settings-section" class="admin-section hidden">
+                    <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6">Site Settings</h1>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <form id="site-settings-form" class="space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label for="heroTitle" class="block text-sm font-medium text-slate-700 mb-1">Hero Title</label>
+                                    <input type="text" id="heroTitle" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                                </div>
+                                <div>
+                                    <label for="heroSubtitle" class="block text-sm font-medium text-slate-700 mb-1">Hero Subtitle</label>
+                                    <input type="text" id="heroSubtitle" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                                </div>
+                                <div>
+                                    <label for="contactEmail" class="block text-sm font-medium text-slate-700 mb-1">Contact Email</label>
+                                    <input type="email" id="contactEmail" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                                </div>
+                                <div>
+                                    <label for="contactPhone" class="block text-sm font-medium text-slate-700 mb-1">Contact Phone</label>
+                                    <input type="text" id="contactPhone" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                                </div>
+                                 <div>
+                                    <label for="facebookUrl" class="block text-sm font-medium text-slate-700 mb-1">Facebook URL</label>
+                                    <input type="url" id="facebookUrl" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                                </div>
+                                 <div>
+                                    <label for="instagramUrl" class="block text-sm font-medium text-slate-700 mb-1">Instagram URL</label>
+                                    <input type="url" id="instagramUrl" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                                </div>
+                                 <div>
+                                    <label for="twitterUrl" class="block text-sm font-medium text-slate-700 mb-1">Twitter URL</label>
+                                    <input type="url" id="twitterUrl" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                                </div>
+                            </div>
+                            <div class="pt-4 flex justify-end">
+                                <button type="submit" class="btn bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700">Save Settings</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
+    <!-- All Modals -->
     <!-- Add/Edit Product Modal -->
-    <div id="product-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 justify-center items-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+    <div id="product-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 justify-center items-center p-4">
+        <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0 overflow-y-auto max-h-[90vh]">
             <form id="product-form" class="p-6">
-                <div class="flex justify-between items-center pb-4 border-b border-gray-200">
-                    <h2 id="modal-title" class="text-2xl font-bold text-gray-800">Add New Product</h2>
-                    <button type="button" id="close-modal-btn" class="text-gray-400 hover:text-gray-800 transition-colors"><i data-feather="x" class="w-8 h-8"></i></button>
+                <div class="flex justify-between items-center pb-4 border-b border-slate-200">
+                    <h2 id="modal-title" class="text-2xl font-bold text-slate-800">Add New Product</h2>
+                    <button type="button" id="close-modal-btn" class="text-slate-400 hover:text-slate-800"><i data-feather="x" class="w-8 h-8"></i></button>
                 </div>
                 <div class="mt-6 space-y-4">
                     <input type="hidden" id="productId">
                     <div>
-                        <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Product Name</label>
-                        <input type="text" id="name" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Product Name</label>
+                        <input type="text" id="name" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="sm:col-span-2">
+                            <label for="category" class="block text-sm font-medium text-slate-700 mb-1">Category</label>
+                            <select id="category" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800"></select>
+                        </div>
+                        <div>
+                            <label for="price" class="block text-sm font-medium text-slate-700 mb-1">Price (INR)</label>
+                            <input type="number" id="price" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
+                        </div>
                     </div>
                     <div>
-                        <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                        <select id="category" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800"></select>
+                        <label for="stock" class="block text-sm font-medium text-slate-700 mb-1">Stock Quantity</label>
+                        <input type="number" id="stock" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" value="0" min="0">
                     </div>
                     <div>
-                        <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price (INR)</label>
-                        <input type="number" id="price" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <label for="images" class="block text-sm font-medium text-slate-700 mb-1">Image URLs (comma-separated)</label>
+                        <textarea id="images" rows="3" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="https://placehold.co/img1.png, https://placehold.co/img2.png"></textarea>
                     </div>
                     <div>
-                        <label for="images" class="block text-sm font-medium text-gray-700 mb-1">Image URLs (comma-separated)</label>
-                        <textarea id="images" rows="3" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="https://placehold.co/img1.png, https://placehold.co/img2.png"></textarea>
-                    </div>
-                    <div>
-                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                        <textarea id="description" rows="4" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800"></textarea>
+                        <label for="description" class="block text-sm font-medium text-slate-700 mb-1">Description</label>
+                        <textarea id="description" rows="4" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800"></textarea>
                     </div>
                      <div>
-                        <label for="specifications" class="block text-sm font-medium text-gray-700 mb-1">Specifications (use &lt;li&gt; tags)</label>
-                        <textarea id="specifications" rows="4" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800" placeholder="<li>Spec 1</li><li>Spec 2</li>"></textarea>
+                        <label for="specifications" class="block text-sm font-medium text-slate-700 mb-1">Specifications (use &lt;li&gt; tags)</label>
+                        <textarea id="specifications" rows="4" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="<li>Spec 1</li><li>Spec 2</li>"></textarea>
                     </div>
                 </div>
-                <div class="pt-6 border-t border-gray-200 mt-6 flex justify-end space-x-3">
-                    <button type="button" id="cancel-btn" class="bg-gray-200 text-gray-700 font-bold py-2.5 px-5 rounded-xl hover:bg-gray-300 transition-all duration-300 shadow-md hover:shadow-lg">Cancel</button>
-                    <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg">Save Product</button>
+                <div class="pt-6 border-t border-slate-200 mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancel-btn" class="btn bg-slate-200 text-slate-700 font-bold py-2.5 px-5 rounded-xl hover:bg-slate-300">Cancel</button>
+                    <button type="submit" class="btn bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-green-700">Save Product</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Add/Edit Discount Modal -->
-    <div id="discount-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 justify-center items-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+    <div id="discount-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 justify-center items-center p-4">
+        <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0">
             <form id="discount-form" class="p-6">
-                <div class="flex justify-between items-center pb-4 border-b border-gray-200">
-                    <h2 id="discount-modal-title" class="text-2xl font-bold text-gray-800">Add New Discount</h2>
-                    <button type="button" id="close-discount-modal-btn" class="text-gray-400 hover:text-gray-800 transition-colors"><i data-feather="x" class="w-8 h-8"></i></button>
+                <div class="flex justify-between items-center pb-4 border-b border-slate-200">
+                    <h2 id="discount-modal-title" class="text-2xl font-bold text-slate-800">Add New Discount</h2>
+                    <button type="button" id="close-discount-modal-btn" class="text-slate-400 hover:text-slate-800"><i data-feather="x" class="w-8 h-8"></i></button>
                 </div>
                 <div class="mt-6 space-y-4">
                     <input type="hidden" id="discountId">
                     <div>
-                        <label for="discountCode" class="block text-sm font-medium text-gray-700 mb-1">Discount Code</label>
-                        <input type="text" id="discountCode" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <label for="discountCode" class="block text-sm font-medium text-slate-700 mb-1">Discount Code</label>
+                        <input type="text" id="discountCode" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
                     </div>
                     <div>
-                        <label for="discountType" class="block text-sm font-medium text-gray-700 mb-1">Discount Type</label>
-                        <select id="discountType" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <label for="discountType" class="block text-sm font-medium text-slate-700 mb-1">Discount Type</label>
+                        <select id="discountType" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
                             <option value="percentage">Percentage (%)</option>
                             <option value="fixed">Fixed Amount (₹)</option>
                         </select>
                     </div>
                     <div>
-                        <label for="discountValue" class="block text-sm font-medium text-gray-700 mb-1">Value</label>
-                        <input type="number" id="discountValue" required class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <label for="discountValue" class="block text-sm font-medium text-slate-700 mb-1">Value</label>
+                        <input type="number" id="discountValue" required class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
                     </div>
                     <div>
-                        <label for="discountExpiry" class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
-                        <input type="date" id="discountExpiry" class="mt-1 block w-full border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-gray-800">
+                        <label for="discountExpiry" class="block text-sm font-medium text-slate-700 mb-1">Expiry Date</label>
+                        <input type="date" id="discountExpiry" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800">
                     </div>
                     <div class="flex items-center">
-                        <input type="checkbox" id="discountActive" class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-gray-300 rounded">
-                        <label for="discountActive" class="ml-2 block text-sm text-gray-900">Is Active</label>
+                        <input type="checkbox" id="discountActive" class="h-4 w-4 text-sky-600 focus:ring-sky-500 border-slate-300 rounded">
+                        <label for="discountActive" class="ml-2 block text-sm text-slate-900">Is Active</label>
                     </div>
                 </div>
-                <div class="pt-6 border-t border-gray-200 mt-6 flex justify-end space-x-3">
-                    <button type="button" id="cancel-discount-btn" class="bg-gray-200 text-gray-700 font-bold py-2.5 px-5 rounded-xl hover:bg-gray-300 transition-all duration-300 shadow-md hover:shadow-lg">Cancel</button>
-                    <button type="submit" class="bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-green-700 transition-all duration-300 shadow-md hover:shadow-lg">Save Discount</button>
+                <div class="pt-6 border-t border-slate-200 mt-6 flex justify-end space-x-3">
+                    <button type="button" id="cancel-discount-btn" class="btn bg-slate-200 text-slate-700 font-bold py-2.5 px-5 rounded-xl hover:bg-slate-300">Cancel</button>
+                    <button type="submit" class="btn bg-green-600 text-white font-bold py-2.5 px-5 rounded-xl hover:bg-green-700">Save Discount</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Order Details Modal (New) -->
-    <div id="order-details-modal" class="modal fixed inset-0 bg-black bg-opacity-50 z-50 justify-center items-center p-4">
-        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0 transition-all duration-300 ease-out">
+    <!-- Order Details Modal -->
+    <div id="order-details-modal" class="modal fixed inset-0 bg-black bg-opacity-60 z-50 justify-center items-center p-4">
+        <div class="modal-content bg-white rounded-xl shadow-2xl w-full max-w-2xl my-8 transform scale-95 opacity-0 overflow-y-auto max-h-[90vh]">
             <div class="p-6">
-                <div class="flex justify-between items-center pb-4 border-b border-gray-200">
-                    <h2 class="text-2xl font-bold text-gray-800">Order Details</h2>
-                    <button type="button" id="close-order-details-modal-btn" class="text-gray-400 hover:text-gray-800 transition-colors"><i data-feather="x" class="w-8 h-8"></i></button>
+                 <div class="flex justify-between items-center pb-4 border-b border-slate-200">
+                    <h2 class="text-2xl font-bold text-slate-800">Order Details</h2>
+                    <button type="button" id="close-order-details-modal-btn" class="text-slate-400 hover:text-slate-800"><i data-feather="x" class="w-8 h-8"></i></button>
                 </div>
-                <div class="mt-6 space-y-4 text-gray-700 text-sm">
-                    <p><strong>Order ID:</strong> <span id="modal-order-id" class="font-semibold text-gray-900"></span></p>
-                    <p><strong>Customer Name:</strong> <span id="modal-customer-name" class="font-semibold text-gray-900"></span></p>
-                    <p><strong>Order Date:</strong> <span id="modal-order-date" class="font-semibold text-gray-900"></span></p>
-                    <p><strong>Status:</strong> <span id="modal-order-status" class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full"></span></p>
-                    
-                    <div class="border-t border-gray-200 pt-4">
-                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Products:</h3>
-                        <ul id="modal-order-products" class="list-disc pl-5 space-y-2 text-gray-700"></ul>
-                    </div>
-
-                    <div class="border-t border-gray-200 pt-4">
-                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Payment Information:</h3>
-                        <p><strong>Method:</strong> <span id="modal-payment-method" class="font-semibold text-gray-900"></span></p>
-                        <p><strong>Transaction ID:</strong> <span id="modal-transaction-id" class="font-semibold text-gray-900"></span></p>
-                    </div>
-
-                    <div class="border-t border-gray-200 pt-4">
-                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Shipping Address:</h3>
-                        <p id="modal-shipping-address" class="text-gray-700"></p>
-                    </div>
-
-                    <div class="border-t border-gray-200 pt-4">
-                        <h3 class="text-lg font-semibold mb-3 text-gray-800">Summary:</h3>
-                        <p class="flex justify-between items-center"><span><strong>Subtotal:</strong></span> <span class="font-semibold text-gray-900">₹<span id="modal-subtotal"></span></span></p>
-                        <p class="flex justify-between items-center"><span><strong>GST (<span id="modal-gst-percentage"></span>%):</strong></span> <span class="font-semibold text-gray-900">₹<span id="modal-gst-amount"></span></span></p>
-                        <p class="flex justify-between items-center text-xl font-bold mt-2 pt-2 border-t border-gray-200"><span><strong>Total Amount:</strong></span> <span class="text-sky-700">₹<span id="modal-total-amount"></span></span></p>
-                    </div>
-
+                <div id="order-details-content" class="mt-6 space-y-4 text-slate-700 text-sm">
+                    <!-- Content will be injected by JS -->
                 </div>
             </div>
         </div>
@@ -571,7 +560,7 @@
             const productsTableBody = document.getElementById('products-table-body');
             const siteSettingsForm = document.getElementById('site-settings-form');
             const paymentSettingsForm = document.getElementById('payment-settings-form');
-            const gstSettingsForm = document.getElementById('gst-settings-form'); // New: GST Settings Form
+            const gstSettingsForm = document.getElementById('gst-settings-form');
             const categoryList = document.getElementById('category-list');
             const customersTableBody = document.getElementById('customers-table-body');
             const reviewList = document.getElementById('review-list');
@@ -581,52 +570,38 @@
             const discountModalTitle = document.getElementById('discount-modal-title');
             const ordersTableBody = document.getElementById('orders-table-body');
 
-            // New: Order Details Modal Elements
             const orderDetailsModal = document.getElementById('order-details-modal');
             const closeOrderDetailsModalBtn = document.getElementById('close-order-details-modal-btn');
-            const modalOrderId = document.getElementById('modal-order-id');
-            const modalCustomerName = document.getElementById('modal-customer-name');
-            const modalOrderDate = document.getElementById('modal-order-date');
-            const modalOrderStatus = document.getElementById('modal-order-status');
-            const modalOrderProducts = document.getElementById('modal-order-products');
-            const modalPaymentMethod = document.getElementById('modal-payment-method');
-            const modalTransactionId = document.getElementById('modal-transaction-id');
-            const modalShippingAddress = document.getElementById('modal-shipping-address');
-            const modalSubtotal = document.getElementById('modal-subtotal');
-            const modalGstPercentage = document.getElementById('modal-gst-percentage');
-            const modalGstAmount = document.getElementById('modal-gst-amount');
-            const modalTotalAmount = document.getElementById('modal-total-amount');
+            const orderDetailsContent = document.getElementById('order-details-content');
 
-            // New: Order Count Elements
-            const totalOrdersCount = document.getElementById('total-orders-count');
-            const completedOrdersCount = document.getElementById('completed-orders-count');
-            const pendingOrdersCount = document.getElementById('pending-orders-count');
-
-            // New: Mobile Menu Elements
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const adminTabsNav = document.getElementById('admin-tabs-nav');
+            const mobileMenu = document.getElementById('mobile-menu');
 
             // Global variable to store GST settings
             window.gstSettings = { gstNumber: '', gstPercentage: 0 };
+
+            // Global variable for Chart.js instance
+            let salesChart = null;
 
 
             // --- Helper for custom alert/confirm ---
             function showMessage(message, type = 'info') {
                 const messageBox = document.createElement('div');
-                messageBox.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white z-[1000] transition-all duration-300 ease-in-out`;
-                if (type === 'info') {
-                    messageBox.classList.add('bg-blue-500');
-                } else if (type === 'success') {
-                    messageBox.classList.add('bg-green-500');
-                } else if (type === 'error') {
-                    messageBox.classList.add('bg-red-500');
-                }
+                messageBox.className = `fixed top-5 right-5 p-4 rounded-lg shadow-lg text-white z-[1000] transform translate-x-full opacity-0 transition-all duration-300 ease-in-out`;
+                if (type === 'success') messageBox.classList.add('bg-green-500');
+                else if (type === 'error') messageBox.classList.add('bg-red-500');
+                else messageBox.classList.add('bg-blue-500');
 
                 messageBox.textContent = message;
                 document.body.appendChild(messageBox);
 
                 setTimeout(() => {
-                    messageBox.classList.add('opacity-0');
+                    messageBox.classList.remove('translate-x-full', 'opacity-0');
+                }, 10);
+
+                setTimeout(() => {
+                    messageBox.classList.add('translate-x-full', 'opacity-0');
                     messageBox.addEventListener('transitionend', () => messageBox.remove());
                 }, 3000);
             }
@@ -634,67 +609,109 @@
             async function showConfirmation(message) {
                 return new Promise((resolve) => {
                     const confirmModal = document.createElement('div');
-                    confirmModal.className = `fixed inset-0 bg-black bg-opacity-50 z-50 flex justify-center items-center p-4`;
+                    confirmModal.className = `fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-center items-center p-4`;
                     confirmModal.innerHTML = `
-                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6">
-                            <p class="text-lg font-semibold text-gray-800 mb-6">${message}</p>
+                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 transform scale-95 opacity-0 transition-all duration-200">
+                            <p class="text-lg font-semibold text-slate-800 mb-6">${message}</p>
                             <div class="flex justify-end space-x-4">
-                                <button id="confirm-cancel" class="bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-lg hover:bg-gray-300 transition">Cancel</button>
-                                <button id="confirm-ok" class="bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600 transition">Confirm</button>
+                                <button id="confirm-cancel" class="btn bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded-lg hover:bg-slate-300">Cancel</button>
+                                <button id="confirm-ok" class="btn bg-red-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-600">Confirm</button>
                             </div>
                         </div>
                     `;
                     document.body.appendChild(confirmModal);
+                    setTimeout(() => confirmModal.querySelector('div').classList.remove('scale-95', 'opacity-0'), 10);
 
-                    document.getElementById('confirm-ok').addEventListener('click', () => {
-                        confirmModal.remove();
-                        resolve(true);
-                    });
-                    document.getElementById('confirm-cancel').addEventListener('click', () => {
-                        confirmModal.remove();
-                        resolve(false);
-                    });
+                    const handleConfirm = (value) => {
+                        confirmModal.querySelector('div').classList.add('scale-95', 'opacity-0');
+                        confirmModal.addEventListener('transitionend', () => {
+                            confirmModal.remove();
+                            resolve(value);
+                        });
+                    };
+
+                    document.getElementById('confirm-ok').onclick = () => handleConfirm(true);
+                    document.getElementById('confirm-cancel').onclick = () => handleConfirm(false);
                 });
             }
 
+            // --- Generic Settings Loader/Saver ---
+            const loadSettings = async (form, fields) => {
+                const docSnap = await getDoc(siteContentRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    fields.forEach(field => {
+                        const element = document.getElementById(field);
+                        if (element) {
+                            element.value = data[field] || (element.type === 'number' ? 0 : '');
+                            if (field === 'gstPercentage') {
+                                window.gstSettings.gstPercentage = data[field] || 0;
+                            }
+                        }
+                    });
+                }
+            };
+
+            const saveSettings = async (form, fields) => {
+                const data = {};
+                fields.forEach(field => {
+                    const element = document.getElementById(field);
+                    if (element) {
+                        data[field] = element.type === 'number' ? parseFloat(element.value) : element.value;
+                    }
+                });
+                try {
+                    await setDoc(siteContentRef, data, { merge: true });
+                    showMessage('Settings saved successfully!', 'success');
+                } catch (error) {
+                    console.error("Error saving settings:", error);
+                    showMessage('Error saving settings.', 'error');
+                }
+            };
+
+            // --- Site, Payment, GST Settings ---
+            const siteSettingsFields = ['heroTitle', 'heroSubtitle', 'contactEmail', 'contactPhone', 'facebookUrl', 'instagramUrl', 'twitterUrl'];
+            const paymentSettingsFields = ['razorpayKeyId', 'razorpayKeySecret'];
+            const gstSettingsFields = ['gstNumber', 'gstPercentage'];
+
+            const loadAllSettings = () => {
+                loadSettings(siteSettingsForm, siteSettingsFields);
+                loadSettings(paymentSettingsForm, paymentSettingsFields);
+                loadSettings(gstSettingsForm, gstSettingsFields);
+            };
+
+            siteSettingsForm.addEventListener('submit', (e) => { e.preventDefault(); saveSettings(siteSettingsForm, siteSettingsFields); });
+            paymentSettingsForm.addEventListener('submit', (e) => { e.preventDefault(); saveSettings(paymentSettingsForm, paymentSettingsFields); });
+            gstSettingsForm.addEventListener('submit', (e) => { e.preventDefault(); saveSettings(gstSettingsForm, gstSettingsFields); });
+            
 
             // --- Authentication ---
             const showAdminPanel = () => {
                 loginContainer.classList.add('hidden');
                 adminPanel.classList.remove('hidden');
-                // Simulate click on products tab to show it by default
-                document.querySelector('.admin-tab[data-tab="products"]').click();
+                document.querySelector('.admin-tab[data-tab="dashboard"]').click();
                 feather.replace();
 
-                // Load Site Settings, Payment Settings, and GST Settings
-                loadSiteSettings();
-                loadPaymentSettings();
-                loadGstSettings(); // New: Load GST Settings
+                loadAllSettings(); 
 
                 // Attach real-time listeners
                 onSnapshot(productsCollection, (snapshot) => {
                     window.productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderProducts(window.productsData);
                     renderAllReviews(window.productsData);
+                    renderDashboard();
                 });
                 onSnapshot(categoriesCollection, (snapshot) => {
                     window.categoriesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     renderCategories(window.categoriesData);
                     populateCategoryDropdown(window.categoriesData);
                 });
-                onSnapshot(customersCollection, (snapshot) => {
-                    const customersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    renderCustomers(customersData);
-                });
-                // Listen for discount changes
-                onSnapshot(discountsCollection, (snapshot) => {
-                    const discountsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    renderDiscounts(discountsData);
-                });
-                // New: Listen for order changes
+                onSnapshot(customersCollection, (snapshot) => renderCustomers(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
+                onSnapshot(discountsCollection, (snapshot) => renderDiscounts(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))));
                 onSnapshot(ordersCollection, (snapshot) => {
-                    const ordersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    renderOrders(ordersData);
+                    window.ordersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    renderOrders(window.ordersData);
+                    renderDashboard();
                 });
             };
 
@@ -710,337 +727,269 @@
                 try {
                     await signInWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
                 } catch (error) {
-                    console.error("Login failed:", error);
                     loginError.classList.remove('hidden');
                 }
             });
 
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    showAdminPanel();
-                } else {
-                    showLoginForm();
-                }
-            });
+            onAuthStateChanged(auth, (user) => user ? showAdminPanel() : showLoginForm());
 
             // --- Tab Switching ---
-            document.querySelectorAll('.admin-tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
-                    document.getElementById(`${tab.dataset.tab}-section`).classList.remove('hidden');
-                    feather.replace(); // Re-render icons on tab switch
+            const switchTab = (tabButton) => {
+                 document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                 
+                 const tabName = tabButton.dataset.tab;
+                 // Activate both desktop and mobile tabs
+                 document.querySelectorAll(`.admin-tab[data-tab="${tabName}"]`).forEach(t => t.classList.add('active'));
 
-                    // Hide mobile menu after selecting a tab
-                    if (window.innerWidth < 768) {
-                        adminTabsNav.classList.remove('nav-links-mobile-flex');
-                        adminTabsNav.classList.add('nav-links-mobile-hidden');
-                        mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-7 h-7 text-gray-700"></i>'; // Reset icon
-                        feather.replace();
+                 document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
+                 document.getElementById(`${tabName}-section`).classList.remove('hidden');
+                 feather.replace();
+            }
+
+            adminTabsNav.addEventListener('click', (e) => {
+                const tabButton = e.target.closest('.admin-tab');
+                if (tabButton) {
+                    switchTab(tabButton);
+                }
+            });
+
+            // --- Mobile Menu Setup & Toggle ---
+            const mobileMenuNav = adminTabsNav.cloneNode(true);
+            mobileMenuNav.removeAttribute('id');
+            mobileMenuNav.className = 'space-y-2 p-2'; // Add padding for mobile view
+            mobileMenu.appendChild(mobileMenuNav);
+
+            mobileMenuNav.addEventListener('click', (e) => {
+                const tabButton = e.target.closest('.admin-tab');
+                if (tabButton) {
+                    switchTab(tabButton);
+                    mobileMenu.classList.remove('open'); // Hide menu after selection
+                }
+            });
+
+            mobileMenuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('open');
+            });
+
+            // --- Dashboard & Analytics ---
+            const renderDashboard = () => {
+                const products = window.productsData || [];
+                const orders = window.ordersData || [];
+
+                const totalRevenue = orders.filter(o => o.status === 'Delivered').reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+                document.getElementById('total-revenue').textContent = `₹${totalRevenue.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                const newOrdersCount = orders.filter(o => new Date(o.orderDate) >= sevenDaysAgo).length;
+                document.getElementById('new-orders').textContent = newOrdersCount;
+
+                const lowStockCount = products.filter(p => p.stock <= 10).length;
+                document.getElementById('low-stock-items').textContent = lowStockCount;
+
+                const productSales = {};
+                orders.forEach(order => order.products.forEach(p => {
+                    productSales[p.name] = (productSales[p.name] || 0) + p.quantity;
+                }));
+                const topProduct = Object.entries(productSales).sort((a, b) => b[1] - a[1])[0];
+                document.getElementById('top-selling-product').textContent = topProduct ? topProduct[0] : 'N/A';
+
+                createSalesChart(orders);
+                feather.replace();
+            };
+
+            const createSalesChart = (orders) => {
+                const ctx = document.getElementById('salesChart').getContext('2d');
+                if (salesChart) salesChart.destroy();
+
+                const labels = [];
+                const salesData = [];
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                for (let i = 29; i >= 0; i--) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() - i);
+                    labels.push(date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }));
+                    salesData.push(0);
+                }
+
+                const thirtyDaysAgo = new Date(today);
+                thirtyDaysAgo.setDate(today.getDate() - 29);
+
+                orders.forEach(order => {
+                    const orderDate = new Date(order.orderDate);
+                    orderDate.setHours(0, 0, 0, 0);
+
+                    if (order.status === 'Delivered' && orderDate >= thirtyDaysAgo && orderDate <= today) {
+                        const diffTime = today.getTime() - orderDate.getTime();
+                        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                        const index = 29 - diffDays;
+                        
+                        if (index >= 0 && index < 30) {
+                            salesData[index] += parseFloat(order.totalAmount || 0);
+                        }
                     }
                 });
-            });
 
-            // --- Mobile Menu Toggle ---
-            mobileMenuToggle.addEventListener('click', () => {
-                const isHidden = adminTabsNav.classList.contains('nav-links-mobile-hidden');
-                if (isHidden) {
-                    adminTabsNav.classList.remove('nav-links-mobile-hidden');
-                    adminTabsNav.classList.add('nav-links-mobile-flex');
-                    mobileMenuToggle.innerHTML = '<i data-feather="x" class="w-7 h-7 text-gray-700"></i>';
-                } else {
-                    adminTabsNav.classList.remove('nav-links-mobile-flex');
-                    adminTabsNav.classList.add('nav-links-mobile-hidden');
-                    mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-7 h-7 text-gray-700"></i>';
-                }
-                feather.replace();
-            });
-
-            // Close mobile menu if resized to desktop view
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 768) {
-                    adminTabsNav.classList.remove('nav-links-mobile-flex');
-                    adminTabsNav.classList.remove('nav-links-mobile-hidden'); // Ensure it's visible on desktop
-                    mobileMenuToggle.innerHTML = '<i data-feather="menu" class="w-7 h-7 text-gray-700"></i>'; // Reset icon
-                    feather.replace();
-                }
-            });
-
-
-            // --- Site Settings ---
-            const loadSiteSettings = async () => {
-                const docSnap = await getDoc(siteContentRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    document.getElementById('heroTitle').value = data.heroTitle || '';
-                    document.getElementById('heroSubtitle').value = data.heroSubtitle || '';
-                    document.getElementById('contactEmail').value = data.contactEmail || '';
-                    document.getElementById('contactPhone').value = data.contactPhone || '';
-                    document.getElementById('facebookUrl').value = data.facebookUrl || '';
-                    document.getElementById('instagramUrl').value = data.instagramUrl || '';
-                    document.getElementById('twitterUrl').value = data.twitterUrl || '';
-                }
+                salesChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Revenue',
+                            data: salesData,
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            borderColor: '#0ea5e9',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            fill: true,
+                            pointBackgroundColor: '#0ea5e9',
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true, ticks: { callback: value => '₹' + value.toLocaleString('en-IN') } } },
+                        plugins: { legend: { display: false } }
+                    }
+                });
             };
-
-            siteSettingsForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const settingsData = {
-                    heroTitle: document.getElementById('heroTitle').value,
-                    heroSubtitle: document.getElementById('heroSubtitle').value,
-                    contactEmail: document.getElementById('contactEmail').value,
-                    contactPhone: document.getElementById('contactPhone').value,
-                    facebookUrl: document.getElementById('facebookUrl').value,
-                    instagramUrl: document.getElementById('instagramUrl').value,
-                    twitterUrl: document.getElementById('twitterUrl').value,
-                };
-                try {
-                    await setDoc(siteContentRef, settingsData, { merge: true });
-                    showMessage('Site settings saved successfully!', 'success');
-                } catch (error) {
-                    console.error("Error saving site settings:", error);
-                    showMessage('Error saving site settings.', 'error');
-                }
-            });
-
-            // --- Payment Gateway Settings ---
-            const loadPaymentSettings = async () => {
-                const docSnap = await getDoc(siteContentRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    document.getElementById('razorpayKeyId').value = data.razorpayKeyId || '';
-                    document.getElementById('razorpayKeySecret').value = data.razorpayKeySecret || '';
-                }
+            
+            // --- Generic Modal Logic ---
+            const openModal = (modal) => {
+                modal.classList.add('flex');
+                setTimeout(() => modal.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0'), 10);
             };
-
-            paymentSettingsForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const paymentData = {
-                    razorpayKeyId: document.getElementById('razorpayKeyId').value,
-                    razorpayKeySecret: document.getElementById('razorpayKeySecret').value,
-                };
-                try {
-                    await setDoc(siteContentRef, paymentData, { merge: true });
-                    showMessage('Payment gateway settings saved successfully!', 'success');
-                } catch (error) {
-                    console.error("Error saving payment settings:", error);
-                    showMessage('Error saving payment settings.', 'error');
-                }
-            });
-
-            // --- GST Settings (New) ---
-            const loadGstSettings = async () => {
-                const docSnap = await getDoc(siteContentRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    document.getElementById('gstNumber').value = data.gstNumber || '';
-                    document.getElementById('gstPercentage').value = data.gstPercentage !== undefined ? data.gstPercentage : 0;
-                    window.gstSettings = {
-                        gstNumber: data.gstNumber || '',
-                        gstPercentage: data.gstPercentage !== undefined ? data.gstPercentage : 0
-                    };
-                }
+            const closeModal = (modal) => {
+                modal.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+                setTimeout(() => modal.classList.remove('flex'), 300);
             };
-
-            gstSettingsForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const gstData = {
-                    gstNumber: document.getElementById('gstNumber').value,
-                    gstPercentage: parseFloat(document.getElementById('gstPercentage').value)
-                };
-                try {
-                    await setDoc(siteContentRef, gstData, { merge: true });
-                    window.gstSettings = gstData; // Update global settings
-                    showMessage('GST settings saved successfully!', 'success');
-                } catch (error) {
-                    console.error("Error saving GST settings:", error);
-                    showMessage('Error saving GST settings.', 'error');
-                }
-            });
-
-
-            // --- Modal Logic (Product) ---
-            const openProductModal = () => {
-                productModal.classList.add('flex');
-                setTimeout(() => { // Add a slight delay for transition
-                    productModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
-                    productModal.querySelector('div').classList.add('scale-100', 'opacity-100');
-                }, 50);
-            };
-            const closeProductModal = () => {
-                productModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
-                productModal.querySelector('div').classList.add('scale-95', 'opacity-0');
-                setTimeout(() => { // Delay hiding the modal until transition finishes
-                    productModal.classList.remove('flex');
-                    productForm.reset();
-                    document.getElementById('productId').value = '';
-                }, 300); // Match transition duration
-            };
-
-            document.getElementById('add-product-btn').addEventListener('click', () => {
-                modalTitle.textContent = 'Add New Product';
-                openProductModal();
-            });
-            document.getElementById('close-modal-btn').addEventListener('click', closeProductModal);
-            document.getElementById('cancel-btn').addEventListener('click', closeProductModal);
 
             // --- Product CRUD ---
             const renderProducts = (products) => {
                 productsTableBody.innerHTML = '';
                 products.forEach(product => {
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
-                    row.innerHTML = `
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${product.name}</td>
-                        <td class="px-6 py-4 text-gray-600">${product.category}</td>
-                        <td class="px-6 py-4 text-gray-600">₹${product.price ? product.price.toLocaleString('en-IN') : 'N/A'}</td>
-                        <td class="px-6 py-4 text-right space-x-3">
-                            <button data-id="${product.id}" class="edit-btn font-medium text-blue-600 hover:text-blue-800 hover:underline">Edit</button>
-                            <button data-id="${product.id}" class="delete-btn font-medium text-red-600 hover:text-red-800 hover:underline">Delete</button>
-                        </td>
+                    let stockClass = 'text-green-600';
+                    if (product.stock <= 10) stockClass = 'text-red-600';
+                    else if (product.stock <= 50) stockClass = 'text-orange-500';
+
+                    productsTableBody.innerHTML += `
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">${product.name}</td>
+                            <td class="px-6 py-4 text-slate-600">${product.category}</td>
+                            <td class="px-6 py-4 text-slate-600">₹${product.price ? product.price.toLocaleString('en-IN') : 'N/A'}</td>
+                            <td class="px-6 py-4 font-semibold ${stockClass}">${product.stock}</td>
+                            <td class="px-6 py-4 text-right space-x-3">
+                                <button data-id="${product.id}" class="edit-btn font-medium text-blue-600 hover:underline">Edit</button>
+                                <button data-id="${product.id}" class="delete-btn font-medium text-red-600 hover:underline">Delete</button>
+                            </td>
+                        </tr>
                     `;
-                    productsTableBody.appendChild(row);
                 });
             };
 
             productForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const id = document.getElementById('productId').value;
-                
                 const productData = {
                     name: document.getElementById('name').value,
                     category: document.getElementById('category').value,
                     price: parseFloat(document.getElementById('price').value),
+                    stock: parseInt(document.getElementById('stock').value, 10),
                     images: document.getElementById('images').value.split(',').map(url => url.trim()),
                     details: {
                         description: document.getElementById('description').value,
                         specifications: document.getElementById('specifications').value
                     }
                 };
-
                 try {
                     if (id) {
-                        const docRef = doc(db, 'products', id);
-                        const docSnap = await getDoc(docRef);
-                        if (docSnap.exists()) {
-                            const existingData = docSnap.data();
-                            const updatedData = { ...existingData, ...productData };
-                            await updateDoc(docRef, updatedData);
-                            showMessage('Product updated successfully!', 'success');
-                        }
+                        await updateDoc(doc(db, 'products', id), productData);
+                        showMessage('Product updated!', 'success');
                     } else {
                         await addDoc(productsCollection, { ...productData, reviews: [], relatedProducts: [], offer: null });
-                        showMessage('Product added successfully!', 'success');
+                        showMessage('Product added!', 'success');
                     }
-                    closeProductModal();
-                } catch (error) {
-                    console.error("Error saving product:", error);
-                    showMessage('Error saving product.', 'error');
-                }
+                    closeModal(productModal);
+                } catch (error) { showMessage('Error saving product.', 'error'); }
             });
 
             productsTableBody.addEventListener('click', async (e) => {
-                const target = e.target;
-                const id = target.dataset.id;
+                const id = e.target.dataset.id;
                 if (!id) return;
-
-                if (target.classList.contains('edit-btn')) {
+                if (e.target.classList.contains('edit-btn')) {
                     const product = window.productsData.find(p => p.id === id);
                     if (product) {
                         modalTitle.textContent = 'Edit Product';
+                        Object.keys(product).forEach(key => {
+                            const el = document.getElementById(key);
+                            if (el) el.value = product[key];
+                        });
                         document.getElementById('productId').value = product.id;
-                        document.getElementById('name').value = product.name;
-                        document.getElementById('category').value = product.category;
-                        document.getElementById('price').value = product.price;
                         document.getElementById('images').value = product.images.join(', ');
                         document.getElementById('description').value = product.details.description;
                         document.getElementById('specifications').value = product.details.specifications;
-                        openProductModal();
+                        openModal(productModal);
                     }
                 }
-
-                if (target.classList.contains('delete-btn')) {
-                    const confirmed = await showConfirmation('Are you sure you want to delete this product?');
-                    if (confirmed) {
+                if (e.target.classList.contains('delete-btn')) {
+                    if (await showConfirmation('Delete this product?')) {
                         try {
                             await deleteDoc(doc(db, 'products', id));
-                            showMessage('Product deleted successfully!', 'success');
-                        } catch (error) {
-                            console.error("Error deleting product:", error);
-                            showMessage('Error deleting product.', 'error');
-                        }
+                            showMessage('Product deleted.', 'success');
+                        } catch (error) { showMessage('Error deleting product.', 'error'); }
                     }
                 }
             });
+            document.getElementById('add-product-btn').addEventListener('click', () => {
+                modalTitle.textContent = 'Add New Product';
+                productForm.reset();
+                document.getElementById('productId').value = '';
+                openModal(productModal);
+            });
+            document.getElementById('close-modal-btn').onclick = () => closeModal(productModal);
+            document.getElementById('cancel-btn').onclick = () => closeModal(productModal);
+
 
             // --- Category CRUD ---
             const renderCategories = (categories) => {
                 categoryList.innerHTML = '';
                 categories.forEach(cat => {
-                    const li = document.createElement('li');
-                    li.className = 'px-6 py-4 flex justify-between items-center hover:bg-gray-50';
-                    li.innerHTML = `
-                        <span class="text-gray-800 font-medium">${cat.name}</span>
-                        <div class="space-x-3">
-                            <button data-id="${cat.id}" data-name="${cat.name}" class="edit-cat-btn font-medium text-blue-600 hover:text-blue-800 hover:underline">Edit</button>
-                            <button data-id="${cat.id}" class="delete-cat-btn font-medium text-red-600 hover:text-red-800 hover:underline">Delete</button>
-                        </div>
+                    categoryList.innerHTML += `
+                        <li class="px-6 py-4 flex justify-between items-center">
+                            <span class="text-slate-800 font-medium">${cat.name}</span>
+                            <div class="space-x-3">
+                                <button data-id="${cat.id}" data-name="${cat.name}" class="edit-cat-btn font-medium text-blue-600 hover:underline">Edit</button>
+                                <button data-id="${cat.id}" class="delete-cat-btn font-medium text-red-600 hover:underline">Delete</button>
+                            </div>
+                        </li>
                     `;
-                    categoryList.appendChild(li);
                 });
             };
-
             const populateCategoryDropdown = (categories) => {
                 const select = document.getElementById('category');
                 select.innerHTML = '<option value="">Select a category</option>';
-                categories.forEach(cat => {
-                    select.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
-                });
+                categories.forEach(cat => select.innerHTML += `<option value="${cat.name}">${cat.name}</option>`);
             };
-
             document.getElementById('add-category-btn').addEventListener('click', async () => {
                 const input = document.getElementById('new-category-name');
                 if (input.value.trim()) {
-                    try {
-                        await addDoc(categoriesCollection, { name: input.value.trim() });
-                        input.value = '';
-                        showMessage('Category added successfully!', 'success');
-                    } catch (error) {
-                        console.error("Error adding category:", error);
-                        showMessage('Error adding category.', 'error');
-                    }
+                    await addDoc(categoriesCollection, { name: input.value.trim() });
+                    input.value = '';
                 }
             });
-
             categoryList.addEventListener('click', async (e) => {
-                const target = e.target;
-                const id = target.dataset.id;
+                const id = e.target.dataset.id;
                 if (!id) return;
-
-                if (target.classList.contains('edit-cat-btn')) {
-                    const newName = prompt('Enter new category name:', target.dataset.name); // Using prompt for simplicity. Consider custom modal.
-                    if (newName && newName.trim()) {
-                        try {
-                            await updateDoc(doc(db, 'categories', id), { name: newName.trim() });
-                            showMessage('Category updated successfully!', 'success');
-                        } catch (error) {
-                            console.error("Error updating category:", error);
-                            showMessage('Error updating category.', 'error');
-                        }
-                    }
+                if (e.target.classList.contains('edit-cat-btn')) {
+                    const newName = prompt('Enter new category name:', e.target.dataset.name);
+                    if (newName && newName.trim()) await updateDoc(doc(db, 'categories', id), { name: newName.trim() });
                 }
-
-                if (target.classList.contains('delete-cat-btn')) {
-                    const confirmed = await showConfirmation('Are you sure you want to delete this category?');
-                    if (confirmed) {
-                        try {
-                            await deleteDoc(doc(db, 'categories', id));
-                            showMessage('Category deleted successfully!', 'success');
-                        } catch (error) {
-                            console.error("Error deleting category:", error);
-                            showMessage('Error deleting category.', 'error');
-                        }
-                    }
+                if (e.target.classList.contains('delete-cat-btn')) {
+                    if (await showConfirmation('Delete this category?')) await deleteDoc(doc(db, 'categories', id));
                 }
             });
 
@@ -1048,14 +997,13 @@
             const renderCustomers = (customers) => {
                 customersTableBody.innerHTML = '';
                 customers.forEach(customer => {
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
-                    row.innerHTML = `
-                        <td class="px-6 py-4 font-medium text-gray-900">${customer.fullName}</td>
-                        <td class="px-6 py-4 text-gray-600">${customer.phone}</td>
-                        <td class="px-6 py-4 text-gray-600">${customer.address}, ${customer.city}, ${customer.pincode}</td>
+                    customersTableBody.innerHTML += `
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-slate-900">${customer.fullName}</td>
+                            <td class="px-6 py-4 text-slate-600">${customer.phone}</td>
+                            <td class="px-6 py-4 text-slate-600">${customer.address}, ${customer.city}, ${customer.pincode}</td>
+                        </tr>
                     `;
-                    customersTableBody.appendChild(row);
                 });
             };
 
@@ -1065,396 +1013,195 @@
                 products.forEach(product => {
                     if (product.reviews && product.reviews.length > 0) {
                         product.reviews.forEach((review, index) => {
-                            const reviewCard = document.createElement('div');
-                            reviewCard.className = 'bg-white p-6 rounded-xl shadow-md border border-gray-200';
-                            let stars = Array(5).fill(0).map((_, i) => `<i data-feather="star" class="w-4 h-4 ${i < review.rating ? 'text-amber-500 fill-current' : 'text-gray-300'}"></i>`).join('');
-                            
-                            let replySection = `
-                                <div class="mt-4 pt-4 border-t border-gray-100">
-                                    <button data-product-id="${product.id}" data-review-index="${index}" class="reply-btn text-sm text-blue-600 font-semibold hover:text-blue-800 hover:underline">Reply to Review</button>
+                            let stars = Array(5).fill(0).map((_, i) => `<i data-feather="star" class="w-4 h-4 ${i < review.rating ? 'text-amber-400 fill-current' : 'text-slate-300'}"></i>`).join('');
+                            let replySection = review.adminReply ? `
+                                <div class="mt-3 pt-3 border-t border-slate-200 bg-sky-50 p-4 rounded-lg">
+                                    <p class="text-sm font-bold text-sky-800 mb-1">Reply from ToyTopia:</p>
+                                    <p class="text-sm text-slate-700">${review.adminReply}</p>
+                                </div>` : `
+                                <div class="mt-4 pt-4 border-t border-slate-100">
+                                    <button data-product-id="${product.id}" data-review-index="${index}" class="reply-btn text-sm text-blue-600 font-semibold hover:underline">Reply</button>
                                     <div class="reply-form-container hidden mt-2">
-                                        <textarea class="w-full border-gray-300 rounded-lg shadow-sm text-sm p-2.5 focus:border-sky-500 focus:ring-2 focus:ring-sky-200" rows="3" placeholder="Write your reply..."></textarea>
-                                        <button data-product-id="${product.id}" data-review-index="${index}" class="submit-reply-btn mt-3 bg-green-600 text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-sm">Submit Reply</button>
+                                        <textarea class="w-full border-slate-300 rounded-lg shadow-sm text-sm p-2.5 focus:border-sky-500 focus:ring-2 focus:ring-sky-200" rows="3" placeholder="Write your reply..."></textarea>
+                                        <button data-product-id="${product.id}" data-review-index="${index}" class="submit-reply-btn mt-3 btn bg-green-600 text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-green-700">Submit Reply</button>
                                     </div>
                                 </div>`;
-
-                            if (review.adminReply) {
-                                replySection = `<div class="mt-3 pt-3 border-t border-gray-200 bg-sky-50 p-4 rounded-lg">
-                                    <p class="text-sm font-bold text-sky-800 mb-1">Reply from ToyTopia:</p>
-                                    <p class="text-sm text-gray-700">${review.adminReply}</p>
+                            reviewList.innerHTML += `
+                                <div class="bg-white p-6 rounded-xl shadow-md">
+                                    <p class="font-bold text-lg text-slate-900">${product.name}</p>
+                                    <div class="flex items-center my-2">
+                                        <div class="flex mr-2">${stars}</div>
+                                        <p class="font-semibold text-slate-700">${review.user}</p>
+                                    </div>
+                                    <p class="text-slate-600 italic leading-relaxed">"${review.comment}"</p>
+                                    ${replySection}
                                 </div>`;
-                            }
-
-                            reviewCard.innerHTML = `
-                                <p class="font-bold text-lg text-gray-900">${product.name}</p>
-                                <div class="flex items-center my-2">
-                                    <div class="flex mr-2">${stars}</div>
-                                    <p class="font-semibold text-gray-700">${review.user}</p>
-                                </div>
-                                <p class="text-gray-600 italic leading-relaxed">"${review.comment}"</p>
-                                ${replySection}
-                            `;
-                            reviewList.appendChild(reviewCard);
                         });
                     }
                 });
                 feather.replace();
             };
-
             reviewList.addEventListener('click', async (e) => {
-                const target = e.target;
-
-                if (target.classList.contains('reply-btn')) {
-                    const formContainer = target.nextElementSibling;
-                    formContainer.classList.toggle('hidden');
-                }
-
-                if (target.classList.contains('submit-reply-btn')) {
-                    const productId = target.dataset.productId;
-                    const reviewIndex = parseInt(target.dataset.reviewIndex);
-                    const replyText = target.previousElementSibling.value;
-
-                    if (!replyText.trim()) {
-                        showMessage('Reply cannot be empty.', 'error');
-                        return;
-                    }
-
+                if (e.target.classList.contains('reply-btn')) e.target.nextElementSibling.classList.toggle('hidden');
+                if (e.target.classList.contains('submit-reply-btn')) {
+                    const { productId, reviewIndex } = e.target.dataset;
+                    const replyText = e.target.previousElementSibling.value;
+                    if (!replyText.trim()) return showMessage('Reply cannot be empty.', 'error');
+                    
                     const product = window.productsData.find(p => p.id === productId);
                     if (product && product.reviews[reviewIndex]) {
                         product.reviews[reviewIndex].adminReply = replyText.trim();
-                        const docRef = doc(db, 'products', productId);
-                        try {
-                            await updateDoc(docRef, { reviews: product.reviews });
-                            showMessage('Reply submitted successfully!', 'success');
-                            // The onSnapshot listener will automatically re-render the view
-                        } catch (error) {
-                            console.error("Error submitting reply:", error);
-                            showMessage('Error submitting reply.', 'error');
-                        }
+                        await updateDoc(doc(db, 'products', productId), { reviews: product.reviews });
+                        showMessage('Reply submitted!', 'success');
                     }
                 }
             });
-
-            // --- Modal Logic (Discount) ---
-            const openDiscountModal = () => {
-                discountModal.classList.add('flex');
-                setTimeout(() => { // Add a slight delay for transition
-                    discountModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
-                    discountModal.querySelector('div').classList.add('scale-100', 'opacity-100');
-                }, 50);
-            };
-            const closeDiscountModal = () => {
-                discountModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
-                discountModal.querySelector('div').classList.add('scale-95', 'opacity-0');
-                setTimeout(() => { // Delay hiding the modal until transition finishes
-                    discountModal.classList.remove('flex');
-                    discountForm.reset();
-                    document.getElementById('discountId').value = '';
-                    document.getElementById('discountActive').checked = true; // Default to active
-                }, 300); // Match transition duration
-            };
-
-            document.getElementById('add-discount-btn').addEventListener('click', () => {
-                discountModalTitle.textContent = 'Add New Discount';
-                closeDiscountModal(); // Reset form
-                openDiscountModal();
-            });
-            document.getElementById('close-discount-modal-btn').addEventListener('click', closeDiscountModal);
-            document.getElementById('cancel-discount-btn').addEventListener('click', closeDiscountModal);
 
             // --- Discount CRUD ---
             const renderDiscounts = (discounts) => {
                 discountsTableBody.innerHTML = '';
-                discounts.forEach(discount => {
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
-                    const expiryDate = discount.expiryDate ? new Date(discount.expiryDate).toLocaleDateString('en-IN') : 'N/A';
-                    const valueDisplay = discount.type === 'percentage' ? `${discount.value}%` : `₹${discount.value}`;
-                    const activeStatus = discount.isActive ? `<span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>` : `<span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>`;
-
-                    row.innerHTML = `
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${discount.code}</td>
-                        <td class="px-6 py-4 text-gray-600">${discount.type}</td>
-                        <td class="px-6 py-4 text-gray-600">${valueDisplay}</td>
-                        <td class="px-6 py-4 text-gray-600">${expiryDate}</td>
-                        <td class="px-6 py-4">${activeStatus}</td>
-                        <td class="px-6 py-4 text-right space-x-3">
-                            <button data-id="${discount.id}" class="edit-discount-btn font-medium text-blue-600 hover:text-blue-800 hover:underline">Edit</button>
-                            <button data-id="${discount.id}" class="delete-discount-btn font-medium text-red-600 hover:text-red-800 hover:underline">Delete</button>
-                        </td>
-                    `;
-                    discountsTableBody.appendChild(row);
+                discounts.forEach(d => {
+                    const expiryDate = d.expiryDate ? new Date(d.expiryDate).toLocaleDateString('en-IN') : 'N/A';
+                    const valueDisplay = d.type === 'percentage' ? `${d.value}%` : `₹${d.value}`;
+                    const activeStatus = d.isActive ? `<span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Active</span>` : `<span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inactive</span>`;
+                    discountsTableBody.innerHTML += `
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">${d.code}</td>
+                            <td class="px-6 py-4 text-slate-600">${d.type}</td>
+                            <td class="px-6 py-4 text-slate-600">${valueDisplay}</td>
+                            <td class="px-6 py-4 text-slate-600">${expiryDate}</td>
+                            <td class="px-6 py-4">${activeStatus}</td>
+                            <td class="px-6 py-4 text-right space-x-3">
+                                <button data-id="${d.id}" class="edit-discount-btn font-medium text-blue-600 hover:underline">Edit</button>
+                                <button data-id="${d.id}" class="delete-discount-btn font-medium text-red-600 hover:underline">Delete</button>
+                            </td>
+                        </tr>`;
                 });
-                feather.replace(); // Ensure icons are rendered for table
             };
-
             discountForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const id = document.getElementById('discountId').value;
-                
                 const discountData = {
                     code: document.getElementById('discountCode').value.trim().toUpperCase(),
                     type: document.getElementById('discountType').value,
                     value: parseFloat(document.getElementById('discountValue').value),
-                    expiryDate: document.getElementById('discountExpiry').value, // YYYY-MM-DD string
+                    expiryDate: document.getElementById('discountExpiry').value,
                     isActive: document.getElementById('discountActive').checked,
                 };
-
                 try {
                     if (id) {
-                        const docRef = doc(db, 'discounts', id);
-                        await updateDoc(docRef, discountData);
-                        showMessage('Discount updated successfully!', 'success');
+                        await updateDoc(doc(db, 'discounts', id), discountData);
+                        showMessage('Discount updated!', 'success');
                     } else {
-                        // Check for duplicate code before adding
-                        const existingDiscounts = await getDocs(discountsCollection);
-                        const isDuplicate = existingDiscounts.docs.some(d => d.data().code === discountData.code);
-                        if (isDuplicate) {
-                            showMessage('Discount code already exists. Please use a unique code.', 'error');
-                            return;
-                        }
+                        const isDuplicate = (await getDocs(discountsCollection)).docs.some(d => d.data().code === discountData.code);
+                        if (isDuplicate) return showMessage('Discount code already exists.', 'error');
                         await addDoc(discountsCollection, discountData);
-                        showMessage('Discount added successfully!', 'success');
+                        showMessage('Discount added!', 'success');
                     }
-                    closeDiscountModal();
-                } catch (error) {
-                    console.error("Error saving discount:", error);
-                    showMessage('Error saving discount.', 'error');
-                }
+                    closeModal(discountModal);
+                } catch (error) { showMessage('Error saving discount.', 'error'); }
             });
-
             discountsTableBody.addEventListener('click', async (e) => {
-                const target = e.target;
-                const id = target.dataset.id;
+                const id = e.target.dataset.id;
                 if (!id) return;
-
-                if (target.classList.contains('edit-discount-btn')) {
+                if (e.target.classList.contains('edit-discount-btn')) {
                     const discountDoc = await getDoc(doc(db, 'discounts', id));
                     if (discountDoc.exists()) {
                         const discount = discountDoc.data();
                         discountModalTitle.textContent = 'Edit Discount';
-                        document.getElementById('discountId').value = discount.id;
+                        document.getElementById('discountId').value = id;
                         document.getElementById('discountCode').value = discount.code;
                         document.getElementById('discountType').value = discount.type;
                         document.getElementById('discountValue').value = discount.value;
-                        document.getElementById('discountExpiry').value = discount.expiryDate || ''; // Set date input
+                        document.getElementById('discountExpiry').value = discount.expiryDate || '';
                         document.getElementById('discountActive').checked = discount.isActive;
-                        openDiscountModal();
+                        openModal(discountModal);
                     }
                 }
-
-                if (target.classList.contains('delete-discount-btn')) {
-                    const confirmed = await showConfirmation('Are you sure you want to delete this discount?');
-                    if (confirmed) {
-                        try {
-                            await deleteDoc(doc(db, 'discounts', id));
-                            showMessage('Discount deleted successfully!', 'success');
-                        } catch (error) {
-                            console.error("Error deleting discount:", error);
-                            showMessage('Error deleting discount.', 'error');
-                        }
+                if (e.target.classList.contains('delete-discount-btn')) {
+                    if (await showConfirmation('Delete this discount?')) {
+                        await deleteDoc(doc(db, 'discounts', id));
+                        showMessage('Discount deleted.', 'success');
                     }
                 }
             });
+            document.getElementById('add-discount-btn').addEventListener('click', () => {
+                discountModalTitle.textContent = 'Add New Discount';
+                discountForm.reset();
+                document.getElementById('discountId').value = '';
+                document.getElementById('discountActive').checked = true;
+                openModal(discountModal);
+            });
+            document.getElementById('close-discount-modal-btn').onclick = () => closeModal(discountModal);
+            document.getElementById('cancel-discount-btn').onclick = () => closeModal(discountModal);
 
-            // --- Order Management (New) ---
+            // --- Order Management ---
             const renderOrders = (orders) => {
                 ordersTableBody.innerHTML = '';
-                let total = 0;
-                let completed = 0;
-                let pending = 0;
-
                 orders.forEach(order => {
-                    total++; // Increment total for each order
-
-                    if (order.status === 'Delivered') {
-                        completed++;
-                    }
-                    if (order.status === 'Pending' || order.status === 'Processing') {
-                        pending++;
-                    }
-
-                    const row = document.createElement('tr');
-                    row.className = 'bg-white border-b hover:bg-gray-50';
                     const orderDate = order.orderDate ? new Date(order.orderDate).toLocaleDateString('en-IN') : 'N/A';
-                    const totalAmount = order.totalAmount ? `₹${parseFloat(order.totalAmount).toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'N/A';
-                    let statusClass = '';
-                    if (order.status === 'Pending') {
-                        statusClass = 'bg-yellow-100 text-yellow-800';
-                    } else if (order.status === 'Processing') {
-                        statusClass = 'bg-blue-100 text-blue-800';
-                    } else if (order.status === 'Shipped') {
-                        statusClass = 'bg-indigo-100 text-indigo-800';
-                    } else if (order.status === 'Delivered') {
-                        statusClass = 'bg-green-100 text-green-800';
-                    } else if (order.status === 'Cancelled') {
-                        statusClass = 'bg-red-100 text-red-800';
-                    }
-
-                    // Defensive check for order.id
-                    const displayOrderId = order.id ? order.id.substring(0, 8) + '...' : 'N/A';
-
-                    // Conditionally show delete button for cancelled orders
-                    const deleteButtonHtml = order.status === 'Cancelled' ? 
-                        `<button data-id="${order.id || ''}" class="delete-order-btn font-medium text-red-600 hover:text-red-800 hover:underline ml-3">Delete</button>` : '';
-
-                    row.innerHTML = `
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${displayOrderId}</td>
-                        <td class="px-6 py-4 text-gray-600">${order.customerName}</td>
-                        <td class="px-6 py-4 text-gray-600">${orderDate}</td>
-                        <td class="px-6 py-4 text-gray-600">${totalAmount}</td>
-                        <td class="px-6 py-4">
-                            <span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${order.status}</span>
-                        </td>
-                        <td class="px-6 py-4 text-right flex items-center justify-end space-x-3">
-                            <button data-id="${order.id || ''}" class="view-order-btn font-medium text-sky-600 hover:text-sky-800 hover:underline">View Details</button>
-                            <select data-id="${order.id || ''}" class="update-order-status-select mt-1 block w-auto border-gray-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 text-sm p-2">
-                                <option value="">Update Status</option>
-                                <option value="Pending">Pending</option>
-                                <option value="Processing">Processing</option>
-                                <option value="Shipped">Shipped</option>
-                                <option value="Delivered">Delivered</option>
-                                <option value="Cancelled">Cancelled</option>
-                            </select>
-                            ${deleteButtonHtml}
-                        </td>
-                    `;
-                    ordersTableBody.appendChild(row);
+                    const totalAmount = order.totalAmount ? `₹${parseFloat(order.totalAmount).toLocaleString('en-IN', {minimumFractionDigits: 2})}` : 'N/A';
+                    let statusClass = { 'Pending': 'bg-yellow-100 text-yellow-800', 'Processing': 'bg-blue-100 text-blue-800', 'Shipped': 'bg-indigo-100 text-indigo-800', 'Delivered': 'bg-green-100 text-green-800', 'Cancelled': 'bg-red-100 text-red-800'}[order.status] || '';
+                    ordersTableBody.innerHTML += `
+                        <tr>
+                            <td class="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">${order.id.substring(0, 8)}...</td>
+                            <td class="px-6 py-4 text-slate-600">${order.customerName}</td>
+                            <td class="px-6 py-4 text-slate-600">${orderDate}</td>
+                            <td class="px-6 py-4 text-slate-600">${totalAmount}</td>
+                            <td class="px-6 py-4"><span class="px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${order.status}</span></td>
+                            <td class="px-6 py-4 text-right flex items-center justify-end space-x-3">
+                                <button data-id="${order.id}" class="view-order-btn font-medium text-sky-600 hover:underline">View</button>
+                                <select data-id="${order.id}" class="update-order-status-select border-slate-300 rounded-lg shadow-sm text-sm p-2 focus:border-sky-500 focus:ring-sky-200">
+                                    <option value="">Update Status</option>
+                                    <option value="Pending">Pending</option><option value="Processing">Processing</option><option value="Shipped">Shipped</option><option value="Delivered">Delivered</option><option value="Cancelled">Cancelled</option>
+                                </select>
+                                ${order.status === 'Cancelled' ? `<button data-id="${order.id}" class="delete-order-btn font-medium text-red-600 hover:underline">Delete</button>` : ''}
+                            </td>
+                        </tr>`;
                 });
-
-                // Update counts after rendering table
-                totalOrdersCount.textContent = total;
-                completedOrdersCount.textContent = completed;
-                pendingOrdersCount.textContent = pending;
-
-                feather.replace();
             };
-
-            const saveOrder = async (orderData) => {
-                try {
-                    await addDoc(ordersCollection, orderData);
-                    showMessage('Order saved successfully!', 'success');
-                } catch (error) {
-                    console.error("Error saving order:", error);
-                    showMessage('Error saving order.', 'error');
-                }
-            };
-
-            // Event listener for updating order status and deleting cancelled orders
-            ordersTableBody.addEventListener('click', async (e) => {
-                const target = e.target;
-                const orderId = target.dataset.id;
-
-                if (!orderId) return; // Ensure an order ID is present
-
-                // Handle status update
-                if (target.classList.contains('update-order-status-select')) {
-                    const newStatus = target.value;
-                    if (newStatus) {
-                        try {
-                            const orderRef = doc(db, 'orders', orderId);
-                            await updateDoc(orderRef, { status: newStatus });
-                            showMessage(`Order ${orderId ? orderId.substring(0, 8) + '...' : 'N/A'} status updated to ${newStatus}!`, 'success');
-                        } catch (error) {
-                            console.error("Error updating order status:", error);
-                            showMessage('Error updating order status.', 'error');
-                        }
+            ordersTableBody.addEventListener('change', async (e) => {
+                if (e.target.classList.contains('update-order-status-select')) {
+                    const { id } = e.target.dataset;
+                    const newStatus = e.target.value;
+                    if (newStatus && id) {
+                        await updateDoc(doc(db, 'orders', id), { status: newStatus });
+                        showMessage(`Order status updated to ${newStatus}!`, 'success');
                     }
-                    target.value = ""; // Reset dropdown after selection
-                }
-
-                // Handle delete cancelled order
-                if (target.classList.contains('delete-order-btn')) {
-                    const confirmed = await showConfirmation('Are you sure you want to delete this CANCELLED order? This action cannot be undone.');
-                    if (confirmed) {
-                        try {
-                            await deleteDoc(doc(db, 'orders', orderId));
-                            showMessage('Cancelled order deleted successfully!', 'success');
-                        } catch (error) {
-                            console.error("Error deleting order:", error);
-                            showMessage('Error deleting order.', 'error');
-                        }
-                    }
+                    e.target.value = "";
                 }
             });
-
-
-            // Order Details Modal Logic
-            const openOrderDetailsModal = () => {
-                orderDetailsModal.classList.add('flex');
-                setTimeout(() => { // Add a slight delay for transition
-                    orderDetailsModal.querySelector('div').classList.remove('scale-95', 'opacity-0');
-                    orderDetailsModal.querySelector('div').classList.add('scale-100', 'opacity-100');
-                }, 50);
-            };
-            const closeOrderDetailsModal = () => {
-                orderDetailsModal.querySelector('div').classList.remove('scale-100', 'opacity-100');
-                orderDetailsModal.querySelector('div').classList.add('scale-95', 'opacity-0');
-                setTimeout(() => { // Delay hiding the modal until transition finishes
-                    orderDetailsModal.classList.remove('flex');
-                }, 300); // Match transition duration
-            };
-
-            closeOrderDetailsModalBtn.addEventListener('click', closeOrderDetailsModal);
-
             ordersTableBody.addEventListener('click', async (e) => {
-                const target = e.target;
-                if (target.classList.contains('view-order-btn')) {
-                    const orderId = target.dataset.id;
-                    const orderDoc = await getDoc(doc(db, 'orders', orderId));
+                const id = e.target.dataset.id;
+                if (!id) return;
+                if (e.target.classList.contains('delete-order-btn')) {
+                    if (await showConfirmation('Permanently delete this order?')) await deleteDoc(doc(db, 'orders', id));
+                }
+                if (e.target.classList.contains('view-order-btn')) {
+                    const orderDoc = await getDoc(doc(db, 'orders', id));
                     if (orderDoc.exists()) {
                         const order = orderDoc.data();
-                        
-                        // Populate modal with order data
-                        // Defensive check for order.id
-                        modalOrderId.textContent = order.id ? order.id.substring(0, 8) + '...' : 'N/A';
-                        modalCustomerName.textContent = order.customerName;
-                        modalOrderDate.textContent = new Date(order.orderDate).toLocaleDateString('en-IN');
-                        
-                        modalOrderStatus.textContent = order.status;
-                        modalOrderStatus.className = `px-2.5 py-1 inline-flex text-xs leading-5 font-semibold rounded-full`;
-                        if (order.status === 'Pending') {
-                            modalOrderStatus.classList.add('bg-yellow-100', 'text-yellow-800');
-                        } else if (order.status === 'Processing') {
-                            modalOrderStatus.classList.add('bg-blue-100', 'text-blue-800');
-                        } else if (order.status === 'Shipped') {
-                            modalOrderStatus.classList.add('bg-indigo-100', 'text-indigo-800');
-                        } else if (order.status === 'Delivered') {
-                            modalOrderStatus.classList.add('bg-green-100', 'text-green-800');
-                        } else if (order.status === 'Cancelled') {
-                            modalOrderStatus.classList.add('bg-red-100', 'text-red-800');
-                        }
-
-                        modalOrderProducts.innerHTML = '';
                         let subtotal = 0;
-                        order.products.forEach(p => {
-                            const listItem = document.createElement('li');
-                            listItem.textContent = `${p.name} (Qty: ${p.quantity}, Price: ₹${p.price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})})`;
-                            modalOrderProducts.appendChild(listItem);
+                        let productListHTML = order.products.map(p => {
                             subtotal += p.quantity * p.price;
-                        });
-
-                        const gstPercentage = window.gstSettings.gstPercentage || 0; // Use global GST setting
-                        const gstAmount = subtotal * (gstPercentage / 100);
-                        const totalWithGST = subtotal + gstAmount;
-
-                        modalPaymentMethod.textContent = order.paymentInfo.method;
-                        modalTransactionId.textContent = order.paymentInfo.transactionId;
-                        modalShippingAddress.textContent = `${order.shippingAddress.street}, ${order.shippingAddress.city}, ${order.shippingAddress.state}, ${order.shippingAddress.pincode}`;
-                        
-                        modalSubtotal.textContent = subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                        modalGstPercentage.textContent = gstPercentage;
-                        modalGstAmount.textContent = gstAmount.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                        modalTotalAmount.textContent = totalWithGST.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-
-                        openOrderDetailsModal();
-                        feather.replace(); // Re-render icons inside modal
-                    } else {
-                        showMessage('Order details not found.', 'error');
+                            return `<li>${p.name} (Qty: ${p.quantity}, Price: ₹${p.price.toLocaleString('en-IN')})</li>`;
+                        }).join('');
+                        const gstAmount = subtotal * ((window.gstSettings.gstPercentage || 0) / 100);
+                        orderDetailsContent.innerHTML = `
+                            <p><strong>Order ID:</strong> <span class="font-semibold text-slate-900">${id.substring(0,8)}...</span></p>
+                            <p><strong>Customer Name:</strong> <span class="font-semibold text-slate-900">${order.customerName}</span></p>
+                            <p><strong>Order Date:</strong> <span class="font-semibold text-slate-900">${new Date(order.orderDate).toLocaleDateString('en-IN')}</span></p>
+                            <div class="border-t pt-4 mt-4"><h3 class="text-lg font-semibold mb-3 text-slate-800">Products:</h3><ul class="list-disc pl-5 space-y-2">${productListHTML}</ul></div>
+                            <div class="border-t pt-4 mt-4"><h3 class="text-lg font-semibold mb-3 text-slate-800">Summary:</h3>
+                                <p class="flex justify-between"><span>Subtotal:</span> <span class="font-semibold">₹${subtotal.toLocaleString('en-IN')}</span></p>
+                                <p class="flex justify-between"><span>GST (${window.gstSettings.gstPercentage || 0}%):</span> <span class="font-semibold">₹${gstAmount.toLocaleString('en-IN')}</span></p>
+                                <p class="flex justify-between text-xl font-bold mt-2 pt-2 border-t"><span>Total:</span> <span class="text-sky-700">₹${order.totalAmount.toLocaleString('en-IN')}</span></p>
+                            </div>`;
+                        openModal(orderDetailsModal);
                     }
                 }
             });
-
+            closeOrderDetailsModalBtn.onclick = () => closeModal(orderDetailsModal);
         }
 
         main().catch(console.error);
