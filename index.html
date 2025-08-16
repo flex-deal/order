@@ -87,6 +87,15 @@
         #mobile-menu.open {
             max-height: 100vh; /* A large enough value */
         }
+        
+        /* Toggle Switch Styling */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #0ea5e9;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #0ea5e9;
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -301,21 +310,47 @@
                 <!-- Payment Gateway Section -->
                 <div id="payments-section" class="admin-section hidden">
                     <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-6">Payment Gateway Settings</h1>
-                    <div class="bg-white rounded-xl shadow-md p-6">
-                        <form id="payment-settings-form" class="space-y-5">
-                            <div>
-                                <label for="razorpayKeyId" class="block text-sm font-medium text-slate-700 mb-1">Razorpay Key ID</label>
-                                <input type="text" id="razorpayKeyId" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="rzp_test_XXXXXXXXXXXXXXXX">
+                    <form id="payment-settings-form" class="space-y-6">
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h2 class="text-xl font-bold text-slate-700 mb-4">Razorpay (Online Payments)</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="razorpayKeyId" class="block text-sm font-medium text-slate-700 mb-1">Razorpay Key ID</label>
+                                    <input type="text" id="razorpayKeyId" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="rzp_test_XXXXXXXXXXXXXXXX">
+                                </div>
+                                <div>
+                                    <label for="razorpayKeySecret" class="block text-sm font-medium text-slate-700 mb-1">Razorpay Key Secret</label>
+                                    <input type="password" id="razorpayKeySecret" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="••••••••••••••••••••••">
+                                </div>
                             </div>
-                            <div>
-                                <label for="razorpayKeySecret" class="block text-sm font-medium text-slate-700 mb-1">Razorpay Key Secret</label>
-                                <input type="text" id="razorpayKeySecret" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="XXXXXXXXXXXXXXXXXXXXXX">
+                        </div>
+
+                        <!-- NEW: Cash on Delivery Section -->
+                        <div class="bg-white rounded-xl shadow-md p-6">
+                            <h2 class="text-xl font-bold text-slate-700 mb-4">Cash on Delivery (COD)</h2>
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <div>
+                                        <label for="codEnabled" class="font-medium text-slate-700">Enable Cash on Delivery</label>
+                                        <p class="text-sm text-slate-500">Allow customers to pay upon delivery.</p>
+                                    </div>
+                                    <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                        <input type="checkbox" name="toggle" id="codEnabled" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer"/>
+                                        <label for="codEnabled" class="toggle-label block overflow-hidden h-6 rounded-full bg-slate-300 cursor-pointer"></label>
+                                    </div>
+                                </div>
+                                <div id="cod-advance-container" class="hidden">
+                                    <label for="codAdvanceAmount" class="block text-sm font-medium text-slate-700 mb-1">Advance Amount (₹)</label>
+                                    <input type="number" id="codAdvanceAmount" class="mt-1 block w-full border-slate-300 rounded-lg shadow-sm focus:border-sky-500 focus:ring-2 focus:ring-sky-200 p-2.5 text-slate-800" placeholder="e.g., 100" min="0">
+                                    <p class="text-xs text-slate-500 mt-1">Set to 0 if no advance payment is required.</p>
+                                </div>
                             </div>
-                            <div class="pt-4 flex justify-end">
-                                <button type="submit" class="btn bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700">Save Payment Settings</button>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+
+                        <div class="pt-4 flex justify-end">
+                            <button type="submit" class="btn bg-green-600 text-white font-bold py-2.5 px-6 rounded-xl hover:bg-green-700">Save All Payment Settings</button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Orders Section -->
@@ -577,6 +612,10 @@
             const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
             const adminTabsNav = document.getElementById('admin-tabs-nav');
             const mobileMenu = document.getElementById('mobile-menu');
+            
+            // NEW COD Elements
+            const codEnabledToggle = document.getElementById('codEnabled');
+            const codAdvanceContainer = document.getElementById('cod-advance-container');
 
             // Global variable to store GST settings
             window.gstSettings = { gstNumber: '', gstPercentage: 0 };
@@ -643,12 +682,18 @@
                     fields.forEach(field => {
                         const element = document.getElementById(field);
                         if (element) {
-                            element.value = data[field] || (element.type === 'number' ? 0 : '');
+                            if (element.type === 'checkbox') {
+                                element.checked = data[field] || false;
+                            } else {
+                                element.value = data[field] || (element.type === 'number' ? 0 : '');
+                            }
                             if (field === 'gstPercentage') {
                                 window.gstSettings.gstPercentage = data[field] || 0;
                             }
                         }
                     });
+                    // Trigger UI update for COD section after loading
+                    codEnabledToggle.dispatchEvent(new Event('change'));
                 }
             };
 
@@ -657,7 +702,11 @@
                 fields.forEach(field => {
                     const element = document.getElementById(field);
                     if (element) {
-                        data[field] = element.type === 'number' ? parseFloat(element.value) : element.value;
+                        if (element.type === 'checkbox') {
+                            data[field] = element.checked;
+                        } else {
+                            data[field] = element.type === 'number' ? parseFloat(element.value) || 0 : element.value;
+                        }
                     }
                 });
                 try {
@@ -671,7 +720,7 @@
 
             // --- Site, Payment, GST Settings ---
             const siteSettingsFields = ['heroTitle', 'heroSubtitle', 'contactEmail', 'contactPhone', 'facebookUrl', 'instagramUrl', 'twitterUrl'];
-            const paymentSettingsFields = ['razorpayKeyId', 'razorpayKeySecret'];
+            const paymentSettingsFields = ['razorpayKeyId', 'razorpayKeySecret', 'codEnabled', 'codAdvanceAmount'];
             const gstSettingsFields = ['gstNumber', 'gstPercentage'];
 
             const loadAllSettings = () => {
@@ -684,6 +733,14 @@
             paymentSettingsForm.addEventListener('submit', (e) => { e.preventDefault(); saveSettings(paymentSettingsForm, paymentSettingsFields); });
             gstSettingsForm.addEventListener('submit', (e) => { e.preventDefault(); saveSettings(gstSettingsForm, gstSettingsFields); });
             
+            // NEW: Event listener for COD toggle
+            codEnabledToggle.addEventListener('change', () => {
+                if (codEnabledToggle.checked) {
+                    codAdvanceContainer.classList.remove('hidden');
+                } else {
+                    codAdvanceContainer.classList.add('hidden');
+                }
+            });
 
             // --- Authentication ---
             const showAdminPanel = () => {
